@@ -5,10 +5,11 @@ export interface ProductDefinition {
   name: string; // Spanish UI label
   description: string;
   /**
-   * Path to a hero image inside `/public`. The MVP uses CSS placeholders, so
-   * this is optional and the UI falls back to an illustrative tile.
+   * Imágenes en /public. Si hay más de una, la card va a ciclarlas con un
+   * slideshow (ver ImageSlideshow.tsx). Si está vacío o ausente, se muestra
+   * un dibujo SVG como placeholder.
    */
-  image?: string;
+  images?: string[];
   available: boolean; // false → "Próximamente"
 }
 
@@ -17,48 +18,59 @@ export const PRODUCTS: ProductDefinition[] = [
     id: "table",
     name: "Mesa",
     description: "Mesa a medida en madera maciza.",
-    image: "/mesa-2.jpeg",
+    images: ["/mesa-1.jpeg", "/mesa-2.jpeg", "/mesa-3.jpeg"],
     available: true,
   },
   {
     id: "bench",
-    name: "Banco",
-    description: "Banco sin respaldo para mesa o entrada.",
-    // TODO: copiar a /public/banco.jpeg y referenciarla acá
-    available: false,
-  },
-  {
-    id: "bench-backrest",
-    name: "Banco con respaldo",
-    description: "Banco con respaldo, ideal para comedor.",
-    // TODO: copiar a /public/banco-respaldo.jpeg y referenciarla acá
+    name: "Bancos",
+    description: "Bancos artesanales, con o sin respaldo.",
+    images: ["/banco-1.jpeg", "/banco-2.jpeg"],
     available: false,
   },
   {
     id: "chair",
     name: "Silla",
     description: "Silla artesanal en madera.",
+    images: ["/silla.jpeg"],
     available: false,
   },
   {
     id: "shelf",
     name: "Estantería",
     description: "Estantería a medida para tu espacio.",
-    // TODO: copiar a /public/estanteria.jpeg y referenciarla acá
+    images: [
+      "/estanteria-1.jpeg",
+      "/estanteria-2.jpeg",
+      "/estanteria-3.jpeg",
+      "/estanteria-cajones.jpeg",
+      "/mesada-entrada.jpeg",
+    ],
     available: false,
   },
   {
     id: "coffee-table",
     name: "Mesa ratona",
     description: "Mesa baja para living.",
-    // TODO: copiar a /public/mesa-ratona.jpeg y referenciarla acá
+    images: [
+      "/mesa-ratona-1.jpeg",
+      "/mesa-ratona-2.jpeg",
+      "/mesa-ratona-3.jpeg",
+    ],
     available: false,
   },
   {
     id: "bedside-table",
     name: "Mesa de luz",
     description: "Mesa de luz para dormitorio.",
-    // TODO: copiar a /public/mesa-luz.jpeg y referenciarla acá
+    images: ["/mesa-luz.jpeg"],
+    available: false,
+  },
+  {
+    id: "cylinder",
+    name: "Cirindros",
+    description: "Cirindros de madera maciza, usados como banqueta o mesa auxiliar.",
+    images: ["/cirindros.jpeg"],
     available: false,
   },
 ];

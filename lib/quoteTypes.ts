@@ -10,11 +10,11 @@
 export type ProductId =
   | "table"
   | "bench"
-  | "bench-backrest"
   | "chair"
   | "shelf"
   | "coffee-table"
-  | "bedside-table";
+  | "bedside-table"
+  | "cylinder";
 
 export type ContactMethod = "email" | "whatsapp";
 

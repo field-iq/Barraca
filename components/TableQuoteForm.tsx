@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import type {
   ContactDetails,
   QuoteRequest,
   TableDimensions,
 } from "@/lib/quoteTypes";
+import { getProduct } from "@/lib/products";
 import { ContactGate, isContactValid } from "./ContactGate";
+import { ImageSlideshow } from "./ImageSlideshow";
 
 interface TableQuoteFormProps {
   onBack: () => void;
@@ -75,13 +76,11 @@ export function TableQuoteForm({ onBack, onSubmit }: TableQuoteFormProps) {
       </header>
 
       <div className="relative aspect-[16/9] w-full rounded-xl bg-sand overflow-hidden">
-        <Image
-          src="/mesa-1.jpeg"
+        <ImageSlideshow
+          images={getProduct("table")?.images ?? ["/mesa-1.jpeg"]}
           alt="Mesa de madera maciza hecha en el taller de La Barraca"
-          fill
-          priority
           sizes="(max-width: 768px) 100vw, 720px"
-          className="object-cover"
+          priority
         />
       </div>
 

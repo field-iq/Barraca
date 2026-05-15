@@ -71,12 +71,20 @@ function OfferCard({ offer }: { offer: Offer }) {
         <p className="mt-1 text-sm text-walnut/70">{offer.description}</p>
 
         <div className="mt-4 pt-4 border-t border-sand flex items-baseline gap-3">
-          <span className="font-serif text-xl text-walnut">
-            {formatARS(offer.price)}
-          </span>
-          {offer.oldPrice && offer.oldPrice > offer.price && (
-            <span className="text-sm text-walnut/50 line-through">
-              {formatARS(offer.oldPrice)}
+          {offer.price > 0 ? (
+            <>
+              <span className="font-serif text-xl text-walnut">
+                {formatARS(offer.price)}
+              </span>
+              {offer.oldPrice && offer.oldPrice > offer.price && (
+                <span className="text-sm text-walnut/50 line-through">
+                  {formatARS(offer.oldPrice)}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="font-serif text-lg text-walnut/70">
+              Consultar precio
             </span>
           )}
         </div>

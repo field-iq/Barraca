@@ -1,5 +1,5 @@
-import Image from "next/image";
 import type { ProductDefinition } from "@/lib/products";
+import { ImageSlideshow } from "./ImageSlideshow";
 
 interface ProductCardProps {
   product: ProductDefinition;
@@ -22,13 +22,11 @@ export function ProductCard({ product, onSelect }: ProductCardProps) {
       ].join(" ")}
     >
       <div className="relative aspect-[4/3] w-full rounded-xl bg-sand mb-4 flex items-center justify-center overflow-hidden">
-        {product.image ? (
-          <Image
-            src={product.image}
+        {product.images && product.images.length > 0 ? (
+          <ImageSlideshow
+            images={product.images}
             alt={product.name}
-            fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover"
           />
         ) : (
           <ProductIllustration id={product.id} />
@@ -77,16 +75,6 @@ function ProductIllustration({ id }: { id: string }) {
           <rect x="15" y="45" width="90" height="6" rx="2" />
           <line x1="22" y1="51" x2="22" y2="75" />
           <line x1="98" y1="51" x2="98" y2="75" />
-        </>
-      )}
-      {id === "bench-backrest" && (
-        <>
-          <rect x="15" y="45" width="90" height="6" rx="2" />
-          <line x1="22" y1="51" x2="22" y2="75" />
-          <line x1="98" y1="51" x2="98" y2="75" />
-          <line x1="22" y1="45" x2="22" y2="20" />
-          <line x1="98" y1="45" x2="98" y2="20" />
-          <line x1="22" y1="22" x2="98" y2="22" />
         </>
       )}
       {id === "chair" && (

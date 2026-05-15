@@ -23,14 +23,13 @@ export interface Offer {
 }
 
 export const OFFERS: Offer[] = [
-  // EJEMPLO — reemplazá con las piezas reales en stock.
   {
-    id: "mesa-roble-200x100",
-    name: "Mesa de roble 200 × 100",
-    description: "Mesa de comedor en roble macizo, terminación al aceite.",
-    price: 1_580_000,
-    oldPrice: 1_750_000,
-    image: "/mesa-3.jpeg",
-    badge: "Pieza única",
+    id: "escritorio",
+    name: "Escritorio",
+    description: "Escritorio de madera maciza, listo para entrega inmediata.",
+    // TODO: ajustar precio real
+    price: 0,
+    image: "/escritorio.jpeg",
+    badge: "En stock",
   },
 ];
