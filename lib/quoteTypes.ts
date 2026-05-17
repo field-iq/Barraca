@@ -41,6 +41,7 @@ export interface QuoteRequest {
   productType: ProductId;
   dimensions: TableDimensions; // For now only "table" is implemented.
   contact: ContactDetails;
+  deliveryAddress: string;
   /** ISO 8601 timestamp generated at submit time. */
   requestedAt: string;
 }
