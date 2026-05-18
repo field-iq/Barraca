@@ -4,25 +4,39 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { ProductSelector } from "@/components/ProductSelector";
 import { TableQuoteForm } from "@/components/TableQuoteForm";
+import { Cart } from "@/components/Cart";
+import { CheckoutForm } from "@/components/CheckoutForm";
 import { ComingSoon } from "@/components/ComingSoon";
 import { QuoteSummary } from "@/components/QuoteSummary";
 import { OffersSection } from "@/components/OffersSection";
 import { getProduct } from "@/lib/products";
 import { submitQuote } from "@/lib/submitQuote";
-import type { PriceEstimate, ProductId, QuoteRequest } from "@/lib/quoteTypes";
+import type {
+  CartItem,
+  CartQuoteRequest,
+  ContactDetails,
+  DeliveryOption,
+  ProductId,
+  TableDimensions,
+} from "@/lib/quoteTypes";
 
 type Step =
   | { name: "select" }
   | { name: "table-form" }
-  | { name: "coming-soon"; product: ProductId }
+  | { name: "cart" }
+  | { name: "checkout" }
   | {
       name: "confirmation";
-      request: QuoteRequest;
-      estimate: PriceEstimate | null;
-    };
+      request: CartQuoteRequest;
+      deliveryCost: number;
+      subtotal: number;
+      total: number;
+    }
+  | { name: "coming-soon"; product: ProductId };
 
 export default function HomePage() {
   const [step, setStep] = useState<Step>({ name: "select" });
+  const [cart, setCart] = useState<CartItem[]>([]);
 
   function handleProductSelect(id: ProductId) {
     if (id === "table") {
@@ -32,10 +46,45 @@ export default function HomePage() {
     }
   }
 
-  async function handleQuoteSubmit(request: QuoteRequest) {
-    // Future: replace `submitQuote` with a Supabase / Airtable / API call.
+  function handleAddToCart(dimensions: TableDimensions) {
+    const item: CartItem = {
+      id: crypto.randomUUID(),
+      productType: "table",
+      dimensions,
+    };
+    setCart((prev) => [...prev, item]);
+    setStep({ name: "cart" });
+  }
+
+  function handleRemoveFromCart(id: string) {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  async function handleCheckout(
+    deliveryOption: DeliveryOption,
+    contact: ContactDetails,
+    deliveryAddress?: string,
+  ) {
+    const request: CartQuoteRequest = {
+      items: cart,
+      deliveryOption,
+      deliveryAddress,
+      contact,
+      requestedAt: new Date().toISOString(),
+    };
     const result = await submitQuote(request);
-    setStep({ name: "confirmation", request, estimate: result.estimate });
+    setStep({
+      name: "confirmation",
+      request,
+      deliveryCost: result.deliveryCost,
+      subtotal: result.subtotal,
+      total: result.total,
+    });
+  }
+
+  function handleNew() {
+    setCart([]);
+    setStep({ name: "select" });
   }
 
   return (
@@ -53,8 +102,27 @@ export default function HomePage() {
 
         {step.name === "table-form" && (
           <TableQuoteForm
-            onBack={() => setStep({ name: "select" })}
-            onSubmit={handleQuoteSubmit}
+            onBack={() =>
+              setStep(cart.length > 0 ? { name: "cart" } : { name: "select" })
+            }
+            onAdd={handleAddToCart}
+          />
+        )}
+
+        {step.name === "cart" && (
+          <Cart
+            items={cart}
+            onRemove={handleRemoveFromCart}
+            onAddMore={() => setStep({ name: "select" })}
+            onCheckout={() => setStep({ name: "checkout" })}
+          />
+        )}
+
+        {step.name === "checkout" && (
+          <CheckoutForm
+            items={cart}
+            onBack={() => setStep({ name: "cart" })}
+            onSubmit={handleCheckout}
           />
         )}
 
@@ -68,8 +136,10 @@ export default function HomePage() {
         {step.name === "confirmation" && (
           <QuoteSummary
             request={step.request}
-            estimate={step.estimate}
-            onNew={() => setStep({ name: "select" })}
+            deliveryCost={step.deliveryCost}
+            subtotal={step.subtotal}
+            total={step.total}
+            onNew={handleNew}
           />
         )}
       </main>
