@@ -42,6 +42,7 @@ const DEFAULT_CONFIG: TablePricingConfig = {
  */
 export function calculateTableQuote(
   dimensions: TableDimensions,
+  distanceKm: number | null,
   config: TablePricingConfig = DEFAULT_CONFIG,
 ): PriceEstimate {
   const surfaceM2 = (dimensions.widthCm * dimensions.lengthCm) / 10_000;
@@ -50,10 +51,14 @@ export function calculateTableQuote(
   const labourCost =
     config.baseLabourCost + dimensions.heightCm * config.labourPerCmHeight;
   const finishCost = config.finishCost;
-  const deliveryCost = config.deliveryCost;
+
+  // Si hay distancia calculada, usarla. Si no, usar costo fijo como fallback.
+  const deliveryCost =
+    distanceKm !== null
+      ? Math.round(distanceKm * 8_000)
+      : config.deliveryCost;
 
   const subtotal = materialCost + labourCost + finishCost + deliveryCost;
-  // Total final: redondeado hacia arriba al múltiplo de $1.000 más cercano.
   const total = roundUpToThousand(subtotal * config.marginMultiplier);
   const margin = total - subtotal;
 
@@ -66,7 +71,10 @@ export function calculateTableQuote(
     margin,
     subtotal: Math.round(subtotal),
     total,
-    notes: "Estimación interna preliminar — no mostrar al usuario.",
+    notes:
+      distanceKm !== null
+        ? `Envío calculado: ${distanceKm} km × $8.000/km`
+        : "Envío a confirmar con el taller (dirección no calculada automáticamente).",
   };
 }
 
