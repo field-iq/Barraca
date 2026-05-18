@@ -1,26 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import type {
-  ContactDetails,
-  QuoteRequest,
-  TableDimensions,
-} from "@/lib/quoteTypes";
-import { calculateDeliveryCost } from "@/lib/pricing/tablePricing";
+import type { TableDimensions } from "@/lib/quoteTypes";
+import { calculateTableQuote } from "@/lib/pricing/tablePricing";
+import { formatARS } from "@/lib/format";
 import { getProduct } from "@/lib/products";
-import { ContactGate, isContactValid } from "./ContactGate";
 import { ImageSlideshow } from "./ImageSlideshow";
 
 interface TableQuoteFormProps {
   onBack: () => void;
-  onSubmit: (request: QuoteRequest) => Promise<void> | void;
+  onAdd: (dimensions: TableDimensions) => void;
 }
-
-type DeliveryPreview =
-  | { status: "idle" }
-  | { status: "loading" }
-  | { status: "ok"; distanceKm: number; cost: number }
-  | { status: "error" };
 
 const DEFAULT_DIMENSIONS: TableDimensions = {
   widthCm: 100,
@@ -28,61 +18,18 @@ const DEFAULT_DIMENSIONS: TableDimensions = {
   heightCm: 80,
 };
 
-const DEFAULT_CONTACT: ContactDetails = {
-  email: "",
-  phone: "",
-  preferredMethod: "email",
-  consent: false,
-};
-
-export function TableQuoteForm({ onBack, onSubmit }: TableQuoteFormProps) {
+export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
   const [dimensions, setDimensions] = useState<TableDimensions>(DEFAULT_DIMENSIONS);
-  const [contact, setContact] = useState<ContactDetails>(DEFAULT_CONTACT);
-  const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [deliveryPreview, setDeliveryPreview] = useState<DeliveryPreview>({ status: "idle" });
-  const [submitting, setSubmitting] = useState(false);
 
   const dimensionsValid = isDimensionsValid(dimensions);
-  const contactValid = isContactValid(contact);
-  const addressValid = deliveryAddress.trim().length > 0;
-  const canSubmit = dimensionsValid && contactValid && addressValid && !submitting;
+  const estimatedPrice = dimensionsValid
+    ? calculateTableQuote(dimensions, null).total
+    : null;
 
-  async function handleAddressBlur() {
-    if (!addressValid) return;
-    setDeliveryPreview({ status: "loading" });
-    try {
-      const params = new URLSearchParams({ address: deliveryAddress.trim() });
-      const res = await fetch(`/api/distance?${params}`);
-      const data: { distanceKm: number | null } = await res.json();
-      if (data.distanceKm !== null) {
-        setDeliveryPreview({
-          status: "ok",
-          distanceKm: data.distanceKm,
-          cost: calculateDeliveryCost(data.distanceKm),
-        });
-      } else {
-        setDeliveryPreview({ status: "error" });
-      }
-    } catch {
-      setDeliveryPreview({ status: "error" });
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit) return;
-    setSubmitting(true);
-    try {
-      await onSubmit({
-        productType: "table",
-        dimensions,
-        contact,
-        deliveryAddress,
-        requestedAt: new Date().toISOString(),
-      });
-    } finally {
-      setSubmitting(false);
-    }
+    if (!dimensionsValid) return;
+    onAdd(dimensions);
   }
 
   return (
@@ -140,86 +87,24 @@ export function TableQuoteForm({ onBack, onSubmit }: TableQuoteFormProps) {
         </div>
       </fieldset>
 
-      <fieldset className="space-y-4">
-        <legend className="font-serif text-xl text-walnut">Entrega</legend>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="delivery-address" className="text-sm font-medium text-walnut">
-            Dirección de entrega
-          </label>
-          <input
-            id="delivery-address"
-            type="text"
-            value={deliveryAddress}
-            onChange={(e) => {
-              setDeliveryAddress(e.target.value);
-              setDeliveryPreview({ status: "idle" });
-            }}
-            onBlur={handleAddressBlur}
-            placeholder="Ej: Av. Corrientes 1234, Buenos Aires"
-            className="w-full rounded-lg border border-sand bg-white px-3 py-2.5 text-walnut focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-          />
-          <DeliveryPreviewBadge preview={deliveryPreview} />
-        </div>
-      </fieldset>
-
-      <ContactGate value={contact} onChange={setContact} />
-
       <div className="pt-2 border-t border-sand flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
-        {!canSubmit && (
-          <p className="text-xs text-walnut/60 sm:mr-auto">
-            Completá las medidas, la dirección de entrega, un medio de contacto
-            y la confirmación para enviar.
+        {estimatedPrice !== null && (
+          <p className="text-sm text-walnut/70 sm:mr-auto">
+            Precio estimado del mueble:{" "}
+            <span className="font-serif text-walnut font-medium">
+              {formatARS(estimatedPrice)}
+            </span>
           </p>
         )}
         <button
           type="submit"
-          disabled={!canSubmit}
+          disabled={!dimensionsValid}
           className="inline-flex items-center justify-center rounded-lg bg-bark text-cream px-5 py-3 text-sm font-medium hover:bg-walnut transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {submitting ? "Calculando envío..." : "Enviar solicitud de cotización"}
+          Agregar al carrito
         </button>
       </div>
     </form>
-  );
-}
-
-function DeliveryPreviewBadge({ preview }: { preview: DeliveryPreview }) {
-  if (preview.status === "idle") {
-    return (
-      <p className="text-xs text-walnut/50">
-        Usamos esta dirección para calcular el costo de envío.
-      </p>
-    );
-  }
-
-  if (preview.status === "loading") {
-    return (
-      <p className="text-xs text-walnut/50 animate-pulse">
-        Calculando envío...
-      </p>
-    );
-  }
-
-  if (preview.status === "error") {
-    return (
-      <p className="text-xs text-amber-600">
-        No pudimos calcular el envío para esa dirección. Lo confirmaremos con vos al contactarte.
-      </p>
-    );
-  }
-
-  return (
-    <p className="text-xs text-bark font-medium">
-      {preview.distanceKm} km desde el taller —{" "}
-      <span className="text-walnut">
-        Envío estimado:{" "}
-        {new Intl.NumberFormat("es-AR", {
-          style: "currency",
-          currency: "ARS",
-          maximumFractionDigits: 0,
-        }).format(preview.cost)}
-      </span>
-    </p>
   );
 }
 
