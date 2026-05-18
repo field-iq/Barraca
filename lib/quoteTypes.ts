@@ -61,3 +61,19 @@ export interface PriceEstimate {
   total: number;
   notes?: string;
 }
+
+export interface CartItem {
+  id: string;
+  productType: ProductId;
+  dimensions: TableDimensions;
+}
+
+export type DeliveryOption = "delivery" | "pickup";
+
+export interface CartQuoteRequest {
+  items: CartItem[];
+  deliveryOption: DeliveryOption;
+  deliveryAddress?: string;
+  contact: ContactDetails;
+  requestedAt: string;
+}
