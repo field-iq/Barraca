@@ -49,6 +49,7 @@ export function QuoteSummary({ request, estimate, onNew }: QuoteSummaryProps) {
           label="Medidas"
           value={`${dimensions.widthCm} × ${dimensions.lengthCm} × ${dimensions.heightCm} cm`}
         />
+        <Row label="Dirección de entrega" value={request.deliveryAddress} />
         {contact.email && <Row label="Email" value={contact.email} />}
         {contact.phone && <Row label="Teléfono / WhatsApp" value={contact.phone} />}
       </dl>
@@ -94,8 +95,9 @@ function PriceBreakdown({ estimate }: { estimate: PriceEstimate }) {
       </div>
 
       <p className="mt-3 text-xs text-walnut/60">
-        Esta cotización es estimativa. Puede ajustarse según el tipo de madera,
-        la terminación elegida y la zona de envío.
+        {estimate.notes?.startsWith("Envío a confirmar")
+          ? "El costo de envío es estimativo y será confirmado por el taller según tu dirección."
+          : "Esta cotización es estimativa. Puede ajustarse según el tipo de madera y la terminación elegida."}
       </p>
     </div>
   );
