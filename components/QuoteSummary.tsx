@@ -1,6 +1,11 @@
 import type { CartQuoteRequest } from "@/lib/quoteTypes";
 import { formatARS } from "@/lib/format";
 
+const PRODUCT_LABEL: Record<string, string> = {
+  table: "Mesa a medida",
+  bench: "Banco a medida",
+};
+
 interface QuoteSummaryProps {
   request: CartQuoteRequest;
   deliveryCost: number;
@@ -63,7 +68,7 @@ export function QuoteSummary({
           {items.map((item) => (
             <div key={item.id} className="flex justify-between gap-4">
               <dt className="text-walnut/60">
-                Mesa a medida —{" "}
+                {PRODUCT_LABEL[item.productType] ?? "Mueble a medida"} —{" "}
                 {item.dimensions.widthCm} × {item.dimensions.lengthCm} × {item.dimensions.heightCm} cm
               </dt>
             </div>
