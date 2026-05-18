@@ -8,24 +8,18 @@ export interface SubmitQuoteResult {
   estimate: PriceEstimate | null;
 }
 
-/**
- * Mock submission for the MVP.
- *
- * Replace the body with a real integration when ready:
- *   - Supabase:   await supabase.from("quotes").insert(payload)
- *   - Airtable:   POST https://api.airtable.com/v0/{base}/quotes
- *   - Sheets:     POST to a Google Apps Script web app
- *   - Email:      POST a server route (e.g. /api/quote) that calls Resend /
- *                 SendGrid / Nodemailer to email the customer + the workshop.
- *
- * The function signature should stay the same so the UI doesn't need to change.
- */
 export async function submitQuote(
   request: QuoteRequest,
 ): Promise<SubmitQuoteResult> {
+  let distanceKm: number | null = null;
+
+  if (request.productType === "table" && request.deliveryAddress) {
+    distanceKm = await fetchDistanceKm(request.deliveryAddress);
+  }
+
   const estimate =
     request.productType === "table"
-      ? calculateTableQuote(request.dimensions)
+      ? calculateTableQuote(request.dimensions, distanceKm)
       : null;
 
   const payload = { ...request, estimate };
@@ -34,13 +28,21 @@ export async function submitQuote(
   console.log("[La Barraca] Nueva cotización:", payload);
 
   // TODO: enviar email al cliente y a La Barraca con este payload.
-  // En el cliente esto no se puede hacer directo — hay que crear una API
-  // route (app/api/quote/route.ts) que use Resend / SendGrid / Nodemailer.
-
-  // Latencia simulada para que el botón "Enviando..." se vea.
   await new Promise((r) => setTimeout(r, 300));
 
   return { ok: true, id: cryptoRandomId(), estimate };
+}
+
+async function fetchDistanceKm(address: string): Promise<number | null> {
+  try {
+    const params = new URLSearchParams({ address });
+    const response = await fetch(`/api/distance?${params}`);
+    if (!response.ok) return null;
+    const data: { distanceKm: number | null } = await response.json();
+    return data.distanceKm ?? null;
+  } catch {
+    return null;
+  }
 }
 
 function cryptoRandomId(): string {
