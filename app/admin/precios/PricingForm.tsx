@@ -44,14 +44,11 @@ export function PricingForm({ config: initialConfig, canEdit }: PricingFormProps
 
   return (
     <div className="space-y-6">
-      {!canEdit && (
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
-          <strong>Modo lectura.</strong> Para poder guardar cambios desde aquí,
-          configurá Vercel KV en tu proyecto. Mientras tanto los precios
-          se pueden editar en el código en{" "}
-          <code className="font-mono">lib/pricing/pricingConfig.ts</code>.
-        </div>
-      )}
+      <div className="p-4 bg-sand/50 border border-sand rounded-xl text-sm text-walnut/70">
+        Para cambiar los precios, editá{" "}
+        <code className="font-mono text-walnut">lib/pricing/pricingConfig.ts</code>{" "}
+        y hacé deploy. Los cambios se aplican en ~2 minutos.
+      </div>
 
       <PricingSection title="Mesa" subtitle="Precio por m² de superficie (ancho × largo)">
         <PriceField

@@ -14,7 +14,7 @@ export interface CartSubmitResult {
 export async function submitQuote(
   request: CartQuoteRequest,
 ): Promise<CartSubmitResult> {
-  const config = await getPricingConfig();
+  const config = getPricingConfig();
 
   let distanceKm: number | null = null;
   if (request.deliveryOption === "delivery" && request.deliveryAddress) {

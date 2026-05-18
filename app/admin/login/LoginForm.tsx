@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,7 +20,7 @@ export function LoginForm() {
     });
 
     if (res.ok) {
-      router.push("/admin/precios");
+      window.location.href = "/admin/precios";
     } else {
       const data = await res.json();
       setError(data.error ?? "Error al iniciar sesión");

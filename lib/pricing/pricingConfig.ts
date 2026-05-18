@@ -46,29 +46,6 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   },
 };
 
-export function isKvConfigured(): boolean {
-  return Boolean(
-    process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN,
-  );
-}
-
-export async function getPricingConfig(): Promise<PricingConfig> {
-  if (isKvConfigured()) {
-    try {
-      const { kv } = await import("@vercel/kv");
-      const stored = await kv.get<PricingConfig>("pricing:config");
-      if (stored) return stored;
-    } catch {
-      // KV unavailable — fall through to defaults
-    }
-  }
+export function getPricingConfig(): PricingConfig {
   return DEFAULT_PRICING_CONFIG;
-}
-
-export async function setPricingConfig(config: PricingConfig): Promise<void> {
-  if (!isKvConfigured()) {
-    throw new Error("Vercel KV no está configurado.");
-  }
-  const { kv } = await import("@vercel/kv");
-  await kv.set("pricing:config", config);
 }

@@ -1,9 +1,9 @@
-import { getPricingConfig, isKvConfigured } from "@/lib/pricing/pricingConfig";
+import { getPricingConfig } from "@/lib/pricing/pricingConfig";
 import { PricingForm } from "./PricingForm";
 
-export default async function AdminPreciosPage() {
-  const config = await getPricingConfig();
-  const canEdit = isKvConfigured();
+export default function AdminPreciosPage() {
+  const config = getPricingConfig();
+  const canEdit = false;
 
   return (
     <div className="min-h-screen bg-sand/20">
