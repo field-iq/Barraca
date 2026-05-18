@@ -1,5 +1,6 @@
-import { calculateDeliveryCost } from "./pricing/tablePricing";
-import { cartSubtotal, cartTotal } from "./cart";
+import { calculateDeliveryCost, calculateTableQuote } from "./pricing/tablePricing";
+import { calculateBenchQuote } from "./pricing/benchPricing";
+import { getPricingConfig } from "./pricing/pricingConfig";
 import type { CartQuoteRequest } from "./quoteTypes";
 
 export interface CartSubmitResult {
@@ -13,8 +14,9 @@ export interface CartSubmitResult {
 export async function submitQuote(
   request: CartQuoteRequest,
 ): Promise<CartSubmitResult> {
-  let distanceKm: number | null = null;
+  const config = await getPricingConfig();
 
+  let distanceKm: number | null = null;
   if (request.deliveryOption === "delivery" && request.deliveryAddress) {
     distanceKm = await fetchDistanceKm(request.deliveryAddress);
   }
@@ -24,8 +26,15 @@ export async function submitQuote(
       ? calculateDeliveryCost(distanceKm)
       : 0;
 
-  const subtotal = cartSubtotal(request.items);
-  const total = cartTotal(request.items, deliveryCost);
+  const subtotal = request.items.reduce((sum, item) => {
+    const quote =
+      item.productType === "bench"
+        ? calculateBenchQuote(item.dimensions, null, config.banco)
+        : calculateTableQuote(item.dimensions, null, config.mesa);
+    return sum + quote.total;
+  }, 0);
+
+  const total = subtotal + deliveryCost;
 
   const payload = { ...request, deliveryCost, subtotal, total };
   console.log("[La Barraca] Nueva cotización:", payload);
