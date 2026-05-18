@@ -4,6 +4,7 @@ import {
   type ProductPricingConfig,
   DEFAULT_PRICING_CONFIG,
 } from "./pricingConfig";
+import { roundUpToThousand } from "./pricingUtils";
 
 export function calculateBenchQuote(
   dimensions: TableDimensions,
@@ -41,6 +42,3 @@ export function calculateBenchQuote(
   };
 }
 
-function roundUpToThousand(amount: number): number {
-  return Math.ceil(amount / 1000) * 1000;
-}

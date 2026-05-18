@@ -1,4 +1,5 @@
 import type { PriceEstimate, TableDimensions } from "../quoteTypes";
+import { roundUpToThousand } from "./pricingUtils";
 
 interface TablePricingConfig {
   materialCostPerM2: number;
@@ -84,6 +85,3 @@ export function calculateTableQuote(
   };
 }
 
-function roundUpToThousand(amount: number): number {
-  return Math.ceil(amount / 1000) * 1000;
-}
