@@ -1,20 +1,22 @@
-import type { PriceEstimate, QuoteRequest } from "@/lib/quoteTypes";
+import type { CartQuoteRequest } from "@/lib/quoteTypes";
+import { formatARS } from "@/lib/format";
 
 interface QuoteSummaryProps {
-  request: QuoteRequest;
-  estimate: PriceEstimate | null;
+  request: CartQuoteRequest;
+  deliveryCost: number;
+  subtotal: number;
+  total: number;
   onNew: () => void;
 }
 
-/**
- * Confirmation + price breakdown shown after the user submits a quotation.
- *
- * The price comes from `calculateTableQuote` in lib/pricing/tablePricing.ts.
- * If `estimate` is null (e.g. a product whose pricing engine isn't ready yet),
- * we fall back to a "we'll get back to you" message without numbers.
- */
-export function QuoteSummary({ request, estimate, onNew }: QuoteSummaryProps) {
-  const { contact, dimensions } = request;
+export function QuoteSummary({
+  request,
+  deliveryCost,
+  subtotal,
+  total,
+  onNew,
+}: QuoteSummaryProps) {
+  const { contact, items, deliveryOption, deliveryAddress } = request;
 
   return (
     <section className="max-w-xl mx-auto bg-white border border-sand rounded-2xl p-6 sm:p-8">
@@ -38,29 +40,55 @@ export function QuoteSummary({ request, estimate, onNew }: QuoteSummaryProps) {
         <h2 className="font-serif text-2xl text-walnut">¡Gracias!</h2>
         <p className="mt-2 text-walnut/80">
           Te enviamos la cotización a tu{" "}
-          {contact.preferredMethod === "email" ? "email" : "WhatsApp"}. Aquí
-          abajo también la podés ver.
+          {contact.preferredMethod === "email" ? "email" : "WhatsApp"}.
         </p>
       </div>
 
+      {/* Datos de contacto */}
       <dl className="mt-6 border-t border-sand pt-6 space-y-3 text-sm">
-        <Row label="Producto" value="Mesa a medida" />
-        <Row
-          label="Medidas"
-          value={`${dimensions.widthCm} × ${dimensions.lengthCm} × ${dimensions.heightCm} cm`}
-        />
-        <Row label="Dirección de entrega" value={request.deliveryAddress} />
         {contact.email && <Row label="Email" value={contact.email} />}
         {contact.phone && <Row label="Teléfono / WhatsApp" value={contact.phone} />}
+        {deliveryOption === "delivery" && deliveryAddress && (
+          <Row label="Dirección de entrega" value={deliveryAddress} />
+        )}
+        {deliveryOption === "pickup" && (
+          <Row label="Retiro en" value="Saenz Peña 1213, Tigre" />
+        )}
       </dl>
 
-      {estimate ? (
-        <PriceBreakdown estimate={estimate} />
-      ) : (
-        <p className="mt-6 border-t border-sand pt-6 text-sm text-walnut/70">
-          La Barraca te enviará la cotización a la brevedad.
+      {/* Lista de muebles */}
+      <div className="mt-6 border-t border-sand pt-6">
+        <h3 className="font-serif text-lg text-walnut mb-3">Muebles cotizados</h3>
+        <dl className="space-y-2 text-sm">
+          {items.map((item) => (
+            <div key={item.id} className="flex justify-between gap-4">
+              <dt className="text-walnut/60">
+                Mesa a medida —{" "}
+                {item.dimensions.widthCm} × {item.dimensions.lengthCm} × {item.dimensions.heightCm} cm
+              </dt>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* Desglose de precios */}
+      <div className="mt-6 border-t border-sand pt-6">
+        <dl className="space-y-2 text-sm">
+          <Row label="Muebles" value={formatARS(subtotal)} />
+          <Row
+            label="Envío"
+            value={deliveryOption === "pickup" ? "Gratis (retiro)" : formatARS(deliveryCost)}
+          />
+        </dl>
+        <div className="mt-4 pt-4 border-t border-sand flex justify-between items-baseline">
+          <span className="font-serif text-walnut">Total estimado</span>
+          <span className="font-serif text-2xl text-walnut">{formatARS(total)}</span>
+        </div>
+        <p className="mt-3 text-xs text-walnut/60">
+          Esta cotización es estimativa. Puede ajustarse según el tipo de madera
+          y la terminación elegida.
         </p>
-      )}
+      </div>
 
       <div className="mt-6 flex justify-center">
         <button
@@ -68,38 +96,10 @@ export function QuoteSummary({ request, estimate, onNew }: QuoteSummaryProps) {
           onClick={onNew}
           className="text-sm text-bark hover:text-walnut underline underline-offset-4"
         >
-          Cotizar otro mueble
+          Hacer otra cotización
         </button>
       </div>
     </section>
-  );
-}
-
-function PriceBreakdown({ estimate }: { estimate: PriceEstimate }) {
-  return (
-    <div className="mt-6 border-t border-sand pt-6">
-      <h3 className="font-serif text-lg text-walnut mb-3">Cotización</h3>
-
-      <dl className="space-y-2 text-sm">
-        <Row label="Materiales" value={formatARS(estimate.materialCost)} />
-        <Row label="Mano de obra" value={formatARS(estimate.labourCost)} />
-        <Row label="Terminación" value={formatARS(estimate.finishCost)} />
-        <Row label="Envío" value={formatARS(estimate.deliveryCost)} />
-      </dl>
-
-      <div className="mt-4 pt-4 border-t border-sand flex justify-between items-baseline">
-        <span className="font-serif text-walnut">Total estimado</span>
-        <span className="font-serif text-2xl text-walnut">
-          {formatARS(estimate.total)}
-        </span>
-      </div>
-
-      <p className="mt-3 text-xs text-walnut/60">
-        {estimate.notes?.startsWith("Envío a confirmar")
-          ? "El costo de envío es estimativo y será confirmado por el taller según tu dirección."
-          : "Esta cotización es estimativa. Puede ajustarse según el tipo de madera y la terminación elegida."}
-      </p>
-    </div>
   );
 }
 
@@ -110,12 +110,4 @@ function Row({ label, value }: { label: string; value: string }) {
       <dd className="text-walnut font-medium text-right">{value}</dd>
     </div>
   );
-}
-
-function formatARS(amount: number): string {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
