@@ -1,36 +1,38 @@
-import { calculateTableQuote } from "./pricing/tablePricing";
-import type { PriceEstimate, QuoteRequest } from "./quoteTypes";
+import { calculateDeliveryCost } from "./pricing/tablePricing";
+import { cartSubtotal, cartTotal } from "./cart";
+import type { CartQuoteRequest } from "./quoteTypes";
 
-export interface SubmitQuoteResult {
+export interface CartSubmitResult {
   ok: true;
   id: string;
-  /** Price breakdown shown to the user after submission. */
-  estimate: PriceEstimate | null;
+  deliveryCost: number;
+  subtotal: number;
+  total: number;
 }
 
 export async function submitQuote(
-  request: QuoteRequest,
-): Promise<SubmitQuoteResult> {
+  request: CartQuoteRequest,
+): Promise<CartSubmitResult> {
   let distanceKm: number | null = null;
 
-  if (request.productType === "table" && request.deliveryAddress) {
+  if (request.deliveryOption === "delivery" && request.deliveryAddress) {
     distanceKm = await fetchDistanceKm(request.deliveryAddress);
   }
 
-  const estimate =
-    request.productType === "table"
-      ? calculateTableQuote(request.dimensions, distanceKm)
-      : null;
+  const deliveryCost =
+    request.deliveryOption === "delivery" && distanceKm !== null
+      ? calculateDeliveryCost(distanceKm)
+      : 0;
 
-  const payload = { ...request, estimate };
+  const subtotal = cartSubtotal(request.items);
+  const total = cartTotal(request.items, deliveryCost);
 
-  // eslint-disable-next-line no-console
+  const payload = { ...request, deliveryCost, subtotal, total };
   console.log("[La Barraca] Nueva cotización:", payload);
 
-  // TODO: enviar email al cliente y a La Barraca con este payload.
   await new Promise((r) => setTimeout(r, 300));
 
-  return { ok: true, id: cryptoRandomId(), estimate };
+  return { ok: true, id: cryptoRandomId(), deliveryCost, subtotal, total };
 }
 
 async function fetchDistanceKm(address: string): Promise<number | null> {
