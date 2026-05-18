@@ -2,6 +2,11 @@ import { formatARS } from "@/lib/format";
 import { itemPrice } from "@/lib/cart";
 import type { CartItem } from "@/lib/quoteTypes";
 
+const PRODUCT_LABEL: Record<string, string> = {
+  table: "Mesa a medida",
+  bench: "Banco a medida",
+};
+
 interface CartItemCardProps {
   item: CartItem;
   onRemove: (id: string) => void;
@@ -14,7 +19,9 @@ export function CartItemCard({ item, onRemove }: CartItemCardProps) {
   return (
     <div className="flex items-start justify-between gap-4 py-4 border-b border-sand last:border-0">
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-walnut">Mesa a medida</p>
+        <p className="font-medium text-walnut">
+          {PRODUCT_LABEL[item.productType] ?? "Mueble a medida"}
+        </p>
         <p className="text-sm text-walnut/60 mt-0.5">
           {dimensions.widthCm} × {dimensions.lengthCm} × {dimensions.heightCm} cm
         </p>

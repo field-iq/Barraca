@@ -1,7 +1,11 @@
 import { calculateTableQuote } from "./pricing/tablePricing";
+import { calculateBenchQuote } from "./pricing/benchPricing";
 import type { CartItem } from "./quoteTypes";
 
 export function itemPrice(item: CartItem): number {
+  if (item.productType === "bench") {
+    return calculateBenchQuote(item.dimensions, null).total;
+  }
   return calculateTableQuote(item.dimensions, null).total;
 }
 

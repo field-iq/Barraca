@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { ProductSelector } from "@/components/ProductSelector";
 import { TableQuoteForm } from "@/components/TableQuoteForm";
+import { BenchQuoteForm } from "@/components/BenchQuoteForm";
 import { Cart } from "@/components/Cart";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { ComingSoon } from "@/components/ComingSoon";
@@ -23,6 +24,7 @@ import type {
 type Step =
   | { name: "select" }
   | { name: "table-form" }
+  | { name: "bench-form" }
   | { name: "cart" }
   | { name: "checkout" }
   | {
@@ -41,6 +43,8 @@ export default function HomePage() {
   function handleProductSelect(id: ProductId) {
     if (id === "table") {
       setStep({ name: "table-form" });
+    } else if (id === "bench") {
+      setStep({ name: "bench-form" });
     } else {
       setStep({ name: "coming-soon", product: id });
     }
@@ -50,6 +54,16 @@ export default function HomePage() {
     const item: CartItem = {
       id: crypto.randomUUID(),
       productType: "table",
+      dimensions,
+    };
+    setCart((prev) => [...prev, item]);
+    setStep({ name: "cart" });
+  }
+
+  function handleAddBenchToCart(dimensions: TableDimensions) {
+    const item: CartItem = {
+      id: crypto.randomUUID(),
+      productType: "bench",
       dimensions,
     };
     setCart((prev) => [...prev, item]);
@@ -106,6 +120,15 @@ export default function HomePage() {
               setStep(cart.length > 0 ? { name: "cart" } : { name: "select" })
             }
             onAdd={handleAddToCart}
+          />
+        )}
+
+        {step.name === "bench-form" && (
+          <BenchQuoteForm
+            onBack={() =>
+              setStep(cart.length > 0 ? { name: "cart" } : { name: "select" })
+            }
+            onAdd={handleAddBenchToCart}
           />
         )}
 
