@@ -26,7 +26,7 @@ export const PRODUCTS: ProductDefinition[] = [
     name: "Bancos",
     description: "Bancos artesanales, con o sin respaldo.",
     images: ["/banco-1.jpeg", "/banco-2.jpeg"],
-    available: false,
+    available: true,
   },
   {
     id: "chair",

@@ -1,59 +1,71 @@
 import type { PriceEstimate, TableDimensions } from "../quoteTypes";
+import { roundUpToThousand } from "./pricingUtils";
 
-/**
- * Placeholder pricing configuration for tables.
- *
- * The real values will come from the workshop's cost sheet (and eventually a
- * remote config in Supabase / Airtable / Google Sheets). The shape below is
- * what the future pricing engine should consume — keep adding inputs here
- * (wood type, finish, edge profile, delivery zone...) as the engine grows.
- */
 interface TablePricingConfig {
-  /** ARS per m² of table top surface (material). */
   materialCostPerM2: number;
-  /** Flat labour cost for a standard table build, in ARS. */
   baseLabourCost: number;
-  /** Additional labour for taller / sturdier frames, per cm of height. */
-  labourPerCmHeight: number;
-  /** Fixed finish cost (lacquer / oil / wax) in ARS. */
   finishCost: number;
-  /** Flat delivery cost in ARS within the local zone. */
-  deliveryCost: number;
-  /** Gross margin applied on top of cost+labour, expressed as a multiplier. */
+  deliveryCostFallback: number;
   marginMultiplier: number;
 }
 
-// TODO: load from remote config (Supabase / Airtable / Sheets) once available.
 const DEFAULT_CONFIG: TablePricingConfig = {
   materialCostPerM2: 504_000,
   baseLabourCost: 90_000,
-  labourPerCmHeight: 350,
   finishCost: 35_000,
-  deliveryCost: 25_000,
+  deliveryCostFallback: 25_000,
   marginMultiplier: 1.35,
 };
 
 /**
- * Calculate an internal price estimate for a custom table.
+ * Modelo C: base fija (carga/descarga) + costo por km progresivo.
  *
- * IMPORTANT: This is intentionally NOT shown to the user in the MVP. It exists
- * so we can wire the rest of the pricing pipeline (storage, admin review,
- * notification email) without further refactoring later.
+ * Tramos:
+ *   km  0–15  → $1.500/km
+ *   km 15–40  → $3.000/km
+ *   km 40+    → $5.000/km
  */
+export function calculateDeliveryCost(distanceKm: number): number {
+  const BASE = 20_000;
+  const TIER1_LIMIT = 15;
+  const TIER2_LIMIT = 40;
+  const RATE1 = 1_500;
+  const RATE2 = 3_000;
+  const RATE3 = 5_000;
+
+  let cost = BASE;
+
+  if (distanceKm <= TIER1_LIMIT) {
+    cost += distanceKm * RATE1;
+  } else if (distanceKm <= TIER2_LIMIT) {
+    cost += TIER1_LIMIT * RATE1 + (distanceKm - TIER1_LIMIT) * RATE2;
+  } else {
+    cost +=
+      TIER1_LIMIT * RATE1 +
+      (TIER2_LIMIT - TIER1_LIMIT) * RATE2 +
+      (distanceKm - TIER2_LIMIT) * RATE3;
+  }
+
+  return Math.round(cost);
+}
+
 export function calculateTableQuote(
   dimensions: TableDimensions,
+  distanceKm: number | null,
   config: TablePricingConfig = DEFAULT_CONFIG,
 ): PriceEstimate {
   const surfaceM2 = (dimensions.widthCm * dimensions.lengthCm) / 10_000;
 
   const materialCost = surfaceM2 * config.materialCostPerM2;
-  const labourCost =
-    config.baseLabourCost + dimensions.heightCm * config.labourPerCmHeight;
+  const labourCost = config.baseLabourCost;
   const finishCost = config.finishCost;
-  const deliveryCost = config.deliveryCost;
+
+  const deliveryCost =
+    distanceKm !== null
+      ? calculateDeliveryCost(distanceKm)
+      : config.deliveryCostFallback;
 
   const subtotal = materialCost + labourCost + finishCost + deliveryCost;
-  // Total final: redondeado hacia arriba al múltiplo de $1.000 más cercano.
   const total = roundUpToThousand(subtotal * config.marginMultiplier);
   const margin = total - subtotal;
 
@@ -66,11 +78,10 @@ export function calculateTableQuote(
     margin,
     subtotal: Math.round(subtotal),
     total,
-    notes: "Estimación interna preliminar — no mostrar al usuario.",
+    notes:
+      distanceKm !== null
+        ? `Envío: base $20.000 + ${distanceKm} km (tarifa progresiva)`
+        : "Envío a confirmar con el taller (dirección no calculada automáticamente).",
   };
 }
 
-/** Redondea hacia arriba al múltiplo de 1.000 más cercano. */
-function roundUpToThousand(amount: number): number {
-  return Math.ceil(amount / 1000) * 1000;
-}

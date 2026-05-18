@@ -41,6 +41,7 @@ export interface QuoteRequest {
   productType: ProductId;
   dimensions: TableDimensions; // For now only "table" is implemented.
   contact: ContactDetails;
+  deliveryAddress: string;
   /** ISO 8601 timestamp generated at submit time. */
   requestedAt: string;
 }
@@ -59,4 +60,20 @@ export interface PriceEstimate {
   subtotal: number;
   total: number;
   notes?: string;
+}
+
+export interface CartItem {
+  id: string;
+  productType: ProductId;
+  dimensions: TableDimensions;
+}
+
+export type DeliveryOption = "delivery" | "pickup";
+
+export interface CartQuoteRequest {
+  items: CartItem[];
+  deliveryOption: DeliveryOption;
+  deliveryAddress?: string;
+  contact: ContactDetails;
+  requestedAt: string;
 }

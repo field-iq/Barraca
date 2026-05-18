@@ -1,46 +1,59 @@
-import { calculateTableQuote } from "./pricing/tablePricing";
-import type { PriceEstimate, QuoteRequest } from "./quoteTypes";
+import { calculateDeliveryCost, calculateTableQuote } from "./pricing/tablePricing";
+import { calculateBenchQuote } from "./pricing/benchPricing";
+import { getPricingConfig } from "./pricing/pricingConfig";
+import type { CartQuoteRequest } from "./quoteTypes";
 
-export interface SubmitQuoteResult {
+export interface CartSubmitResult {
   ok: true;
   id: string;
-  /** Price breakdown shown to the user after submission. */
-  estimate: PriceEstimate | null;
+  deliveryCost: number;
+  subtotal: number;
+  total: number;
 }
 
-/**
- * Mock submission for the MVP.
- *
- * Replace the body with a real integration when ready:
- *   - Supabase:   await supabase.from("quotes").insert(payload)
- *   - Airtable:   POST https://api.airtable.com/v0/{base}/quotes
- *   - Sheets:     POST to a Google Apps Script web app
- *   - Email:      POST a server route (e.g. /api/quote) that calls Resend /
- *                 SendGrid / Nodemailer to email the customer + the workshop.
- *
- * The function signature should stay the same so the UI doesn't need to change.
- */
 export async function submitQuote(
-  request: QuoteRequest,
-): Promise<SubmitQuoteResult> {
-  const estimate =
-    request.productType === "table"
-      ? calculateTableQuote(request.dimensions)
-      : null;
+  request: CartQuoteRequest,
+): Promise<CartSubmitResult> {
+  const config = getPricingConfig();
 
-  const payload = { ...request, estimate };
+  let distanceKm: number | null = null;
+  if (request.deliveryOption === "delivery" && request.deliveryAddress) {
+    distanceKm = await fetchDistanceKm(request.deliveryAddress);
+  }
 
-  // eslint-disable-next-line no-console
+  const deliveryCost =
+    request.deliveryOption === "delivery" && distanceKm !== null
+      ? calculateDeliveryCost(distanceKm)
+      : 0;
+
+  const subtotal = request.items.reduce((sum, item) => {
+    const quote =
+      item.productType === "bench"
+        ? calculateBenchQuote(item.dimensions, null, config.banco)
+        : calculateTableQuote(item.dimensions, null, config.mesa);
+    return sum + quote.total;
+  }, 0);
+
+  const total = subtotal + deliveryCost;
+
+  const payload = { ...request, deliveryCost, subtotal, total };
   console.log("[La Barraca] Nueva cotización:", payload);
 
-  // TODO: enviar email al cliente y a La Barraca con este payload.
-  // En el cliente esto no se puede hacer directo — hay que crear una API
-  // route (app/api/quote/route.ts) que use Resend / SendGrid / Nodemailer.
-
-  // Latencia simulada para que el botón "Enviando..." se vea.
   await new Promise((r) => setTimeout(r, 300));
 
-  return { ok: true, id: cryptoRandomId(), estimate };
+  return { ok: true, id: cryptoRandomId(), deliveryCost, subtotal, total };
+}
+
+async function fetchDistanceKm(address: string): Promise<number | null> {
+  try {
+    const params = new URLSearchParams({ address });
+    const response = await fetch(`/api/distance?${params}`);
+    if (!response.ok) return null;
+    const data: { distanceKm: number | null } = await response.json();
+    return data.distanceKm ?? null;
+  } catch {
+    return null;
+  }
 }
 
 function cryptoRandomId(): string {

@@ -2,28 +2,28 @@
 
 import { useState } from "react";
 import type { TableDimensions } from "@/lib/quoteTypes";
-import { calculateTableQuote } from "@/lib/pricing/tablePricing";
+import { calculateBenchQuote } from "@/lib/pricing/benchPricing";
 import { formatARS } from "@/lib/format";
 import { getProduct } from "@/lib/products";
 import { ImageSlideshow } from "./ImageSlideshow";
 
-interface TableQuoteFormProps {
+interface BenchQuoteFormProps {
   onBack: () => void;
   onAdd: (dimensions: TableDimensions) => void;
 }
 
 const DEFAULT_DIMENSIONS: TableDimensions = {
-  widthCm: 100,
-  lengthCm: 200,
-  heightCm: 80,
+  widthCm: 40,
+  lengthCm: 180,
+  heightCm: 45,
 };
 
-export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
+export function BenchQuoteForm({ onBack, onAdd }: BenchQuoteFormProps) {
   const [dimensions, setDimensions] = useState<TableDimensions>(DEFAULT_DIMENSIONS);
 
   const dimensionsValid = isDimensionsValid(dimensions);
   const estimatedPrice = dimensionsValid
-    ? calculateTableQuote(dimensions, null).total
+    ? calculateBenchQuote(dimensions, null).total
     : null;
 
   function handleSubmit(e: React.FormEvent) {
@@ -39,10 +39,10 @@ export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
     >
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-walnut">Mesa</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl text-walnut">Banco</h2>
           <p className="mt-1 text-sm text-walnut/70">
-            Indicá las medidas en centímetros. Si no estás seguro, escribí un
-            valor aproximado.
+            El precio se calcula por metro cuadrado de superficie (ancho × largo).
+            Indicá el alto solo como referencia de fabricación.
           </p>
         </div>
         <button
@@ -56,8 +56,8 @@ export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
 
       <div className="relative aspect-[16/9] w-full rounded-xl bg-sand overflow-hidden">
         <ImageSlideshow
-          images={getProduct("table")?.images ?? ["/mesa-1.jpeg"]}
-          alt="Mesa de madera maciza hecha en el taller de La Barraca"
+          images={getProduct("bench")?.images ?? ["/banco-1.jpeg"]}
+          alt="Banco artesanal de madera maciza hecho en el taller de La Barraca"
           sizes="(max-width: 768px) 100vw, 720px"
           priority
         />
@@ -67,7 +67,7 @@ export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
         <legend className="font-serif text-xl text-walnut">Medidas</legend>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <DimensionField
-            label="Ancho"
+            label="Ancho del asiento"
             id="dim-width"
             value={dimensions.widthCm}
             onChange={(widthCm) => setDimensions((d) => ({ ...d, widthCm }))}
@@ -83,6 +83,7 @@ export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
             id="dim-height"
             value={dimensions.heightCm}
             onChange={(heightCm) => setDimensions((d) => ({ ...d, heightCm }))}
+            hint="Solo para fabricación — no afecta el precio"
           />
         </div>
       </fieldset>
@@ -90,7 +91,7 @@ export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
       <div className="pt-2 border-t border-sand flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         {estimatedPrice !== null && (
           <p className="text-sm text-walnut/70 sm:mr-auto">
-            Precio estimado del mueble:{" "}
+            Precio estimado del banco:{" "}
             <span className="font-serif text-walnut font-medium">
               {formatARS(estimatedPrice)}
             </span>
@@ -113,11 +114,13 @@ function DimensionField({
   id,
   value,
   onChange,
+  hint,
 }: {
   label: string;
   id: string;
   value: number;
   onChange: (n: number) => void;
+  hint?: string;
 }) {
   return (
     <div className="flex flex-col gap-1.5">
@@ -139,6 +142,9 @@ function DimensionField({
           cm
         </span>
       </div>
+      {hint && (
+        <p className="text-xs text-walnut/40">{hint}</p>
+      )}
     </div>
   );
 }
