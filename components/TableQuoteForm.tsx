@@ -31,11 +31,13 @@ const DEFAULT_CONTACT: ContactDetails = {
 export function TableQuoteForm({ onBack, onSubmit }: TableQuoteFormProps) {
   const [dimensions, setDimensions] = useState<TableDimensions>(DEFAULT_DIMENSIONS);
   const [contact, setContact] = useState<ContactDetails>(DEFAULT_CONTACT);
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const dimensionsValid = isDimensionsValid(dimensions);
   const contactValid = isContactValid(contact);
-  const canSubmit = dimensionsValid && contactValid && !submitting;
+  const addressValid = deliveryAddress.trim().length > 0;
+  const canSubmit = dimensionsValid && contactValid && addressValid && !submitting;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,6 +48,7 @@ export function TableQuoteForm({ onBack, onSubmit }: TableQuoteFormProps) {
         productType: "table",
         dimensions,
         contact,
+        deliveryAddress,
         requestedAt: new Date().toISOString(),
       });
     } finally {
@@ -108,13 +111,33 @@ export function TableQuoteForm({ onBack, onSubmit }: TableQuoteFormProps) {
         </div>
       </fieldset>
 
+      <fieldset className="space-y-4">
+        <legend className="font-serif text-xl text-walnut">Entrega</legend>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="delivery-address" className="text-sm font-medium text-walnut">
+            Dirección de entrega
+          </label>
+          <input
+            id="delivery-address"
+            type="text"
+            value={deliveryAddress}
+            onChange={(e) => setDeliveryAddress(e.target.value)}
+            placeholder="Ej: Av. Corrientes 1234, Buenos Aires"
+            className="w-full rounded-lg border border-sand bg-white px-3 py-2.5 text-walnut focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+          />
+          <p className="text-xs text-walnut/50">
+            Usamos esta dirección para calcular el costo de envío.
+          </p>
+        </div>
+      </fieldset>
+
       <ContactGate value={contact} onChange={setContact} />
 
       <div className="pt-2 border-t border-sand flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         {!canSubmit && (
           <p className="text-xs text-walnut/60 sm:mr-auto">
-            Completá las medidas, un medio de contacto y la confirmación para
-            enviar.
+            Completá las medidas, la dirección de entrega, un medio de contacto
+            y la confirmación para enviar.
           </p>
         )}
         <button
