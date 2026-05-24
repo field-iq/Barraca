@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { ProductSelector } from "@/components/ProductSelector";
 import { TableQuoteForm } from "@/components/TableQuoteForm";
 import { BenchQuoteForm } from "@/components/BenchQuoteForm";
+import { MirrorQuoteForm } from "@/components/MirrorQuoteForm";
 import { Cart } from "@/components/Cart";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { ComingSoon } from "@/components/ComingSoon";
@@ -25,6 +26,7 @@ type Step =
   | { name: "select" }
   | { name: "table-form" }
   | { name: "bench-form" }
+  | { name: "mirror-form" }
   | { name: "cart" }
   | { name: "checkout" }
   | {
@@ -45,6 +47,8 @@ export default function HomePage() {
       setStep({ name: "table-form" });
     } else if (id === "bench") {
       setStep({ name: "bench-form" });
+    } else if (id === "mirror") {
+      setStep({ name: "mirror-form" });
     } else {
       setStep({ name: "coming-soon", product: id });
     }
@@ -64,6 +68,16 @@ export default function HomePage() {
     const item: CartItem = {
       id: crypto.randomUUID(),
       productType: "bench",
+      dimensions,
+    };
+    setCart((prev) => [...prev, item]);
+    setStep({ name: "cart" });
+  }
+
+  function handleAddMirrorToCart(dimensions: TableDimensions) {
+    const item: CartItem = {
+      id: crypto.randomUUID(),
+      productType: "mirror",
       dimensions,
     };
     setCart((prev) => [...prev, item]);
@@ -129,6 +143,15 @@ export default function HomePage() {
               setStep(cart.length > 0 ? { name: "cart" } : { name: "select" })
             }
             onAdd={handleAddBenchToCart}
+          />
+        )}
+
+        {step.name === "mirror-form" && (
+          <MirrorQuoteForm
+            onBack={() =>
+              setStep(cart.length > 0 ? { name: "cart" } : { name: "select" })
+            }
+            onAdd={handleAddMirrorToCart}
           />
         )}
 

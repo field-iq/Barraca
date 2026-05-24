@@ -29,6 +29,13 @@ export const PRODUCTS: ProductDefinition[] = [
     available: true,
   },
   {
+    id: "mirror",
+    name: "Espejo",
+    description: "Espejo a medida con marco de madera maciza.",
+    images: ["/espejo-1.jpeg", "/espejo-2.jpeg", "/espejo-3.jpeg", "/espejo-4.jpeg"],
+    available: true,
+  },
+  {
     id: "chair",
     name: "Silla",
     description: "Silla artesanal en madera.",

@@ -18,6 +18,7 @@ export interface DeliveryPricingConfig {
 export interface PricingConfig {
   mesa: ProductPricingConfig;
   banco: ProductPricingConfig;
+  espejo: ProductPricingConfig;
   delivery: DeliveryPricingConfig;
 }
 
@@ -35,6 +36,13 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
     finishCost: 25_000,
     deliveryCostFallback: 25_000,
     marginMultiplier: 1.35,
+  },
+  espejo: {
+    materialCostPerM2: 250_000,
+    baseLabourCost: 0,
+    finishCost: 0,
+    deliveryCostFallback: 25_000,
+    marginMultiplier: 1.0,
   },
   delivery: {
     baseCost: 20_000,

@@ -5,6 +5,7 @@ import type { CartItem } from "@/lib/quoteTypes";
 const PRODUCT_LABEL: Record<string, string> = {
   table: "Mesa a medida",
   bench: "Banco a medida",
+  mirror: "Espejo a medida",
 };
 
 interface CartItemCardProps {
@@ -23,7 +24,9 @@ export function CartItemCard({ item, onRemove }: CartItemCardProps) {
           {PRODUCT_LABEL[item.productType] ?? "Mueble a medida"}
         </p>
         <p className="text-sm text-walnut/60 mt-0.5">
-          {dimensions.widthCm} × {dimensions.lengthCm} × {dimensions.heightCm} cm
+          {item.productType === "mirror"
+            ? `${dimensions.widthCm} × ${dimensions.lengthCm} cm`
+            : `${dimensions.widthCm} × ${dimensions.lengthCm} × ${dimensions.heightCm} cm`}
         </p>
       </div>
       <div className="flex items-center gap-3 shrink-0">

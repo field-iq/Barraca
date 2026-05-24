@@ -38,6 +38,10 @@ export function PricingForm({ config: initialConfig, canEdit }: PricingFormProps
     setConfig((c) => ({ ...c, banco: { ...c.banco, [key]: value } }));
   }
 
+  function updateEspejo(key: keyof typeof config.espejo, value: number) {
+    setConfig((c) => ({ ...c, espejo: { ...c.espejo, [key]: value } }));
+  }
+
   function updateDelivery(key: keyof typeof config.delivery, value: number) {
     setConfig((c) => ({ ...c, delivery: { ...c.delivery, [key]: value } }));
   }
@@ -124,6 +128,23 @@ export function PricingForm({ config: initialConfig, canEdit }: PricingFormProps
           description="Se usa cuando no se puede calcular la distancia"
           value={config.banco.deliveryCostFallback}
           onChange={(v) => updateBanco("deliveryCostFallback", v)}
+          disabled={!canEdit}
+        />
+      </PricingSection>
+
+      <PricingSection title="Espejo" subtitle="Precio por m² de superficie (ancho × alto)">
+        <PriceField
+          label="Precio ($ por m²)"
+          description="Precio final por metro cuadrado de espejo"
+          value={config.espejo.materialCostPerM2}
+          onChange={(v) => updateEspejo("materialCostPerM2", v)}
+          disabled={!canEdit}
+        />
+        <PriceField
+          label="Envío estimado (fallback)"
+          description="Se usa cuando no se puede calcular la distancia"
+          value={config.espejo.deliveryCostFallback}
+          onChange={(v) => updateEspejo("deliveryCostFallback", v)}
           disabled={!canEdit}
         />
       </PricingSection>

@@ -10,6 +10,7 @@
 export type ProductId =
   | "table"
   | "bench"
+  | "mirror"
   | "chair"
   | "shelf"
   | "coffee-table"

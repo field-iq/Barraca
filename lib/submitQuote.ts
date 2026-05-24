@@ -1,5 +1,6 @@
 import { calculateDeliveryCost, calculateTableQuote } from "./pricing/tablePricing";
 import { calculateBenchQuote } from "./pricing/benchPricing";
+import { calculateMirrorQuote } from "./pricing/mirrorPricing";
 import { getPricingConfig } from "./pricing/pricingConfig";
 import type { CartQuoteRequest } from "./quoteTypes";
 
@@ -30,7 +31,9 @@ export async function submitQuote(
     const quote =
       item.productType === "bench"
         ? calculateBenchQuote(item.dimensions, null, config.banco)
-        : calculateTableQuote(item.dimensions, null, config.mesa);
+        : item.productType === "mirror"
+          ? calculateMirrorQuote(item.dimensions, null, config.espejo)
+          : calculateTableQuote(item.dimensions, null, config.mesa);
     return sum + quote.total;
   }, 0);
 
