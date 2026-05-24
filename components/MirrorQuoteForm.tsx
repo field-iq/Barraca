@@ -58,6 +58,7 @@ export function MirrorQuoteForm({ onBack, onAdd }: MirrorQuoteFormProps) {
           images={getProduct("mirror")?.images ?? ["/espejo-1.jpeg"]}
           alt="Espejo con marco de madera maciza hecho en el taller de La Barraca"
           sizes="(max-width: 768px) 100vw, 720px"
+          objectFit="contain"
           priority
         />
       </div>

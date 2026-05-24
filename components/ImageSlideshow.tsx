@@ -12,6 +12,8 @@ interface ImageSlideshowProps {
   intervalMs?: number;
   /** Si la primera imagen debe cargarse con prioridad (LCP). */
   priority?: boolean;
+  /** Cómo ajustar la imagen al contenedor. Default: 'cover'. */
+  objectFit?: "cover" | "contain";
 }
 
 /**
@@ -25,6 +27,7 @@ export function ImageSlideshow({
   sizes,
   intervalMs = 3000,
   priority = false,
+  objectFit = "cover",
 }: ImageSlideshowProps) {
   const [index, setIndex] = useState(0);
 
@@ -46,7 +49,7 @@ export function ImageSlideshow({
           fill
           sizes={sizes}
           priority={priority && i === 0}
-          className={`object-cover transition-opacity duration-700 ${
+          className={`${objectFit === "contain" ? "object-contain" : "object-cover"} transition-opacity duration-700 ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
         />

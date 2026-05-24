@@ -27,6 +27,7 @@ export function ProductCard({ product, onSelect }: ProductCardProps) {
             images={product.images}
             alt={product.name}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            objectFit={product.imageFit ?? "cover"}
           />
         ) : (
           <ProductIllustration id={product.id} />

@@ -10,6 +10,8 @@ export interface ProductDefinition {
    * un dibujo SVG como placeholder.
    */
   images?: string[];
+  /** Cómo ajustar las imágenes al contenedor del card. Default: 'cover'. */
+  imageFit?: "cover" | "contain";
   available: boolean; // false → "Próximamente"
 }
 
@@ -33,6 +35,7 @@ export const PRODUCTS: ProductDefinition[] = [
     name: "Espejo",
     description: "Espejo a medida con marco de madera maciza.",
     images: ["/espejo-1.jpeg", "/espejo-2.jpeg", "/espejo-3.jpeg", "/espejo-4.jpeg"],
+    imageFit: "contain",
     available: true,
   },
   {
