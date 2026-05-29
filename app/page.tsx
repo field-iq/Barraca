@@ -10,7 +10,6 @@ import { Cart } from "@/components/Cart";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { ComingSoon } from "@/components/ComingSoon";
 import { QuoteSummary } from "@/components/QuoteSummary";
-import { OffersSection } from "@/components/OffersSection";
 import { getProduct } from "@/lib/products";
 import { submitQuote } from "@/lib/submitQuote";
 import type {
@@ -120,12 +119,7 @@ export default function HomePage() {
       <Header />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
         {step.name === "select" && (
-          <>
-            <OffersSection />
-            <div className="mt-12 sm:mt-16 border-t border-sand pt-10">
-              <ProductSelector onSelect={handleProductSelect} />
-            </div>
-          </>
+          <ProductSelector onSelect={handleProductSelect} />
         )}
 
         {step.name === "table-form" && (
