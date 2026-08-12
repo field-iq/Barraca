@@ -20,7 +20,7 @@ export function LoginForm() {
     });
 
     if (res.ok) {
-      window.location.href = "/admin/precios";
+      window.location.href = "/admin/catalogo";
     } else {
       const data = await res.json();
       setError(data.error ?? "Error al iniciar sesión");

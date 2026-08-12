@@ -10,6 +10,7 @@ import { Cart } from "@/components/Cart";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { ComingSoon } from "@/components/ComingSoon";
 import { QuoteSummary } from "@/components/QuoteSummary";
+import { StandardFurnitureSection } from "@/components/StandardFurnitureSection";
 import { getProduct } from "@/lib/products";
 import { submitQuote } from "@/lib/submitQuote";
 import type {
@@ -40,6 +41,7 @@ type Step =
 export default function HomePage() {
   const [step, setStep] = useState<Step>({ name: "select" });
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [quoteSelectorOpen, setQuoteSelectorOpen] = useState(false);
 
   function handleProductSelect(id: ProductId) {
     if (id === "table") {
@@ -111,6 +113,7 @@ export default function HomePage() {
 
   function handleNew() {
     setCart([]);
+    setQuoteSelectorOpen(false);
     setStep({ name: "select" });
   }
 
@@ -119,7 +122,24 @@ export default function HomePage() {
       <Header />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
         {step.name === "select" && (
-          <ProductSelector onSelect={handleProductSelect} />
+          <>
+            <StandardFurnitureSection />
+            {quoteSelectorOpen ? (
+              <div className="mt-12 border-t border-sand pt-10 sm:mt-14">
+                <ProductSelector onSelect={handleProductSelect} />
+              </div>
+            ) : (
+              <div className="mt-10 flex justify-center border-t border-sand pt-8">
+                <button
+                  type="button"
+                  onClick={() => setQuoteSelectorOpen(true)}
+                  className="inline-flex items-center justify-center rounded-lg bg-bark px-6 py-3 text-sm font-medium text-cream transition hover:bg-walnut"
+                >
+                  Cotizar mueble a medida
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {step.name === "table-form" && (
@@ -153,7 +173,10 @@ export default function HomePage() {
           <Cart
             items={cart}
             onRemove={handleRemoveFromCart}
-            onAddMore={() => setStep({ name: "select" })}
+            onAddMore={() => {
+              setQuoteSelectorOpen(true);
+              setStep({ name: "select" });
+            }}
             onCheckout={() => setStep({ name: "checkout" })}
           />
         )}
@@ -169,7 +192,10 @@ export default function HomePage() {
         {step.name === "coming-soon" && (
           <ComingSoon
             productName={getProduct(step.product)?.name ?? "Producto"}
-            onBack={() => setStep({ name: "select" })}
+            onBack={() => {
+              setQuoteSelectorOpen(true);
+              setStep({ name: "select" });
+            }}
           />
         )}
 
