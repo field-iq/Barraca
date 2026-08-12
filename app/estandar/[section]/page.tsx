@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
+import { AddToStoreCartButton } from "@/components/AddToStoreCartButton";
 import { getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
 import { formatARS } from "@/lib/format";
@@ -15,7 +16,7 @@ export async function generateMetadata({ params }: StandardItemPageProps) {
   const catalog = await getCatalog();
   const item = getVisibleProducts(catalog).find((product) => product.id === params.section);
 
-  if (!item) return { title: "Muebles estandar - La Barraca De Juan" };
+  if (!item) return { title: "Muebles estándar - La Barraca De Juan" };
 
   return {
     title: `${item.detailTitle} - La Barraca De Juan`,
@@ -44,7 +45,7 @@ export default async function StandardItemPage({ params }: StandardItemPageProps
           href="/"
           className="text-sm text-bark underline underline-offset-4 hover:text-walnut"
         >
-          Volver a muebles estandar
+          Volver a muebles estándar
         </Link>
 
         <section className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
@@ -88,6 +89,9 @@ export default async function StandardItemPage({ params }: StandardItemPageProps
                   Ahorr&aacute;s {formatARS(savings)} pagando en efectivo
                 </p>
               )}
+              <div className="mt-4 border-t border-cream/20 pt-4">
+                <AddToStoreCartButton productId={item.id} fullWidth />
+              </div>
             </div>
           </div>
         </section>

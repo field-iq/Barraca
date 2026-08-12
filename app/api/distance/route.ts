@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ORIGIN = "Saenz Peña 1213, Tigre, Buenos Aires, Argentina";
+const ORIGIN = "Sáenz Peña 1213, Tigre, Buenos Aires, Argentina";
 const MAPS_URL = "https://maps.googleapis.com/maps/api/distancematrix/json";
 
 export async function GET(request: NextRequest) {

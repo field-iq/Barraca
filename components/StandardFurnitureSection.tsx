@@ -10,6 +10,7 @@ import {
   type CatalogProduct,
 } from "@/lib/catalog";
 import { ImageSlideshow } from "./ImageSlideshow";
+import { AddToStoreCartButton } from "./AddToStoreCartButton";
 
 export function StandardFurnitureSection() {
   const [catalog, setCatalog] = useState<CatalogData>(DEFAULT_CATALOG);
@@ -42,7 +43,7 @@ export function StandardFurnitureSection() {
             Medidas y precios definidos
           </p>
           <h1 id="standard-furniture-title" className="font-serif text-3xl text-walnut sm:text-4xl">
-            Muebles estandar
+            Muebles estándar
           </h1>
         </div>
         <p className="max-w-xl text-sm text-walnut/70">
@@ -133,6 +134,9 @@ function StandardProductCard({ product }: { product: CatalogProduct }) {
               </p>
             )}
           </div>
+        </div>
+        <div className="mt-3">
+          <AddToStoreCartButton productId={product.id} fullWidth />
         </div>
       </div>
     </article>

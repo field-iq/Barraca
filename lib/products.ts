@@ -79,7 +79,7 @@ export const PRODUCTS: ProductDefinition[] = [
   {
     id: "cylinder",
     name: "Cirindros",
-    description: "Cirindros de madera maciza, usados como banqueta o mesa auxiliar.",
+    description: "Cilindros de madera maciza, usados como banqueta o mesa auxiliar.",
     images: ["/cirindros.jpeg"],
     available: false,
   },

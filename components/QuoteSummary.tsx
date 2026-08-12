@@ -57,7 +57,7 @@ export function QuoteSummary({
           <Row label="Dirección de entrega" value={deliveryAddress} />
         )}
         {deliveryOption === "pickup" && (
-          <Row label="Retiro en" value="Saenz Peña 1213, Tigre" />
+          <Row label="Retiro en" value="Sáenz Peña 1213, Tigre" />
         )}
       </dl>
 

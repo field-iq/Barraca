@@ -35,7 +35,7 @@ const DEFAULT_CATEGORIES: CatalogCategory[] = [
   {
     id: "mesas-comedor",
     name: "Mesas de comedor",
-    description: "Mesas de madera maciza en medidas estandar.",
+    description: "Mesas de madera maciza en medidas estándar.",
     sortOrder: 0,
     visible: true,
   },
@@ -102,18 +102,18 @@ export function getVisibleProducts(catalog: CatalogData): CatalogProduct[] {
 
 export function validateCatalog(value: unknown): CatalogData {
   if (!value || typeof value !== "object") {
-    throw new Error("El catalogo enviado no es valido.");
+    throw new Error("El catálogo enviado no es válido.");
   }
 
   const catalog = value as Partial<CatalogData>;
   if (!Array.isArray(catalog.categories) || !Array.isArray(catalog.products)) {
-    throw new Error("El catalogo debe incluir categorias y productos.");
+    throw new Error("El catálogo debe incluir categorías y productos.");
   }
 
   const categoryIds = new Set<string>();
   for (const category of catalog.categories) {
     if (!category.id || !category.name || categoryIds.has(category.id)) {
-      throw new Error("Hay una categoria sin nombre o con identificador repetido.");
+      throw new Error("Hay una categoría sin nombre o con identificador repetido.");
     }
     categoryIds.add(category.id);
   }
@@ -124,7 +124,7 @@ export function validateCatalog(value: unknown): CatalogData {
       throw new Error("Hay un producto sin nombre o con identificador repetido.");
     }
     if (!categoryIds.has(product.categoryId)) {
-      throw new Error(`El producto ${product.name} no tiene una categoria valida.`);
+      throw new Error(`El producto ${product.name} no tiene una categoría válida.`);
     }
     if (
       !Number.isFinite(product.listPrice) ||
@@ -132,19 +132,19 @@ export function validateCatalog(value: unknown): CatalogData {
       product.listPrice < 0 ||
       product.cashPrice < 0
     ) {
-      throw new Error(`Los precios de ${product.name} deben ser numeros validos y positivos.`);
+      throw new Error(`Los precios de ${product.name} deben ser números válidos y positivos.`);
     }
     if (product.cashPrice > product.listPrice) {
       throw new Error(`El precio en efectivo de ${product.name} no puede superar el de lista.`);
     }
     if (!Array.isArray(product.images)) {
-      throw new Error(`Las imagenes de ${product.name} no son validas.`);
+      throw new Error(`Las imágenes de ${product.name} no son válidas.`);
     }
     if (product.visible && product.images.length === 0) {
-      throw new Error(`Agrega al menos una foto a ${product.name} antes de publicarlo.`);
+      throw new Error(`Agregá al menos una foto a ${product.name} antes de publicarlo.`);
     }
     if (product.visible && product.images.length === 0) {
-      throw new Error(`Agrega al menos una foto a ${product.name} antes de publicarlo.`);
+      throw new Error(`Agregá al menos una foto a ${product.name} antes de publicarlo.`);
     }
     productIds.add(product.id);
   }

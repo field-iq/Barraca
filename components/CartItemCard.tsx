@@ -34,7 +34,7 @@ export function CartItemCard({ item, onRemove }: CartItemCardProps) {
         <button
           type="button"
           onClick={() => onRemove(item.id)}
-          aria-label="Eliminar item"
+          aria-label="Eliminar ítem"
           className="text-walnut/30 hover:text-bark transition text-lg leading-none"
         >
           ×

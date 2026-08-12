@@ -76,7 +76,7 @@ export function AdminCatalog({
     const category = catalog.categories[0];
     if (!category) {
       setTab("categories");
-      setMessage("Crea una categoria antes de agregar un producto.");
+      setMessage("Creá una categoría antes de agregar un producto.");
       return;
     }
 
@@ -129,7 +129,7 @@ export function AdminCatalog({
         ...catalog.categories,
         {
           id,
-          name: "Nueva categoria",
+          name: "Nueva categoría",
           description: "",
           sortOrder: catalog.categories.length,
           visible: false,
@@ -143,10 +143,10 @@ export function AdminCatalog({
       (product) => product.categoryId === category.id,
     ).length;
     if (productCount > 0) {
-      setMessage(`Move los ${productCount} productos de esta categoria antes de eliminarla.`);
+      setMessage(`Mové los ${productCount} productos de esta categoría antes de eliminarla.`);
       return;
     }
-    if (!window.confirm(`Eliminar la categoria ${category.name}?`)) return;
+    if (!window.confirm(`¿Eliminar la categoría ${category.name}?`)) return;
     markChanged({
       ...catalog,
       categories: catalog.categories.filter((item) => item.id !== category.id),
@@ -190,7 +190,7 @@ export function AdminCatalog({
       <header className="sticky top-0 z-20 border-b border-sand bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="min-w-0">
-            <h1 className="truncate font-serif text-xl">Catalogo</h1>
+            <h1 className="truncate font-serif text-xl">Catálogo</h1>
             <p className="text-xs text-walnut/55">La Barraca De Juan</p>
           </div>
           <div className="flex items-center gap-2">
@@ -220,7 +220,7 @@ export function AdminCatalog({
             <p className="mt-1 text-sm text-walnut/60">
               {cloudStorageConfigured
                 ? "Los cambios se guardan en Vercel y se publican al instante."
-                : "Modo local: conecta Vercel Blob antes de publicar en produccion."}
+                : "Modo local: conectá Vercel Blob antes de publicar en producción."}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -268,7 +268,7 @@ export function AdminCatalog({
             onClick={() => setTab("categories")}
             icon={<Tags size={17} />}
           >
-            Categorias ({catalog.categories.length})
+            Categorías ({catalog.categories.length})
           </TabButton>
         </div>
 
@@ -446,7 +446,7 @@ function ProductEditor({
       </div>
 
       <div className="space-y-8 p-4 sm:p-6">
-        <EditorSection title="Informacion principal">
+        <EditorSection title="Información principal">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextField
               label="Nombre"
@@ -454,7 +454,7 @@ function ProductEditor({
               onChange={(name) => onChange({ name })}
             />
             <SelectField
-              label="Categoria"
+              label="Categoría"
               value={product.categoryId}
               options={categories.map((category) => ({
                 value: category.id,
@@ -469,19 +469,19 @@ function ProductEditor({
               placeholder="Ej: 2.00 x 1.00 mts"
             />
             <TextField
-              label="Titulo de la ficha"
+              label="Título de la ficha"
               value={product.detailTitle}
               onChange={(detailTitle) => onChange({ detailTitle })}
             />
           </div>
           <TextAreaField
-            label="Descripcion corta"
+            label="Descripción corta"
             value={product.description}
             onChange={(description) => onChange({ description })}
             rows={2}
           />
           <TextAreaField
-            label="Descripcion para vender el producto"
+            label="Descripción para vender el producto"
             value={product.detailDescription}
             onChange={(detailDescription) => onChange({ detailDescription })}
             rows={4}
@@ -605,7 +605,7 @@ function ImageManager({
       >
         <UploadCloud size={28} className="text-bark" aria-hidden="true" />
         <span className="mt-2 text-sm font-medium">
-          {uploading ? "Subiendo fotos..." : "Arrastra fotos o selecciona archivos"}
+          {uploading ? "Subiendo fotos..." : "Arrastrá fotos o seleccioná archivos"}
         </span>
         <span className="mt-1 text-xs text-walnut/50">JPG, PNG o WebP, hasta 4 MB</span>
         <input
@@ -676,7 +676,7 @@ function ImageManager({
         </div>
       ) : (
         <div className="flex items-center gap-2 text-sm text-walnut/50">
-          <ImagePlus size={17} /> Este producto todavia no tiene fotos.
+          <ImagePlus size={17} /> Este producto todavía no tiene fotos.
         </div>
       )}
     </div>
@@ -704,7 +704,7 @@ function CategoryEditor({
     <section className="overflow-hidden rounded-md border border-sand bg-white">
       <div className="flex items-center justify-between gap-4 border-b border-sand px-4 py-4 sm:px-6">
         <div>
-          <h3 className="font-serif text-xl">Categorias</h3>
+          <h3 className="font-serif text-xl">Categorías</h3>
           <p className="mt-1 text-sm text-walnut/55">Organizan los productos de la tienda.</p>
         </div>
         <button
@@ -725,7 +725,7 @@ function CategoryEditor({
               onChange={(name) => onChange(category.id, { name })}
             />
             <TextField
-              label="Descripcion"
+              label="Descripción"
               value={category.description}
               onChange={(description) => onChange(category.id, { description })}
             />
@@ -740,13 +740,13 @@ function CategoryEditor({
                 Visible
               </label>
               <span className="text-xs text-walnut/45">{productCounts[category.id] ?? 0} prod.</span>
-              <IconButton label="Subir categoria" disabled={index === 0} onClick={() => onMove(category.id, -1)}>
+              <IconButton label="Subir categoría" disabled={index === 0} onClick={() => onMove(category.id, -1)}>
                 <ArrowUp size={16} />
               </IconButton>
-              <IconButton label="Bajar categoria" disabled={index === ordered.length - 1} onClick={() => onMove(category.id, 1)}>
+              <IconButton label="Bajar categoría" disabled={index === ordered.length - 1} onClick={() => onMove(category.id, 1)}>
                 <ArrowDown size={16} />
               </IconButton>
-              <IconButton label="Eliminar categoria" danger onClick={() => onDelete(category)}>
+              <IconButton label="Eliminar categoría" danger onClick={() => onDelete(category)}>
                 <Trash2 size={16} />
               </IconButton>
             </div>
@@ -911,7 +911,7 @@ function EmptyProducts({ onAdd }: { onAdd: () => void }) {
   return (
     <div className="flex min-h-80 flex-col items-center justify-center rounded-md border border-dashed border-sand bg-white p-8 text-center">
       <Package size={32} className="text-walnut/30" />
-      <p className="mt-3 font-medium">Todavia no hay productos</p>
+      <p className="mt-3 font-medium">Todavía no hay productos</p>
       <button type="button" onClick={onAdd} className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-bark px-4 text-sm font-medium text-cream">
         <Plus size={17} /> Agregar producto
       </button>

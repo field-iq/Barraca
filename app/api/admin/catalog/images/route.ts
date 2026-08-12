@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const productId = sanitizeSegment(String(formData.get("productId") ?? "producto"));
 
     if (!(file instanceof File)) {
-      return NextResponse.json({ error: "Selecciona una imagen." }, { status: 400 });
+      return NextResponse.json({ error: "Seleccioná una imagen." }, { status: 400 });
     }
     if (!ALLOWED_TYPES.has(file.type)) {
       return NextResponse.json({ error: "Usa una imagen JPG, PNG o WebP." }, { status: 400 });
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (process.env.VERCEL) {
       return NextResponse.json(
-        { error: "Conecta Vercel Blob antes de subir fotos en produccion." },
+        { error: "Conectá Vercel Blob antes de subir fotos en producción." },
         { status: 503 },
       );
     }

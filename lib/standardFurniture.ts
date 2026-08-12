@@ -16,10 +16,10 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
   {
     id: "mesa-comedor-200",
     name: "Mesa comedor",
-    description: "Mesa de madera maciza con medida estandar.",
+    description: "Mesa de madera maciza con medida estándar.",
     detailTitle: "Mesa comedor 2.00 x 1.00 mts",
     detailDescription:
-      "Una mesa de comedor firme, calida y de escala muy comoda para el uso diario. Esta medida funciona muy bien en comedores familiares y espacios integrados, con presencia de madera maciza y una terminacion pensada para acompanar muchos anos de reuniones.",
+      "Una mesa de comedor firme, cálida y de escala muy cómoda para el uso diario. Esta medida funciona muy bien en comedores familiares y espacios integrados, con presencia de madera maciza y una terminación pensada para acompañar muchos años de reuniones.",
     dimensions: "2.00 x 1.00 mts",
     listPrice: 1_140_000,
     cashPrice: 950_000,
@@ -45,7 +45,7 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
     description: "Mesa compacta de madera maciza para espacios chicos.",
     detailTitle: "Mesa comedor 1.60 x 0.80 mts",
     detailDescription:
-      "Una opcion compacta y practica para departamentos, cocinas comedor o ambientes mas chicos. Mantiene la presencia de una mesa de madera maciza, pero con una medida facil de ubicar y de usar todos los dias.",
+      "Una opción compacta y práctica para departamentos, cocinas comedor o ambientes más chicos. Mantiene la presencia de una mesa de madera maciza, pero con una medida fácil de ubicar y de usar todos los días.",
     dimensions: "1.60 x 0.80 mts",
     listPrice: 828_000,
     cashPrice: 690_000,
@@ -55,10 +55,10 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
   {
     id: "camastro-160",
     name: "Camastro",
-    description: "Camastro de madera con profundidad estandar.",
+    description: "Camastro de madera con profundidad estándar.",
     detailTitle: "Camastro 1.60 x 0.60 mts",
     detailDescription:
-      "Un camastro robusto para armar un rincon de descanso en galeria, living o espacio semicubierto. La madera aporta peso visual y calidez, y la profundidad permite usarlo como asiento amplio o pieza de apoyo.",
+      "Un camastro robusto para armar un rincón de descanso en galería, living o espacio semicubierto. La madera aporta peso visual y calidez, y la profundidad permite usarlo como asiento amplio o pieza de apoyo.",
     dimensions: "1.60 x 0.60 mts prof.",
     listPrice: 900_000,
     cashPrice: 750_000,
@@ -68,10 +68,10 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
   {
     id: "camastro-180",
     name: "Camastro",
-    description: "Camastro de madera con profundidad estandar.",
+    description: "Camastro de madera con profundidad estándar.",
     detailTitle: "Camastro 1.80 x 0.60 mts",
     detailDescription:
-      "Una medida versatil para quienes quieren un camastro con mas presencia sin ocupar demasiado. Funciona bien con almohadones y textiles, y suma una base noble para espacios de descanso.",
+      "Una medida versátil para quienes quieren un camastro con más presencia sin ocupar demasiado. Funciona bien con almohadones y textiles, y suma una base noble para espacios de descanso.",
     dimensions: "1.80 x 0.60 mts prof.",
     listPrice: 900_000,
     cashPrice: 750_000,
@@ -81,10 +81,10 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
   {
     id: "camastro-200",
     name: "Camastro",
-    description: "Camastro de madera con profundidad estandar.",
+    description: "Camastro de madera con profundidad estándar.",
     detailTitle: "Camastro 2.00 x 0.60 mts",
     detailDescription:
-      "El camastro mas largo de la linea estandar. Es ideal para galerias o livings amplios donde se busca una pieza de madera importante, comoda y con mucha presencia.",
+      "El camastro más largo de la línea estándar. Es ideal para galerías o livings amplios donde se busca una pieza de madera importante, cómoda y con mucha presencia.",
     dimensions: "2.00 x 0.60 mts prof.",
     listPrice: 1_020_000,
     cashPrice: 850_000,
@@ -93,11 +93,11 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
   },
   {
     id: "mesa-ratona-celosias-120",
-    name: "Mesa ratona con laterales de celosias",
+    name: "Mesa ratona con laterales de celosías",
     description: "Mesa ratona con laterales trabajados.",
-    detailTitle: "Mesa ratona con laterales de celosias",
+    detailTitle: "Mesa ratona con laterales de celosías",
     detailDescription:
-      "Una mesa baja con mas detalle artesanal. Los laterales de celosias suman textura y hacen que la pieza se destaque en el living, sin perder funcionalidad para el uso cotidiano.",
+      "Una mesa baja con más detalle artesanal. Los laterales de celosías suman textura y hacen que la pieza se destaque en el living, sin perder funcionalidad para el uso cotidiano.",
     dimensions: "1.20 x 0.70 x 0.45 mts alto",
     listPrice: 474_000,
     cashPrice: 395_000,
@@ -106,7 +106,7 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
       "/catalogo/mesa-ratona-celosias-120/2.jpeg",
       "/catalogo/mesa-ratona-celosias-120/3.jpeg",
     ],
-    imageAlt: "Mesa ratona con laterales de celosias",
+    imageAlt: "Mesa ratona con laterales de celosías",
   },
   {
     id: "mesa-ratona-simple-120",
@@ -114,7 +114,7 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
     description: "Mesa ratona simple de madera maciza.",
     detailTitle: "Mesa ratona simple 1.20 x 0.70 mts",
     detailDescription:
-      "Una mesa ratona limpia, funcional y facil de combinar. Su formato simple deja que la madera sea protagonista y la vuelve una pieza muy adaptable para livings de distintos estilos.",
+      "Una mesa ratona limpia, funcional y fácil de combinar. Su formato simple deja que la madera sea protagonista y la vuelve una pieza muy adaptable para livings de distintos estilos.",
     dimensions: "1.20 x 0.70 x 0.40 mts alto",
     listPrice: 468_000,
     cashPrice: 390_000,
@@ -130,7 +130,7 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
     description: "Mesa ratona chica de madera maciza.",
     detailTitle: "Mesa ratona 1.00 x 0.50 mts",
     detailDescription:
-      "Una version mas chica, practica y liviana visualmente. Ideal para espacios reducidos o para acompanar un sillon sin cargar el ambiente.",
+      "Una versión más chica, práctica y liviana visualmente. Ideal para espacios reducidos o para acompañar un sillón sin cargar el ambiente.",
     dimensions: "1.00 x 0.50 x 0.40 mts alto",
     listPrice: 384_000,
     cashPrice: 320_000,
@@ -143,11 +143,11 @@ export const STANDARD_FURNITURE: StandardFurnitureItem[] = [
   {
     id: "cilindros",
     name: "Cilindros",
-    description: "Cilindros de madera maciza con diametro fijo.",
+    description: "Cilindros de madera maciza con diámetro fijo.",
     detailTitle: "Cilindros de madera maciza",
     detailDescription:
-      "Piezas auxiliares versatiles para usar como apoyo, mesa lateral o detalle decorativo. Al venir en distintas alturas, pueden funcionar solas o combinadas para sumar volumen y textura al ambiente.",
-    dimensions: "50, 60 y 70 cm alto - diametro 30 cm",
+      "Piezas auxiliares versátiles para usar como apoyo, mesa lateral o detalle decorativo. Al venir en distintas alturas, pueden funcionar solas o combinadas para sumar volumen y textura al ambiente.",
+    dimensions: "50, 60 y 70 cm alto - diámetro 30 cm",
     listPrice: 168_000,
     cashPrice: 140_000,
     images: ["/catalogo/cilindros/1.jpeg", "/catalogo/cilindros/2.jpeg"],

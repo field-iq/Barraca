@@ -11,7 +11,7 @@ export async function PUT(request: NextRequest) {
     const catalog = await saveCatalog(await request.json());
     return NextResponse.json(catalog);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "No se pudo guardar el catalogo.";
+    const message = error instanceof Error ? error.message : "No se pudo guardar el catálogo.";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

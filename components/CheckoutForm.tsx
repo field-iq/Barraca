@@ -126,7 +126,7 @@ export function CheckoutForm({ items, onBack, onSubmit }: CheckoutFormProps) {
               setDeliveryPreview({ status: "idle" });
             }}
             title="Retiro en taller"
-            subtitle="Saenz Peña 1213, Tigre — gratis"
+            subtitle="Sáenz Peña 1213, Tigre — gratis"
           />
         </div>
 

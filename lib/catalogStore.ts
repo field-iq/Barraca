@@ -50,7 +50,7 @@ export async function saveCatalog(value: unknown): Promise<CatalogData> {
   }
 
   if (process.env.VERCEL) {
-    throw new Error("Conecta Vercel Blob antes de guardar cambios en produccion.");
+    throw new Error("Conectá Vercel Blob antes de guardar cambios en producción.");
   }
 
   await fs.mkdir(path.dirname(LOCAL_CATALOG_PATH), { recursive: true });
