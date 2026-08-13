@@ -40,33 +40,36 @@ export default async function StandardItemPage({ params }: StandardItemPageProps
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
+      <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#18211e]">
+        <div aria-hidden="true" className="absolute inset-0 bg-[url('/textures/catalog-boards.jpg')] bg-[length:auto_980px] bg-repeat opacity-75" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[#15201c]/78" />
+        <div className="relative mx-auto min-w-0 max-w-5xl px-4 py-10 sm:py-14">
         <Link
           href="/catalogo"
-          className="text-sm text-bark underline underline-offset-4 hover:text-walnut"
+          className="text-sm text-[#efb296] underline underline-offset-4 hover:text-white"
         >
           Volver al catálogo
         </Link>
 
-        <section className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div>
-            <p className="text-xs uppercase text-bark/70">
+        <section className="mt-6 grid min-w-0 gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-[0.16em] text-[#efb296]">
               {category?.name ?? "La Barraca De Juan"}
             </p>
-            <h1 className="mt-2 font-serif text-4xl text-walnut sm:text-5xl">
+            <h1 className="mt-2 break-words font-serif text-4xl text-[#f6f1e9] sm:text-5xl">
               {item.detailTitle}
             </h1>
-            <p className="mt-4 text-lg text-walnut/75">{item.description}</p>
-            <p className="mt-5 leading-7 text-walnut/75">{item.detailDescription}</p>
+            <p className="mt-4 text-lg text-white/70">{item.description}</p>
+            <p className="mt-5 leading-7 text-white/65">{item.detailDescription}</p>
           </div>
 
-          <div className="overflow-hidden rounded-lg border border-sand bg-white">
+          <div className="min-w-0 max-w-full overflow-hidden rounded-lg border border-sand bg-white">
             <div className="p-4">
               <h2 className="font-serif text-xl text-walnut">Precio y medidas</h2>
               <dl className="mt-4 text-sm">
-                <div className="flex items-baseline justify-between gap-4">
+                <div className="flex min-w-0 flex-col gap-1 min-[420px]:flex-row min-[420px]:items-baseline min-[420px]:justify-between min-[420px]:gap-4">
                   <dt className="text-walnut/50">Medidas</dt>
-                  <dd className="text-right font-medium text-walnut">{item.dimensions}</dd>
+                  <dd className="min-w-0 break-words font-medium text-walnut min-[420px]:text-right">{item.dimensions}</dd>
                 </div>
               </dl>
             </div>
@@ -80,12 +83,12 @@ export default async function StandardItemPage({ params }: StandardItemPageProps
                   </p>
                 )}
               </div>
-              <p className="mt-1 font-serif text-4xl">{formatARS(item.cashPrice)}</p>
+              <p className="mt-1 break-words font-serif text-4xl">{formatARS(item.cashPrice)}</p>
               <p className="mt-2 text-sm text-cream/70">
                 Antes: <span className="line-through">{formatARS(item.listPrice)}</span>
               </p>
               {savings > 0 && (
-                <p className="mt-4 inline-flex rounded-md bg-emerald-700 px-3 py-2 text-sm font-semibold text-white">
+                <p className="mt-4 inline-flex max-w-full whitespace-normal rounded-md bg-emerald-700 px-3 py-2 text-sm font-semibold leading-5 text-white">
                   Ahorr&aacute;s {formatARS(savings)} pagando en efectivo
                 </p>
               )}
@@ -124,6 +127,7 @@ export default async function StandardItemPage({ params }: StandardItemPageProps
             </div>
           )}
         </section>
+        </div>
       </main>
     </>
   );

@@ -99,13 +99,19 @@ export default function CatalogPage() {
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+      <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#18211e]">
+        <div aria-hidden="true" className="absolute inset-0 bg-[url('/textures/catalog-boards.jpg')] bg-[length:auto_980px] bg-repeat opacity-75" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[#15201c]/75" />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/25" />
+        <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
         {step.name === "select" && (
           <>
-            <StandardFurnitureSection />
-            <section id="a-medida" className="mt-14 scroll-mt-24 border-t border-sand pt-10 sm:mt-20 sm:pt-14">
+            <StandardFurnitureSection tone="dark" />
+            <section id="a-medida" className="mt-14 scroll-mt-24 border-t border-white/20 pt-10 sm:mt-20 sm:pt-14">
               {quoteSelectorOpen ? (
-                <ProductSelector onSelect={handleProductSelect} />
+                <div className="bg-[#f7f4ee] p-5 sm:p-10">
+                  <ProductSelector onSelect={handleProductSelect} />
+                </div>
               ) : (
                 <div className="grid gap-6 bg-[#22372f] px-6 py-8 text-white sm:grid-cols-[1fr_auto] sm:items-center sm:px-10 sm:py-10">
                   <div>
@@ -173,10 +179,11 @@ export default function CatalogPage() {
             onNew={handleNew}
           />
         )}
+        </div>
       </main>
 
-      <footer className="mt-12 border-t border-sand bg-[#f7f4ee]">
-        <div className="mx-auto max-w-6xl px-4 py-7 text-xs text-walnut/60 sm:px-6">
+      <footer className="border-t border-white/10 bg-[#111916] text-white/60">
+        <div className="mx-auto max-w-6xl px-4 py-7 text-xs text-white/60 sm:px-6">
           La Barraca de Juan · Muebles &amp; deco · Envíos y disponibilidad a confirmar
         </div>
       </footer>

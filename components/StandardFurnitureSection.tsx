@@ -12,7 +12,7 @@ import {
 import { ImageSlideshow } from "./ImageSlideshow";
 import { AddToStoreCartButton } from "./AddToStoreCartButton";
 
-export function StandardFurnitureSection() {
+export function StandardFurnitureSection({ tone = "light" }: { tone?: "light" | "dark" }) {
   const [catalog, setCatalog] = useState<CatalogData>(DEFAULT_CATALOG);
 
   useEffect(() => {
@@ -25,6 +25,7 @@ export function StandardFurnitureSection() {
   }, []);
 
   const visibleProducts = useMemo(() => getVisibleProducts(catalog), [catalog]);
+  const isDark = tone === "dark";
   const visibleCategories = useMemo(
     () =>
       catalog.categories
@@ -39,14 +40,14 @@ export function StandardFurnitureSection() {
     <section aria-labelledby="standard-furniture-title">
       <div className="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs uppercase text-bark/70">
+          <p className={`text-xs uppercase tracking-[0.16em] ${isDark ? "text-[#efb296]" : "text-bark/70"}`}>
             Medidas y precios definidos
           </p>
-          <h1 id="standard-furniture-title" className="font-serif text-3xl text-walnut sm:text-4xl">
-            Muebles estándar
+          <h1 id="standard-furniture-title" className={`mt-2 font-serif text-4xl sm:text-5xl ${isDark ? "text-[#f6f1e9]" : "text-walnut"}`}>
+            Piezas listas para llevar
           </h1>
         </div>
-        <p className="max-w-xl text-sm text-walnut/70">
+        <p className={`max-w-xl text-sm leading-6 ${isDark ? "text-white/65" : "text-walnut/70"}`}>
           Modelos con medidas fijas y precio de lista, con valor especial para pago en efectivo.
         </p>
       </div>
@@ -59,15 +60,15 @@ export function StandardFurnitureSection() {
 
           return (
             <section key={category.id} aria-labelledby={`category-${category.id}`}>
-              <div className="mb-4 border-b border-sand pb-3">
-                <h2 id={`category-${category.id}`} className="font-serif text-2xl text-walnut">
+              <div className={`mb-4 border-b pb-3 ${isDark ? "border-white/20" : "border-sand"}`}>
+                <h2 id={`category-${category.id}`} className={`font-serif text-2xl ${isDark ? "text-[#f6f1e9]" : "text-walnut"}`}>
                   {category.name}
                 </h2>
                 {category.description && (
-                  <p className="mt-1 text-sm text-walnut/60">{category.description}</p>
+                  <p className={`mt-1 text-sm ${isDark ? "text-white/55" : "text-walnut/60"}`}>{category.description}</p>
                 )}
               </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {products.map((product) => (
                   <StandardProductCard key={product.id} product={product} />
                 ))}
@@ -86,7 +87,7 @@ function StandardProductCard({ product }: { product: CatalogProduct }) {
     : 0;
 
   return (
-    <article className="overflow-hidden rounded-lg border border-sand bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
+    <article className="min-w-0 max-w-full overflow-hidden rounded-lg border border-sand bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
       <Link
         href={`/estandar/${product.id}`}
         aria-label={`Ver fotos y detalles de ${product.detailTitle}`}
@@ -115,21 +116,21 @@ function StandardProductCard({ product }: { product: CatalogProduct }) {
         </div>
 
         <dl className="mt-4 border-t border-sand pt-3 text-sm">
-          <div className="flex items-baseline justify-between gap-4">
+          <div className="flex min-w-0 flex-col gap-1 min-[420px]:flex-row min-[420px]:items-baseline min-[420px]:justify-between min-[420px]:gap-4">
             <dt className="text-walnut/50">Medidas</dt>
-            <dd className="text-right font-medium text-walnut">{product.dimensions}</dd>
+            <dd className="min-w-0 break-words font-medium text-walnut min-[420px]:text-right">{product.dimensions}</dd>
           </div>
         </dl>
 
         <div className="mt-4 rounded-md bg-walnut px-4 py-4 text-cream">
           <p className="text-xs font-medium uppercase">Precio especial en efectivo</p>
-          <p className="mt-1 font-serif text-3xl">{formatARS(product.cashPrice)}</p>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-cream/20 pt-3 text-xs">
+          <p className="mt-1 break-words font-serif text-3xl">{formatARS(product.cashPrice)}</p>
+          <div className="mt-3 flex min-w-0 flex-col items-start gap-2 border-t border-cream/20 pt-3 text-xs min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
             <p className="text-cream/70">
               Antes: <span className="line-through">{formatARS(product.listPrice)}</span>
             </p>
             {savings > 0 && (
-              <p className="rounded-md bg-emerald-700 px-2 py-1 font-semibold text-white">
+              <p className="max-w-full break-words rounded-md bg-emerald-700 px-2 py-1 font-semibold text-white">
                 Ahorr&aacute;s {formatARS(savings)}
               </p>
             )}
