@@ -3,9 +3,18 @@ import { StoreCartProvider } from "@/components/StoreCartProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "La Barraca De Juan — Muebles artesanales",
+  title: {
+    default: "La Barraca de Juan | Muebles & deco",
+    template: "%s | La Barraca de Juan",
+  },
   description:
-    "Cotizá tu mueble a medida con La Barraca De Juan. Mesas, bancos, sillas y más, hechos a mano en nuestro taller.",
+    "Muebles con historia, piezas listas para llevar y diseños a medida en Tigre. Conocé La Barraca de Juan.",
+  openGraph: {
+    title: "La Barraca de Juan | Muebles & deco",
+    description: "Piezas listas para llevar y muebles hechos a medida en Tigre.",
+    locale: "es_AR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

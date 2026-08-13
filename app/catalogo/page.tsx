@@ -1,0 +1,185 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Header } from "@/components/Header";
+import { ProductSelector } from "@/components/ProductSelector";
+import { TableQuoteForm } from "@/components/TableQuoteForm";
+import { BenchQuoteForm } from "@/components/BenchQuoteForm";
+import { MirrorQuoteForm } from "@/components/MirrorQuoteForm";
+import { Cart } from "@/components/Cart";
+import { CheckoutForm } from "@/components/CheckoutForm";
+import { ComingSoon } from "@/components/ComingSoon";
+import { QuoteSummary } from "@/components/QuoteSummary";
+import { StandardFurnitureSection } from "@/components/StandardFurnitureSection";
+import { getProduct } from "@/lib/products";
+import { submitQuote } from "@/lib/submitQuote";
+import type {
+  CartItem,
+  CartQuoteRequest,
+  ContactDetails,
+  DeliveryOption,
+  ProductId,
+  TableDimensions,
+} from "@/lib/quoteTypes";
+
+type Step =
+  | { name: "select" }
+  | { name: "table-form" }
+  | { name: "bench-form" }
+  | { name: "mirror-form" }
+  | { name: "cart" }
+  | { name: "checkout" }
+  | {
+      name: "confirmation";
+      request: CartQuoteRequest;
+      deliveryCost: number;
+      subtotal: number;
+      total: number;
+    }
+  | { name: "coming-soon"; product: ProductId };
+
+export default function CatalogPage() {
+  const [step, setStep] = useState<Step>({ name: "select" });
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [quoteSelectorOpen, setQuoteSelectorOpen] = useState(false);
+
+  useEffect(() => {
+    if (window.location.hash !== "#a-medida") return;
+    setQuoteSelectorOpen(true);
+    window.requestAnimationFrame(() => {
+      document.getElementById("a-medida")?.scrollIntoView({ behavior: "smooth" });
+    });
+  }, []);
+
+  function handleProductSelect(id: ProductId) {
+    if (id === "table") setStep({ name: "table-form" });
+    else if (id === "bench") setStep({ name: "bench-form" });
+    else if (id === "mirror") setStep({ name: "mirror-form" });
+    else setStep({ name: "coming-soon", product: id });
+  }
+
+  function addItem(productType: "table" | "bench" | "mirror", dimensions: TableDimensions) {
+    setCart((current) => [
+      ...current,
+      { id: crypto.randomUUID(), productType, dimensions },
+    ]);
+    setStep({ name: "cart" });
+  }
+
+  async function handleCheckout(
+    deliveryOption: DeliveryOption,
+    contact: ContactDetails,
+    deliveryAddress?: string,
+  ) {
+    const request: CartQuoteRequest = {
+      items: cart,
+      deliveryOption,
+      deliveryAddress,
+      contact,
+      requestedAt: new Date().toISOString(),
+    };
+    const result = await submitQuote(request);
+    setStep({
+      name: "confirmation",
+      request,
+      deliveryCost: result.deliveryCost,
+      subtotal: result.subtotal,
+      total: result.total,
+    });
+  }
+
+  function handleNew() {
+    setCart([]);
+    setQuoteSelectorOpen(false);
+    setStep({ name: "select" });
+  }
+
+  const backStep = () => setStep(cart.length > 0 ? { name: "cart" } : { name: "select" });
+
+  return (
+    <>
+      <Header />
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+        {step.name === "select" && (
+          <>
+            <StandardFurnitureSection />
+            <section id="a-medida" className="mt-14 scroll-mt-24 border-t border-sand pt-10 sm:mt-20 sm:pt-14">
+              {quoteSelectorOpen ? (
+                <ProductSelector onSelect={handleProductSelect} />
+              ) : (
+                <div className="grid gap-6 bg-[#22372f] px-6 py-8 text-white sm:grid-cols-[1fr_auto] sm:items-center sm:px-10 sm:py-10">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e4a58d]">A medida</p>
+                    <h2 className="mt-2 font-serif text-3xl sm:text-4xl">¿Necesitás otra medida?</h2>
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
+                      Elegí el tipo de mueble, cargá las dimensiones y prepará una cotización inicial. Cada proyecto queda sujeto a confirmación.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setQuoteSelectorOpen(true)}
+                    className="inline-flex h-12 items-center justify-center rounded-md bg-[#e7a181] px-5 text-sm font-semibold text-[#1f2d28] hover:bg-[#f0b69c]"
+                  >
+                    Cotizar mueble a medida
+                  </button>
+                </div>
+              )}
+            </section>
+          </>
+        )}
+
+        {step.name === "table-form" && (
+          <TableQuoteForm onBack={backStep} onAdd={(dimensions) => addItem("table", dimensions)} />
+        )}
+        {step.name === "bench-form" && (
+          <BenchQuoteForm onBack={backStep} onAdd={(dimensions) => addItem("bench", dimensions)} />
+        )}
+        {step.name === "mirror-form" && (
+          <MirrorQuoteForm onBack={backStep} onAdd={(dimensions) => addItem("mirror", dimensions)} />
+        )}
+        {step.name === "cart" && (
+          <Cart
+            items={cart}
+            onRemove={(id) => setCart((current) => current.filter((item) => item.id !== id))}
+            onAddMore={() => {
+              setQuoteSelectorOpen(true);
+              setStep({ name: "select" });
+            }}
+            onCheckout={() => setStep({ name: "checkout" })}
+          />
+        )}
+        {step.name === "checkout" && (
+          <CheckoutForm
+            items={cart}
+            onBack={() => setStep({ name: "cart" })}
+            onSubmit={handleCheckout}
+          />
+        )}
+        {step.name === "coming-soon" && (
+          <ComingSoon
+            productName={getProduct(step.product)?.name ?? "Producto"}
+            onBack={() => {
+              setQuoteSelectorOpen(true);
+              setStep({ name: "select" });
+            }}
+          />
+        )}
+        {step.name === "confirmation" && (
+          <QuoteSummary
+            request={step.request}
+            deliveryCost={step.deliveryCost}
+            subtotal={step.subtotal}
+            total={step.total}
+            onNew={handleNew}
+          />
+        )}
+      </main>
+
+      <footer className="mt-12 border-t border-sand bg-[#f7f4ee]">
+        <div className="mx-auto max-w-6xl px-4 py-7 text-xs text-walnut/60 sm:px-6">
+          La Barraca de Juan · Muebles &amp; deco · Envíos y disponibilidad a confirmar
+        </div>
+      </footer>
+    </>
+  );
+}

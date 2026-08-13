@@ -42,10 +42,10 @@ export default async function StandardItemPage({ params }: StandardItemPageProps
       <Header />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
         <Link
-          href="/"
+          href="/catalogo"
           className="text-sm text-bark underline underline-offset-4 hover:text-walnut"
         >
-          Volver a muebles estándar
+          Volver al catálogo
         </Link>
 
         <section className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">

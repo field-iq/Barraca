@@ -4,8 +4,18 @@
 
 html,
 body {
-  background-color: #faf7f2; /* cream */
-  color: #3f2e22; /* walnut */
+  background-color: #f7f4ee;
+  color: #3f2e22;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: #22372f;
+  color: #ffffff;
 }
