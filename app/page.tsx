@@ -110,23 +110,24 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-[#f1ede5] py-16 sm:py-24">
-          <Image src="/textures/washed-planks.jpg" alt="" fill sizes="100vw" className="object-cover opacity-40" />
-          <div aria-hidden="true" className="absolute inset-0 bg-[#f7f4ee]/70" />
+        <section className="relative overflow-hidden bg-[#17211e] py-16 text-white sm:py-24">
+          <Image src="/textures/aged-painted-boards.jpg" alt="" fill sizes="100vw" className="object-cover" />
+          <div aria-hidden="true" className="absolute inset-0 bg-[#14201c]/75" />
+          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-black/20" />
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#b04d31]">Piezas reales</p>
-                <h2 className="mt-3 max-w-2xl font-serif text-4xl leading-tight text-walnut sm:text-5xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#efb296]">Piezas reales</p>
+                <h2 className="mt-3 max-w-2xl font-serif text-4xl leading-tight text-[#f6f1e9] sm:text-5xl">
                   El carácter está en cada detalle
                 </h2>
               </div>
-              <Link href="/catalogo" className="inline-flex items-center gap-2 text-sm font-semibold text-walnut hover:text-[#216e4e]">
+              <Link href="/catalogo" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition hover:text-[#efb296]">
                 Ver todo el catálogo <ArrowRight size={17} />
               </Link>
             </div>
             <div className="mt-8 sm:mt-12">
-              <CircularShowcase items={featuredPieces} />
+              <CircularShowcase items={featuredPieces} tone="dark" />
             </div>
           </div>
         </section>

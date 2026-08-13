@@ -19,15 +19,17 @@ export interface ShowcaseItem {
 interface CircularShowcaseProps {
   items: ShowcaseItem[];
   autoplay?: boolean;
+  tone?: "light" | "dark";
 }
 
-export function CircularShowcase({ items, autoplay = true }: CircularShowcaseProps) {
+export function CircularShowcase({ items, autoplay = true, tone = "light" }: CircularShowcaseProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const itemCount = items.length;
+  const isDark = tone === "dark";
 
   useEffect(() => {
     if (activeIndex >= itemCount) setActiveIndex(0);
@@ -132,9 +134,9 @@ export function CircularShowcase({ items, autoplay = true }: CircularShowcasePro
       </div>
 
       <div className="flex min-h-[360px] min-w-0 flex-col justify-center">
-        <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#b65337]">
+        <div className={`flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? "text-[#efb296]" : "text-[#b65337]"}`}>
           <span>{String(activeIndex + 1).padStart(2, "0")}</span>
-          <span className="h-px w-10 bg-[#b65337]/40" />
+          <span className={`h-px w-10 ${isDark ? "bg-[#efb296]/45" : "bg-[#b65337]/40"}`} />
           <span>{String(itemCount).padStart(2, "0")}</span>
         </div>
 
@@ -148,13 +150,13 @@ export function CircularShowcase({ items, autoplay = true }: CircularShowcasePro
             transition={{ duration: reduceMotion ? 0 : 0.35, ease: "easeOut" }}
             className="mt-7"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-walnut/50">
+            <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${isDark ? "text-white/55" : "text-walnut/50"}`}>
               {activeItem.eyebrow}
             </p>
-            <h3 className="mt-3 max-w-lg font-serif text-4xl leading-tight text-walnut sm:text-5xl">
+            <h3 className={`mt-3 max-w-lg font-serif text-4xl leading-tight sm:text-5xl ${isDark ? "text-[#f6f1e9]" : "text-walnut"}`}>
               {activeItem.title}
             </h3>
-            <p className="mt-5 max-w-lg text-base leading-7 text-walnut/65">
+            <p className={`mt-5 max-w-lg text-base leading-7 ${isDark ? "text-white/65" : "text-walnut/65"}`}>
               {activeItem.description}
             </p>
           </motion.div>
@@ -162,7 +164,7 @@ export function CircularShowcase({ items, autoplay = true }: CircularShowcasePro
 
         <Link
           href={activeItem.href}
-          className="mt-7 inline-flex w-fit items-center gap-2 text-sm font-semibold text-[#216e4e] hover:underline hover:underline-offset-4"
+          className={`mt-7 inline-flex w-fit items-center gap-2 text-sm font-semibold hover:underline hover:underline-offset-4 ${isDark ? "text-[#efb296] hover:text-white" : "text-[#216e4e]"}`}
         >
           Ver en el catálogo <ArrowRight size={17} aria-hidden="true" />
         </Link>
@@ -174,7 +176,7 @@ export function CircularShowcase({ items, autoplay = true }: CircularShowcasePro
             disabled={itemCount < 2}
             aria-label="Ver pieza anterior"
             title="Anterior"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-walnut/20 text-walnut transition hover:border-walnut hover:bg-walnut hover:text-white disabled:opacity-40"
+            className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition disabled:opacity-40 ${isDark ? "border-white/30 text-white hover:border-white hover:bg-white hover:text-[#17211e]" : "border-walnut/20 text-walnut hover:border-walnut hover:bg-walnut hover:text-white"}`}
           >
             <ArrowLeft size={18} aria-hidden="true" />
           </button>
@@ -184,7 +186,7 @@ export function CircularShowcase({ items, autoplay = true }: CircularShowcasePro
             disabled={itemCount < 2}
             aria-label="Ver pieza siguiente"
             title="Siguiente"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-walnut text-white transition hover:bg-[#216e4e] disabled:opacity-40"
+            className={`inline-flex h-11 w-11 items-center justify-center rounded-full transition disabled:opacity-40 ${isDark ? "bg-[#efb296] text-[#17211e] hover:bg-white" : "bg-walnut text-white hover:bg-[#216e4e]"}`}
           >
             <ArrowRight size={18} aria-hidden="true" />
           </button>
