@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TableDimensions } from "@/lib/quoteTypes";
 import { calculateTableQuote } from "@/lib/pricing/tablePricing";
+import {
+  getDefaultDimensions,
+  validateProductDimensions,
+  type DimensionRange,
+  type PricingConfig,
+} from "@/lib/pricing/pricingConfig";
 import { formatARS } from "@/lib/format";
 import { getProduct } from "@/lib/products";
 import { ImageSlideshow } from "./ImageSlideshow";
@@ -10,20 +16,19 @@ import { ImageSlideshow } from "./ImageSlideshow";
 interface TableQuoteFormProps {
   onBack: () => void;
   onAdd: (dimensions: TableDimensions) => void;
+  config: PricingConfig;
 }
 
-const DEFAULT_DIMENSIONS: TableDimensions = {
-  widthCm: 100,
-  lengthCm: 200,
-  heightCm: 80,
-};
+export function TableQuoteForm({ onBack, onAdd, config }: TableQuoteFormProps) {
+  const [dimensions, setDimensions] = useState<TableDimensions>(() => getDefaultDimensions("table", config));
+  const ranges = config.mesa.dimensions;
 
-export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
-  const [dimensions, setDimensions] = useState<TableDimensions>(DEFAULT_DIMENSIONS);
+  useEffect(() => setDimensions(getDefaultDimensions("table", config)), [config]);
 
-  const dimensionsValid = isDimensionsValid(dimensions);
+  const dimensionErrors = validateProductDimensions("table", dimensions, config);
+  const dimensionsValid = dimensionErrors.length === 0;
   const estimatedPrice = dimensionsValid
-    ? calculateTableQuote(dimensions, null).total
+    ? calculateTableQuote(dimensions, null, config.mesa, config.delivery, false).total
     : null;
 
   function handleSubmit(e: React.FormEvent) {
@@ -70,22 +75,31 @@ export function TableQuoteForm({ onBack, onAdd }: TableQuoteFormProps) {
             label="Ancho"
             id="dim-width"
             value={dimensions.widthCm}
+            range={ranges.widthCm}
             onChange={(widthCm) => setDimensions((d) => ({ ...d, widthCm }))}
           />
           <DimensionField
             label="Largo"
             id="dim-length"
             value={dimensions.lengthCm}
+            range={ranges.lengthCm}
             onChange={(lengthCm) => setDimensions((d) => ({ ...d, lengthCm }))}
           />
           <DimensionField
             label="Alto"
             id="dim-height"
             value={dimensions.heightCm}
+            range={ranges.heightCm}
             onChange={(heightCm) => setDimensions((d) => ({ ...d, heightCm }))}
           />
         </div>
       </fieldset>
+
+      {!dimensionsValid && (
+        <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900" role="alert">
+          {dimensionErrors[0]}
+        </p>
+      )}
 
       <div className="pt-2 border-t border-sand flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         {estimatedPrice !== null && (
@@ -112,11 +126,13 @@ function DimensionField({
   label,
   id,
   value,
+  range,
   onChange,
 }: {
   label: string;
   id: string;
   value: number;
+  range: DimensionRange;
   onChange: (n: number) => void;
 }) {
   return (
@@ -129,8 +145,8 @@ function DimensionField({
           id={id}
           type="number"
           inputMode="numeric"
-          min={1}
-          max={500}
+          min={range.min}
+          max={range.max}
           value={Number.isFinite(value) ? value : ""}
           onChange={(e) => onChange(Number(e.target.value))}
           className="w-full rounded-lg border border-sand bg-white pl-3 pr-10 py-2.5 text-walnut focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
@@ -139,12 +155,7 @@ function DimensionField({
           cm
         </span>
       </div>
+      <p className="text-xs text-walnut/45">Entre {range.min} y {range.max} cm</p>
     </div>
-  );
-}
-
-function isDimensionsValid(d: TableDimensions): boolean {
-  return [d.widthCm, d.lengthCm, d.heightCm].every(
-    (n) => Number.isFinite(n) && n > 0 && n <= 500,
   );
 }

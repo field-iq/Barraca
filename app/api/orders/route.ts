@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
+import type { PricingConfig } from "@/lib/pricing/pricingConfig";
+import { getPricingConfig } from "@/lib/pricing/pricingStore";
+import { calculateDeliveryCost } from "@/lib/pricing/tablePricing";
 import {
   buildAdminOrderEmail,
   buildCustomerOrderEmail,
@@ -24,7 +27,8 @@ export async function POST(request: NextRequest) {
 
     const customer = validateCustomer(payload.customer);
     const requestedItems = validateItems(payload.items);
-    const catalog = await getCatalog();
+    const [catalog, pricingConfig] = await Promise.all([getCatalog(), getPricingConfig()]);
+    const delivery = validateDelivery(payload.delivery, pricingConfig);
     const products = new Map(
       getVisibleProducts(catalog).map((product) => [product.id, product]),
     );
@@ -41,11 +45,14 @@ export async function POST(request: NextRequest) {
       };
     });
 
+    const itemsSubtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
     const order: ResolvedOrder = {
       orderId: createOrderId(),
       customer,
       items,
-      total: items.reduce((sum, item) => sum + item.subtotal, 0),
+      itemsSubtotal,
+      delivery,
+      total: itemsSubtotal + delivery.cost,
       createdAt: new Date(),
     };
 
@@ -136,6 +143,57 @@ function validateItems(value: unknown): Array<{ productId: string; quantity: num
   }
 
   return Array.from(quantities, ([productId, quantity]) => ({ productId, quantity }));
+}
+
+function validateDelivery(value: unknown, config: PricingConfig): ResolvedOrder["delivery"] {
+  if (!value || typeof value !== "object") {
+    throw new OrderError("Elegí si querés recibir el pedido con envío o retirarlo.");
+  }
+  const delivery = value as Record<string, unknown>;
+  const option = delivery.option;
+  if (option === "pickup") {
+    return { option, description: "Sin envío · retiro a coordinar", cost: 0 };
+  }
+  if (option !== "delivery") {
+    throw new OrderError("Elegí si querés recibir el pedido con envío o retirarlo.");
+  }
+
+  if (delivery.method === "zone") {
+    if (!config.delivery.zonesEnabled) {
+      throw new OrderError("El envío por zona no está disponible.");
+    }
+    const zone = config.delivery.zones.find(
+      (item) => item.id === delivery.zoneId && item.enabled,
+    );
+    if (!zone) throw new OrderError("La zona seleccionada ya no está disponible.");
+    return {
+      option,
+      description: `Con envío · zona ${zone.name}`,
+      cost: zone.price,
+    };
+  }
+
+  if (delivery.method === "distance") {
+    if (!config.delivery.distanceEnabled) {
+      throw new OrderError("El cálculo por kilómetros no está disponible.");
+    }
+    const distanceKm = Number(delivery.distanceKm);
+    if (!Number.isFinite(distanceKm) || distanceKm <= 0) {
+      throw new OrderError("Ingresá una distancia válida en kilómetros.");
+    }
+    if (distanceKm > config.delivery.maximumDistanceKm) {
+      throw new OrderError(
+        `La distancia supera el máximo de ${config.delivery.maximumDistanceKm} km.`,
+      );
+    }
+    return {
+      option,
+      description: `Con envío · ${distanceKm} km informados (estimado)`,
+      cost: calculateDeliveryCost(distanceKm, config.delivery),
+    };
+  }
+
+  throw new OrderError("Elegí cómo querés cotizar el envío.");
 }
 
 function cleanString(value: unknown, maxLength: number): string {

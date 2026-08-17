@@ -13,11 +13,16 @@ import { QuoteSummary } from "@/components/QuoteSummary";
 import { StandardFurnitureSection } from "@/components/StandardFurnitureSection";
 import { getProduct } from "@/lib/products";
 import { submitQuote } from "@/lib/submitQuote";
+import {
+  DEFAULT_PRICING_CONFIG,
+  type PricingConfig,
+} from "@/lib/pricing/pricingConfig";
 import type {
   CartItem,
   CartQuoteRequest,
   ContactDetails,
   DeliveryOption,
+  DeliverySelection,
   ProductId,
   TableDimensions,
 } from "@/lib/quoteTypes";
@@ -33,6 +38,7 @@ type Step =
       name: "confirmation";
       request: CartQuoteRequest;
       deliveryCost: number;
+      deliveryDescription: string;
       subtotal: number;
       total: number;
     }
@@ -42,8 +48,16 @@ export default function CatalogPage() {
   const [step, setStep] = useState<Step>({ name: "select" });
   const [cart, setCart] = useState<CartItem[]>([]);
   const [quoteSelectorOpen, setQuoteSelectorOpen] = useState(false);
+  const [pricingConfig, setPricingConfig] = useState<PricingConfig>(DEFAULT_PRICING_CONFIG);
 
   useEffect(() => {
+    fetch("/api/pricing", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((data: PricingConfig) => setPricingConfig(data))
+      .catch(() => {
+        // Keep the bundled defaults if the pricing service is temporarily unavailable.
+      });
+
     if (window.location.hash !== "#a-medida") return;
     setQuoteSelectorOpen(true);
     window.requestAnimationFrame(() => {
@@ -70,10 +84,14 @@ export default function CatalogPage() {
     deliveryOption: DeliveryOption,
     contact: ContactDetails,
     deliveryAddress?: string,
+    deliverySelection?: DeliverySelection,
   ) {
     const request: CartQuoteRequest = {
       items: cart,
       deliveryOption,
+      deliveryMethod: deliverySelection?.method,
+      deliveryZoneId: deliverySelection?.zoneId,
+      deliveryDistanceKm: deliverySelection?.distanceKm,
       deliveryAddress,
       contact,
       requestedAt: new Date().toISOString(),
@@ -83,6 +101,7 @@ export default function CatalogPage() {
       name: "confirmation",
       request,
       deliveryCost: result.deliveryCost,
+      deliveryDescription: result.deliveryDescription,
       subtotal: result.subtotal,
       total: result.total,
     });
@@ -135,13 +154,13 @@ export default function CatalogPage() {
         )}
 
         {step.name === "table-form" && (
-          <TableQuoteForm onBack={backStep} onAdd={(dimensions) => addItem("table", dimensions)} />
+          <TableQuoteForm config={pricingConfig} onBack={backStep} onAdd={(dimensions) => addItem("table", dimensions)} />
         )}
         {step.name === "bench-form" && (
-          <BenchQuoteForm onBack={backStep} onAdd={(dimensions) => addItem("bench", dimensions)} />
+          <BenchQuoteForm config={pricingConfig} onBack={backStep} onAdd={(dimensions) => addItem("bench", dimensions)} />
         )}
         {step.name === "mirror-form" && (
-          <MirrorQuoteForm onBack={backStep} onAdd={(dimensions) => addItem("mirror", dimensions)} />
+          <MirrorQuoteForm config={pricingConfig} onBack={backStep} onAdd={(dimensions) => addItem("mirror", dimensions)} />
         )}
         {step.name === "cart" && (
           <Cart
@@ -152,6 +171,7 @@ export default function CatalogPage() {
               setStep({ name: "select" });
             }}
             onCheckout={() => setStep({ name: "checkout" })}
+            config={pricingConfig}
           />
         )}
         {step.name === "checkout" && (
@@ -159,6 +179,7 @@ export default function CatalogPage() {
             items={cart}
             onBack={() => setStep({ name: "cart" })}
             onSubmit={handleCheckout}
+            config={pricingConfig}
           />
         )}
         {step.name === "coming-soon" && (
@@ -174,6 +195,7 @@ export default function CatalogPage() {
           <QuoteSummary
             request={step.request}
             deliveryCost={step.deliveryCost}
+            deliveryDescription={step.deliveryDescription}
             subtotal={step.subtotal}
             total={step.total}
             onNew={handleNew}

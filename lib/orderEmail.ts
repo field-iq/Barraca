@@ -17,6 +17,12 @@ export interface ResolvedOrder {
     notes?: string;
   };
   items: ResolvedOrderItem[];
+  itemsSubtotal: number;
+  delivery: {
+    option: "delivery" | "pickup";
+    description: string;
+    cost: number;
+  };
   total: number;
   createdAt: Date;
 }
@@ -30,6 +36,7 @@ export function buildAdminOrderEmail(order: ResolvedOrder): string {
       </p>
       ${orderTable(order)}
       <div style="margin-top:24px;padding:18px;background:#f4f0e8;border-radius:6px;color:#3f2e22">
+        <p style="margin:0 0 8px"><strong>Entrega:</strong> ${escapeHtml(order.delivery.description)}</p>
         <p style="margin:0 0 8px"><strong>Email:</strong> <a href="mailto:${escapeAttribute(order.customer.email)}" style="color:#6b4f3a">${escapeHtml(order.customer.email)}</a></p>
         ${order.customer.phone ? `<p style="margin:0 0 8px"><strong>Teléfono:</strong> ${escapeHtml(order.customer.phone)}</p>` : ""}
         ${order.customer.notes ? `<p style="margin:0"><strong>Comentarios:</strong><br>${escapeHtml(order.customer.notes).replace(/\n/g, "<br>")}</p>` : ""}
@@ -47,6 +54,9 @@ export function buildCustomerOrderEmail(order: ResolvedOrder): string {
         Recibimos tu pedido y nos pondremos en contacto para confirmar disponibilidad, entrega y forma de pago.
       </p>
       ${orderTable(order)}
+      <p style="margin:18px 0 0;color:#6b4f3a;font-size:14px;line-height:1.6">
+        <strong>Entrega:</strong> ${escapeHtml(order.delivery.description)}
+      </p>
       <p style="margin:22px 0 0;color:#6b4f3a;font-size:14px;line-height:1.6">
         Este correo confirma la solicitud del pedido. No se realizó ningún cobro desde el sitio.
       </p>
@@ -68,6 +78,8 @@ export function buildOrderText(order: ResolvedOrder, customerCopy: boolean): str
     "",
     ...lines,
     "",
+    `Entrega: ${order.delivery.description}`,
+    order.delivery.cost > 0 ? `Costo de envío: ${formatARS(order.delivery.cost)}` : "",
     `Total en efectivo: ${formatARS(order.total)}`,
     `Email: ${order.customer.email}`,
     order.customer.phone ? `Teléfono: ${order.customer.phone}` : "",
@@ -105,6 +117,14 @@ function orderTable(order: ResolvedOrder): string {
       </thead>
       <tbody>${rows}</tbody>
       <tfoot>
+        <tr>
+          <td colspan="2" style="padding:14px 8px 0;text-align:right;color:#6b4f3a">Productos</td>
+          <td style="padding:14px 8px 0;text-align:right;white-space:nowrap">${formatARS(order.itemsSubtotal)}</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="padding:8px 8px 0;text-align:right;color:#6b4f3a">${order.delivery.option === "delivery" ? "Envío" : "Retiro"}</td>
+          <td style="padding:8px 8px 0;text-align:right;white-space:nowrap">${order.delivery.cost > 0 ? formatARS(order.delivery.cost) : "Sin cargo"}</td>
+        </tr>
         <tr>
           <td colspan="2" style="padding:16px 8px 0;text-align:right;font-weight:bold">Total en efectivo</td>
           <td style="padding:16px 8px 0;text-align:right;font-size:20px;font-weight:bold;white-space:nowrap">${formatARS(order.total)}</td>

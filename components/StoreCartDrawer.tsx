@@ -4,16 +4,29 @@ import Image from "next/image";
 import {
   Check,
   ChevronLeft,
+  MapPin,
   Minus,
   Plus,
+  Route,
   Send,
   ShoppingBag,
+  Store,
   Trash2,
+  Truck,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatARS } from "@/lib/format";
-import type { StoreOrderResult } from "@/lib/orderTypes";
+import {
+  DEFAULT_PRICING_CONFIG,
+  type PricingConfig,
+} from "@/lib/pricing/pricingConfig";
+import { calculateDeliveryCost } from "@/lib/pricing/tablePricing";
+import type {
+  StoreDeliveryMethod,
+  StoreDeliveryOption,
+  StoreOrderResult,
+} from "@/lib/orderTypes";
 import { useStoreCart } from "./StoreCartProvider";
 
 type DrawerStep = "cart" | "checkout" | "success";
@@ -46,9 +59,23 @@ export function StoreCartDrawer() {
   } = useStoreCart();
   const [step, setStep] = useState<DrawerStep>("cart");
   const [form, setForm] = useState<CustomerForm>(EMPTY_FORM);
+  const [pricingConfig, setPricingConfig] = useState<PricingConfig>(DEFAULT_PRICING_CONFIG);
+  const [deliveryOption, setDeliveryOption] = useState<StoreDeliveryOption | "">("");
+  const [deliveryMethod, setDeliveryMethod] = useState<StoreDeliveryMethod | "">("");
+  const [deliveryZoneId, setDeliveryZoneId] = useState("");
+  const [distanceInput, setDistanceInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [orderId, setOrderId] = useState("");
+
+  useEffect(() => {
+    fetch("/api/pricing", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((data: PricingConfig) => setPricingConfig(data))
+      .catch(() => {
+        // Keep bundled defaults if the pricing service is temporarily unavailable.
+      });
+  }, []);
 
   const resolvedItems = useMemo(
     () =>
@@ -62,11 +89,48 @@ export function StoreCartDrawer() {
     (sum, item) => sum + item.product.cashPrice * item.quantity,
     0,
   );
+  const enabledZones = useMemo(
+    () => pricingConfig.delivery.zones.filter((zone) => zone.enabled),
+    [pricingConfig.delivery.zones],
+  );
+  const zoneAvailable = pricingConfig.delivery.zonesEnabled && enabledZones.length > 0;
+  const distanceAvailable = pricingConfig.delivery.distanceEnabled;
+  const selectedZone = enabledZones.find((zone) => zone.id === deliveryZoneId);
+  const distanceKm = Number(distanceInput.replace(",", "."));
+  const distanceValid = Number.isFinite(distanceKm)
+    && distanceKm > 0
+    && distanceKm <= pricingConfig.delivery.maximumDistanceKm;
+  const deliveryCost = deliveryOption !== "delivery"
+    ? 0
+    : deliveryMethod === "zone"
+      ? selectedZone?.price ?? null
+      : deliveryMethod === "distance" && distanceValid
+        ? calculateDeliveryCost(distanceKm, pricingConfig.delivery)
+        : null;
+  const orderTotal = total + (deliveryCost ?? 0);
+  const deliveryValid = deliveryOption === "pickup"
+    || (deliveryOption === "delivery" && deliveryCost !== null);
+
+  useEffect(() => {
+    if (!enabledZones.some((zone) => zone.id === deliveryZoneId)) {
+      setDeliveryZoneId(enabledZones[0]?.id ?? "");
+    }
+    if (deliveryMethod === "zone" && !zoneAvailable) {
+      setDeliveryMethod(distanceAvailable ? "distance" : "");
+    }
+    if (deliveryMethod === "distance" && !distanceAvailable) {
+      setDeliveryMethod(zoneAvailable ? "zone" : "");
+    }
+  }, [deliveryMethod, deliveryZoneId, distanceAvailable, enabledZones, zoneAvailable]);
 
   function close() {
     closeCart();
+    setStep("cart");
+    setError("");
+    setDeliveryOption("");
+    setDeliveryMethod("");
+    setDistanceInput("");
     if (step === "success") {
-      setStep("cart");
       setOrderId("");
       setForm(EMPTY_FORM);
     }
@@ -75,6 +139,12 @@ export function StoreCartDrawer() {
   async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (sending || resolvedItems.length === 0) return;
+    if (!deliveryValid) {
+      setError(deliveryOption
+        ? "Completá los datos para calcular el envío."
+        : "Elegí si querés recibir el pedido con envío o retirarlo.");
+      return;
+    }
     setSending(true);
     setError("");
 
@@ -90,6 +160,14 @@ export function StoreCartDrawer() {
             phone: form.phone.trim() || undefined,
             notes: form.notes.trim() || undefined,
           },
+          delivery: deliveryOption === "pickup"
+            ? { option: deliveryOption }
+            : {
+                option: deliveryOption,
+                method: deliveryMethod,
+                ...(deliveryMethod === "zone" ? { zoneId: deliveryZoneId } : {}),
+                ...(deliveryMethod === "distance" ? { distanceKm } : {}),
+              },
           website: form.website,
         }),
       });
@@ -242,7 +320,13 @@ export function StoreCartDrawer() {
                 <p className="mt-1 text-xs text-walnut/50">Entrega y forma de pago se coordinan con el taller.</p>
                 <button
                   type="button"
-                  onClick={() => setStep("checkout")}
+                  onClick={() => {
+                    setDeliveryOption("");
+                    setDeliveryMethod("");
+                    setDistanceInput("");
+                    setError("");
+                    setStep("checkout");
+                  }}
                   className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800"
                 >
                   Continuar pedido <ChevronLeft size={17} className="rotate-180" />
@@ -256,13 +340,140 @@ export function StoreCartDrawer() {
           <form onSubmit={submitOrder} className="flex min-h-0 flex-1 flex-col">
             <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5 sm:px-5">
               <div className="rounded-md border border-sand bg-white px-4 py-3">
-                <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-sm text-walnut/60">
-                    {resolvedItems.reduce((sum, item) => sum + item.quantity, 0)} artículos
-                  </span>
-                  <span className="font-serif text-xl">{formatARS(total)}</span>
+                <div className="flex justify-between gap-4 text-sm text-walnut/65">
+                  <span>{resolvedItems.reduce((sum, item) => sum + item.quantity, 0)} artículos</span>
+                  <span>{formatARS(total)}</span>
                 </div>
-              </div>
+                {deliveryOption && (
+                  <div className="mt-2 flex justify-between gap-4 text-sm text-walnut/65">
+                    <span>{deliveryOption === "pickup" ? "Retiro" : "Envío"}</span>
+                    <span>{deliveryCost === null ? "A calcular" : deliveryCost === 0 ? "Sin cargo" : formatARS(deliveryCost)}</span>
+                  </div>
+                )}
+                {deliveryCost !== null && deliveryOption && (
+                  <div className="mt-3 flex items-baseline justify-between gap-4 border-t border-sand pt-3">
+                    <span className="text-sm font-medium text-walnut">Total estimado</span>
+                    <span className="font-serif text-xl">{formatARS(orderTotal)}</span>
+                  </div>
+                )}
+                </div>
+
+              <fieldset>
+                <legend className="font-serif text-lg text-walnut">¿Querés envío?</legend>
+                <p className="mt-1 text-xs leading-5 text-walnut/55">
+                  Elegí cómo querés recibir el pedido. Los detalles se coordinan con el taller.
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <DeliveryChoice
+                    active={deliveryOption === "delivery"}
+                    icon={<Truck size={20} />}
+                    title="Con envío"
+                    subtitle="Calcular entrega"
+                    onClick={() => {
+                      setDeliveryOption("delivery");
+                      setDeliveryMethod(zoneAvailable ? "zone" : distanceAvailable ? "distance" : "");
+                      setDeliveryZoneId(enabledZones[0]?.id ?? "");
+                      setError("");
+                    }}
+                  />
+                  <DeliveryChoice
+                    active={deliveryOption === "pickup"}
+                    icon={<Store size={20} />}
+                    title="Sin envío"
+                    subtitle="Retiro a coordinar"
+                    onClick={() => {
+                      setDeliveryOption("pickup");
+                      setDeliveryMethod("");
+                      setError("");
+                    }}
+                  />
+                </div>
+
+                {deliveryOption === "delivery" && (
+                  <div className="mt-4 space-y-4 border-t border-sand pt-4">
+                    {!zoneAvailable && !distanceAvailable ? (
+                      <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                        El envío no está disponible en este momento. Elegí retiro o consultanos antes de enviar el pedido.
+                      </p>
+                    ) : (
+                      <>
+                        {zoneAvailable && distanceAvailable && (
+                          <div>
+                            <p className="mb-2 text-sm font-medium text-walnut">Cómo calcularlo</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <DeliveryMethodChoice
+                                active={deliveryMethod === "zone"}
+                                icon={<MapPin size={17} />}
+                                label="Por zona"
+                                onClick={() => setDeliveryMethod("zone")}
+                              />
+                              <DeliveryMethodChoice
+                                active={deliveryMethod === "distance"}
+                                icon={<Route size={17} />}
+                                label="Por km"
+                                onClick={() => setDeliveryMethod("distance")}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {deliveryMethod === "zone" && zoneAvailable && (
+                          <FormField label="Zona de entrega" htmlFor="store-delivery-zone">
+                            <select
+                              id="store-delivery-zone"
+                              value={deliveryZoneId}
+                              onChange={(event) => setDeliveryZoneId(event.target.value)}
+                              className="h-11 w-full rounded-md border border-sand bg-white px-3 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                            >
+                              {enabledZones.map((zone) => (
+                                <option key={zone.id} value={zone.id}>{zone.name} · {formatARS(zone.price)}</option>
+                              ))}
+                            </select>
+                            {selectedZone?.description && (
+                              <p className="mt-1.5 text-xs leading-5 text-walnut/50">Incluye: {selectedZone.description}</p>
+                            )}
+                          </FormField>
+                        )}
+
+                        {deliveryMethod === "distance" && distanceAvailable && (
+                          <FormField label="Distancia aproximada" htmlFor="store-delivery-distance">
+                            <div className="relative">
+                              <input
+                                id="store-delivery-distance"
+                                type="number"
+                                inputMode="decimal"
+                                min="0.1"
+                                max={pricingConfig.delivery.maximumDistanceKm}
+                                step="0.1"
+                                value={distanceInput}
+                                onChange={(event) => setDistanceInput(event.target.value)}
+                                placeholder="Ej: 24"
+                                className="h-11 w-full rounded-md border border-sand bg-white px-3 pr-12 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                              />
+                              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-walnut/55">km</span>
+                            </div>
+                            <p className="mt-1.5 text-xs leading-5 text-walnut/50">
+                              Calculá la ruta desde {pricingConfig.delivery.originAddress}. El importe es estimativo.
+                            </p>
+                            {distanceInput !== "" && !distanceValid && (
+                              <p className="mt-2 text-xs text-amber-700">
+                                Ingresá entre 0,1 y {pricingConfig.delivery.maximumDistanceKm} km.
+                              </p>
+                            )}
+                          </FormField>
+                        )}
+
+                        {deliveryCost !== null && deliveryCost > 0 && (
+                          <div className="flex items-center justify-between gap-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-sm text-emerald-900">
+                            <span>Envío estimado</span>
+                            <strong>{formatARS(deliveryCost)}</strong>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </fieldset>
 
               <div className="grid gap-4">
                 <FormField label="Nombre y apellido" htmlFor="order-name">
@@ -332,13 +543,13 @@ export function StoreCartDrawer() {
             <footer className="shrink-0 border-t border-sand bg-white px-4 py-4 sm:px-5">
               <button
                 type="submit"
-                disabled={sending}
+                disabled={sending || !deliveryValid}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-50"
               >
                 <Send size={17} /> {sending ? "Enviando pedido..." : "Enviar pedido"}
               </button>
               <p className="mt-2 text-center text-xs text-walnut/50">
-                Este envío no realiza un cobro. La Barraca confirmará disponibilidad y entrega.
+                Este pedido no realiza un cobro. La Barraca confirmará disponibilidad y entrega.
               </p>
             </footer>
           </form>
@@ -365,6 +576,66 @@ export function StoreCartDrawer() {
         )}
       </section>
     </div>
+  );
+}
+
+function DeliveryChoice({
+  active,
+  icon,
+  title,
+  subtitle,
+  onClick,
+}: {
+  active: boolean;
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`min-h-24 rounded-md border p-3 text-left transition ${
+        active
+          ? "border-emerald-700 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-700"
+          : "border-sand bg-white text-walnut hover:border-bark/50"
+      }`}
+    >
+      <span className="flex items-center gap-2">
+        {icon}
+        <span className="text-sm font-semibold">{title}</span>
+      </span>
+      <span className="mt-2 block text-xs opacity-65">{subtitle}</span>
+    </button>
+  );
+}
+
+function DeliveryMethodChoice({
+  active,
+  icon,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`inline-flex h-10 items-center justify-center gap-2 rounded-md border text-sm font-medium transition ${
+        active
+          ? "border-bark bg-bark text-cream"
+          : "border-sand bg-white text-walnut hover:border-bark/50"
+      }`}
+    >
+      {icon} {label}
+    </button>
   );
 }
 

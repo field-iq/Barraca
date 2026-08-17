@@ -1,6 +1,7 @@
 import { cartSubtotal } from "@/lib/cart";
 import { formatARS } from "@/lib/format";
 import type { CartItem } from "@/lib/quoteTypes";
+import type { PricingConfig } from "@/lib/pricing/pricingConfig";
 import { CartItemCard } from "./CartItemCard";
 
 interface CartProps {
@@ -8,10 +9,11 @@ interface CartProps {
   onRemove: (id: string) => void;
   onAddMore: () => void;
   onCheckout: () => void;
+  config: PricingConfig;
 }
 
-export function Cart({ items, onRemove, onAddMore, onCheckout }: CartProps) {
-  const subtotal = cartSubtotal(items);
+export function Cart({ items, onRemove, onAddMore, onCheckout, config }: CartProps) {
+  const subtotal = cartSubtotal(items, config);
 
   return (
     <section className="max-w-2xl mx-auto bg-white border border-sand rounded-2xl p-5 sm:p-8">
@@ -34,7 +36,7 @@ export function Cart({ items, onRemove, onAddMore, onCheckout }: CartProps) {
         <>
           <div>
             {items.map((item) => (
-              <CartItemCard key={item.id} item={item} onRemove={onRemove} />
+              <CartItemCard key={item.id} item={item} onRemove={onRemove} config={config} />
             ))}
           </div>
 

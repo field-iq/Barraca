@@ -4,11 +4,13 @@ import { formatARS } from "@/lib/format";
 const PRODUCT_LABEL: Record<string, string> = {
   table: "Mesa a medida",
   bench: "Banco a medida",
+  mirror: "Espejo a medida",
 };
 
 interface QuoteSummaryProps {
   request: CartQuoteRequest;
   deliveryCost: number;
+  deliveryDescription: string;
   subtotal: number;
   total: number;
   onNew: () => void;
@@ -17,6 +19,7 @@ interface QuoteSummaryProps {
 export function QuoteSummary({
   request,
   deliveryCost,
+  deliveryDescription,
   subtotal,
   total,
   onNew,
@@ -84,6 +87,9 @@ export function QuoteSummary({
             label="Envío"
             value={deliveryOption === "pickup" ? "Gratis (retiro)" : formatARS(deliveryCost)}
           />
+          {deliveryOption === "delivery" && (
+            <Row label="Modalidad" value={deliveryDescription} />
+          )}
         </dl>
         <div className="mt-4 pt-4 border-t border-sand flex justify-between items-baseline">
           <span className="font-serif text-walnut">Total estimado</span>

@@ -13,6 +13,7 @@ import {
   LogOut,
   Package,
   Plus,
+  Ruler,
   Save,
   Tags,
   Trash2,
@@ -214,6 +215,22 @@ export function AdminCatalog({
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
+        <nav className="mb-6 flex gap-1 border-b border-sand" aria-label="Administración">
+          <Link
+            href="/admin/catalogo"
+            aria-current="page"
+            className="inline-flex h-11 items-center gap-2 border-b-2 border-bark px-3 text-sm font-medium text-bark"
+          >
+            <Package size={17} /> Catálogo
+          </Link>
+          <Link
+            href="/admin/precios"
+            className="inline-flex h-11 items-center gap-2 border-b-2 border-transparent px-3 text-sm text-walnut/60 hover:text-walnut"
+          >
+            <Ruler size={17} /> A medida
+          </Link>
+        </nav>
+
         <div className="mb-5 flex flex-col gap-3 border-b border-sand pb-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="font-serif text-2xl">Administrar tienda</h2>

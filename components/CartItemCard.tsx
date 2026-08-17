@@ -1,6 +1,7 @@
 import { formatARS } from "@/lib/format";
 import { itemPrice } from "@/lib/cart";
 import type { CartItem } from "@/lib/quoteTypes";
+import type { PricingConfig } from "@/lib/pricing/pricingConfig";
 
 const PRODUCT_LABEL: Record<string, string> = {
   table: "Mesa a medida",
@@ -11,11 +12,12 @@ const PRODUCT_LABEL: Record<string, string> = {
 interface CartItemCardProps {
   item: CartItem;
   onRemove: (id: string) => void;
+  config: PricingConfig;
 }
 
-export function CartItemCard({ item, onRemove }: CartItemCardProps) {
+export function CartItemCard({ item, onRemove, config }: CartItemCardProps) {
   const { dimensions } = item;
-  const price = itemPrice(item);
+  const price = itemPrice(item, config);
 
   return (
     <div className="flex items-start justify-between gap-4 py-4 border-b border-sand last:border-0">

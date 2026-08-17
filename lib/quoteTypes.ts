@@ -70,10 +70,20 @@ export interface CartItem {
 }
 
 export type DeliveryOption = "delivery" | "pickup";
+export type DeliveryMethod = "zone" | "distance";
+
+export interface DeliverySelection {
+  method: DeliveryMethod;
+  zoneId?: string;
+  distanceKm?: number;
+}
 
 export interface CartQuoteRequest {
   items: CartItem[];
   deliveryOption: DeliveryOption;
+  deliveryMethod?: DeliveryMethod;
+  deliveryZoneId?: string;
+  deliveryDistanceKm?: number;
   deliveryAddress?: string;
   contact: ContactDetails;
   requestedAt: string;

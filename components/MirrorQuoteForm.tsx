@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TableDimensions } from "@/lib/quoteTypes";
 import { calculateMirrorQuote } from "@/lib/pricing/mirrorPricing";
+import {
+  getDefaultDimensions,
+  validateProductDimensions,
+  type DimensionRange,
+  type PricingConfig,
+} from "@/lib/pricing/pricingConfig";
 import { formatARS } from "@/lib/format";
 import { getProduct } from "@/lib/products";
 import { ImageSlideshow } from "./ImageSlideshow";
@@ -10,20 +16,19 @@ import { ImageSlideshow } from "./ImageSlideshow";
 interface MirrorQuoteFormProps {
   onBack: () => void;
   onAdd: (dimensions: TableDimensions) => void;
+  config: PricingConfig;
 }
 
-const DEFAULT_DIMENSIONS: TableDimensions = {
-  widthCm: 60,
-  lengthCm: 80,
-  heightCm: 1,
-};
+export function MirrorQuoteForm({ onBack, onAdd, config }: MirrorQuoteFormProps) {
+  const [dimensions, setDimensions] = useState<TableDimensions>(() => getDefaultDimensions("mirror", config));
+  const ranges = config.espejo.dimensions;
 
-export function MirrorQuoteForm({ onBack, onAdd }: MirrorQuoteFormProps) {
-  const [dimensions, setDimensions] = useState<TableDimensions>(DEFAULT_DIMENSIONS);
+  useEffect(() => setDimensions(getDefaultDimensions("mirror", config)), [config]);
 
-  const dimensionsValid = isDimensionsValid(dimensions);
+  const dimensionErrors = validateProductDimensions("mirror", dimensions, config);
+  const dimensionsValid = dimensionErrors.length === 0;
   const estimatedPrice = dimensionsValid
-    ? calculateMirrorQuote(dimensions, null).total
+    ? calculateMirrorQuote(dimensions, null, config.espejo, config.delivery, false).total
     : null;
 
   function handleSubmit(e: React.FormEvent) {
@@ -70,16 +75,24 @@ export function MirrorQuoteForm({ onBack, onAdd }: MirrorQuoteFormProps) {
             label="Ancho"
             id="dim-width"
             value={dimensions.widthCm}
+            range={ranges.widthCm}
             onChange={(widthCm) => setDimensions((d) => ({ ...d, widthCm }))}
           />
           <DimensionField
             label="Alto"
             id="dim-length"
             value={dimensions.lengthCm}
+            range={ranges.lengthCm}
             onChange={(lengthCm) => setDimensions((d) => ({ ...d, lengthCm }))}
           />
         </div>
       </fieldset>
+
+      {!dimensionsValid && (
+        <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900" role="alert">
+          {dimensionErrors[0]}
+        </p>
+      )}
 
       <div className="pt-2 border-t border-sand flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         {estimatedPrice !== null && (
@@ -106,12 +119,14 @@ function DimensionField({
   label,
   id,
   value,
+  range,
   onChange,
   hint,
 }: {
   label: string;
   id: string;
   value: number;
+  range: DimensionRange;
   onChange: (n: number) => void;
   hint?: string;
 }) {
@@ -125,8 +140,8 @@ function DimensionField({
           id={id}
           type="number"
           inputMode="numeric"
-          min={1}
-          max={500}
+          min={range.min}
+          max={range.max}
           value={Number.isFinite(value) ? value : ""}
           onChange={(e) => onChange(Number(e.target.value))}
           className="w-full rounded-lg border border-sand bg-white pl-3 pr-10 py-2.5 text-walnut focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
@@ -135,13 +150,8 @@ function DimensionField({
           cm
         </span>
       </div>
+      <p className="text-xs text-walnut/45">Entre {range.min} y {range.max} cm</p>
       {hint && <p className="text-xs text-walnut/40">{hint}</p>}
     </div>
-  );
-}
-
-function isDimensionsValid(d: TableDimensions): boolean {
-  return [d.widthCm, d.lengthCm].every(
-    (n) => Number.isFinite(n) && n > 0 && n <= 500,
   );
 }
