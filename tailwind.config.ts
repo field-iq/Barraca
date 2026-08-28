@@ -17,8 +17,8 @@ const config: Config = {
         accent: "#B5835A",
       },
       fontFamily: {
-        sans: ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
-        serif: ["ui-serif", "Georgia", "Cambria", "Times New Roman", "serif"],
+        sans: ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        serif: ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
       },
     },
   },

@@ -3,7 +3,9 @@ import { STANDARD_FURNITURE } from "./standardFurniture";
 export interface CatalogCategory {
   id: string;
   name: string;
+  nameEn?: string;
   description: string;
+  descriptionEn?: string;
   sortOrder: number;
   visible: boolean;
 }
@@ -12,9 +14,13 @@ export interface CatalogProduct {
   id: string;
   categoryId: string;
   name: string;
+  nameEn?: string;
   description: string;
+  descriptionEn?: string;
   detailTitle: string;
+  detailTitleEn?: string;
   detailDescription: string;
+  detailDescriptionEn?: string;
   dimensions: string;
   listPrice: number;
   cashPrice: number;
@@ -35,28 +41,36 @@ const DEFAULT_CATEGORIES: CatalogCategory[] = [
   {
     id: "mesas-comedor",
     name: "Mesas de comedor",
+    nameEn: "Dining tables",
     description: "Mesas de madera maciza en medidas estándar.",
+    descriptionEn: "Solid wood tables in standard sizes.",
     sortOrder: 0,
     visible: true,
   },
   {
     id: "camastros",
     name: "Camastros",
+    nameEn: "Daybeds",
     description: "Camastros de madera para espacios de descanso.",
+    descriptionEn: "Wooden daybeds for relaxation spaces.",
     sortOrder: 1,
     visible: true,
   },
   {
     id: "mesas-ratonas",
     name: "Mesas ratonas",
+    nameEn: "Coffee tables",
     description: "Mesas bajas para living.",
+    descriptionEn: "Low tables for the living room.",
     sortOrder: 2,
     visible: true,
   },
   {
     id: "cilindros",
     name: "Cilindros",
+    nameEn: "Cylinders",
     description: "Mesas auxiliares y piezas decorativas.",
+    descriptionEn: "Side tables and decorative pieces.",
     sortOrder: 3,
     visible: true,
   },
@@ -77,9 +91,13 @@ export const DEFAULT_CATALOG: CatalogData = {
     id: item.id,
     categoryId: categoryForProduct(item.id),
     name: item.name,
+    nameEn: item.nameEn,
     description: item.description,
+    descriptionEn: item.descriptionEn,
     detailTitle: item.detailTitle,
+    detailTitleEn: item.detailTitleEn,
     detailDescription: item.detailDescription,
+    detailDescriptionEn: item.detailDescriptionEn,
     dimensions: item.dimensions,
     listPrice: item.listPrice,
     cashPrice: item.cashPrice,

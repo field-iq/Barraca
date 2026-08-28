@@ -1,5 +1,8 @@
+"use client";
+
 import { PRODUCTS } from "@/lib/products";
 import type { ProductId } from "@/lib/quoteTypes";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ProductCard } from "./ProductCard";
 
 interface ProductSelectorProps {
@@ -7,6 +10,8 @@ interface ProductSelectorProps {
 }
 
 export function ProductSelector({ onSelect }: ProductSelectorProps) {
+  const { t } = useLanguage();
+
   return (
     <section aria-labelledby="product-selector-title">
       <div className="text-center max-w-2xl mx-auto mb-8">
@@ -14,11 +19,10 @@ export function ProductSelector({ onSelect }: ProductSelectorProps) {
           id="product-selector-title"
           className="font-serif text-3xl sm:text-4xl text-walnut"
         >
-          Cotizá tu mueble a medida
+          {t("productSelector.title")}
         </h1>
         <p className="mt-3 text-walnut/70">
-          Elegí el producto que querés cotizar. Hacemos cada pieza a mano en
-          nuestro taller, según tus medidas.
+          {t("productSelector.description")}
         </p>
       </div>
 

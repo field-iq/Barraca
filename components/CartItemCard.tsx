@@ -1,12 +1,16 @@
+"use client";
+
 import { formatARS } from "@/lib/format";
 import { itemPrice } from "@/lib/cart";
 import type { CartItem } from "@/lib/quoteTypes";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n/translations";
 
-const PRODUCT_LABEL: Record<string, string> = {
-  table: "Mesa a medida",
-  bench: "Banco a medida",
-  mirror: "Espejo a medida",
+const PRODUCT_LABEL_KEY: Record<string, TranslationKey> = {
+  table: "cartItem.table",
+  bench: "cartItem.bench",
+  mirror: "cartItem.mirror",
 };
 
 interface CartItemCardProps {
@@ -16,6 +20,7 @@ interface CartItemCardProps {
 }
 
 export function CartItemCard({ item, onRemove, config }: CartItemCardProps) {
+  const { t } = useLanguage();
   const { dimensions } = item;
   const price = itemPrice(item, config);
 
@@ -23,7 +28,7 @@ export function CartItemCard({ item, onRemove, config }: CartItemCardProps) {
     <div className="flex items-start justify-between gap-4 py-4 border-b border-sand last:border-0">
       <div className="flex-1 min-w-0">
         <p className="font-medium text-walnut">
-          {PRODUCT_LABEL[item.productType] ?? "Mueble a medida"}
+          {t(PRODUCT_LABEL_KEY[item.productType] ?? "cartItem.fallback")}
         </p>
         <p className="text-sm text-walnut/60 mt-0.5">
           {item.productType === "mirror"
@@ -36,7 +41,7 @@ export function CartItemCard({ item, onRemove, config }: CartItemCardProps) {
         <button
           type="button"
           onClick={() => onRemove(item.id)}
-          aria-label="Eliminar ítem"
+          aria-label={t("cartItem.removeAriaLabel")}
           className="text-walnut/30 hover:text-bark transition text-lg leading-none"
         >
           ×

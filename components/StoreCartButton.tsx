@@ -1,17 +1,23 @@
 "use client";
 
 import { ShoppingBasket } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useStoreCart } from "./StoreCartProvider";
 
 export function StoreCartButton({ overlay = false }: { overlay?: boolean }) {
+  const { t } = useLanguage();
   const { itemCount, openCart } = useStoreCart();
 
   return (
     <button
       type="button"
       onClick={openCart}
-      title="Abrir canasta"
-      aria-label={`Abrir carrito, ${itemCount} ${itemCount === 1 ? "artículo" : "artículos"}`}
+      title={t("storeCartButton.title")}
+      aria-label={
+        itemCount === 1
+          ? t("storeCartButton.ariaLabelOne")
+          : t("storeCartButton.ariaLabelMany", { count: itemCount })
+      }
       className={`relative inline-flex h-10 w-10 shrink-0 items-center justify-center transition ${
         overlay
           ? "ml-1 border-l border-white/25 pl-3 text-[#f1c0a7] hover:text-white"

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export interface ShowcaseItem {
   title: string;
@@ -23,6 +24,7 @@ interface CircularShowcaseProps {
 }
 
 export function CircularShowcase({ items, autoplay = true, tone = "light" }: CircularShowcaseProps) {
+  const { t } = useLanguage();
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
@@ -80,8 +82,8 @@ export function CircularShowcase({ items, autoplay = true, tone = "light" }: Cir
       ref={rootRef}
       className="grid min-w-0 items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20"
       role="region"
-      aria-roledescription="carrusel"
-      aria-label="Piezas destacadas de La Barraca de Juan"
+      aria-roledescription={t("showcase.carousel")}
+      aria-label={t("showcase.ariaLabel")}
       tabIndex={0}
       onKeyDown={(event) => {
         if (event.key === "ArrowLeft") {
@@ -112,7 +114,7 @@ export function CircularShowcase({ items, autoplay = true, tone = "light" }: Cir
               animate={position}
               transition={reduceMotion ? { duration: 0 } : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => goTo(index, index >= activeIndex ? 1 : -1)}
-              aria-label={`Mostrar ${item.title}`}
+              aria-label={`${t("showcase.show")} ${item.title}`}
               aria-hidden={!isVisible}
               tabIndex={isVisible ? 0 : -1}
             >
@@ -166,7 +168,7 @@ export function CircularShowcase({ items, autoplay = true, tone = "light" }: Cir
           href={activeItem.href}
           className={`mt-7 inline-flex w-fit items-center gap-2 text-sm font-semibold hover:underline hover:underline-offset-4 ${isDark ? "text-[#efb296] hover:text-white" : "text-[#216e4e]"}`}
         >
-          Ver en el catálogo <ArrowRight size={17} aria-hidden="true" />
+          {t("showcase.viewInCatalog")} <ArrowRight size={17} aria-hidden="true" />
         </Link>
 
         <div className="mt-10 flex gap-3">
@@ -174,8 +176,8 @@ export function CircularShowcase({ items, autoplay = true, tone = "light" }: Cir
             type="button"
             onClick={goPrevious}
             disabled={itemCount < 2}
-            aria-label="Ver pieza anterior"
-            title="Anterior"
+            aria-label={t("showcase.previousAriaLabel")}
+            title={t("showcase.previousTitle")}
             className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition disabled:opacity-40 ${isDark ? "border-white/30 text-white hover:border-white hover:bg-white hover:text-[#17211e]" : "border-walnut/20 text-walnut hover:border-walnut hover:bg-walnut hover:text-white"}`}
           >
             <ArrowLeft size={18} aria-hidden="true" />
@@ -184,8 +186,8 @@ export function CircularShowcase({ items, autoplay = true, tone = "light" }: Cir
             type="button"
             onClick={goNext}
             disabled={itemCount < 2}
-            aria-label="Ver pieza siguiente"
-            title="Siguiente"
+            aria-label={t("showcase.nextAriaLabel")}
+            title={t("showcase.nextTitle")}
             className={`inline-flex h-11 w-11 items-center justify-center rounded-full transition disabled:opacity-40 ${isDark ? "bg-[#efb296] text-[#17211e] hover:bg-white" : "bg-walnut text-white hover:bg-[#216e4e]"}`}
           >
             <ArrowRight size={18} aria-hidden="true" />

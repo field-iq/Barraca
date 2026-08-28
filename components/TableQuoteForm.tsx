@@ -11,6 +11,7 @@ import {
 } from "@/lib/pricing/pricingConfig";
 import { formatARS } from "@/lib/format";
 import { getProduct } from "@/lib/products";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ImageSlideshow } from "./ImageSlideshow";
 
 interface TableQuoteFormProps {
@@ -20,6 +21,7 @@ interface TableQuoteFormProps {
 }
 
 export function TableQuoteForm({ onBack, onAdd, config }: TableQuoteFormProps) {
+  const { t } = useLanguage();
   const [dimensions, setDimensions] = useState<TableDimensions>(() => getDefaultDimensions("table", config));
   const ranges = config.mesa.dimensions;
 
@@ -44,10 +46,9 @@ export function TableQuoteForm({ onBack, onAdd, config }: TableQuoteFormProps) {
     >
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-walnut">Mesa</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl text-walnut">{t("quoteForm.table.title")}</h2>
           <p className="mt-1 text-sm text-walnut/70">
-            Indicá las medidas en centímetros. Si no estás seguro, escribí un
-            valor aproximado.
+            {t("quoteForm.table.description")}
           </p>
         </div>
         <button
@@ -55,38 +56,38 @@ export function TableQuoteForm({ onBack, onAdd, config }: TableQuoteFormProps) {
           onClick={onBack}
           className="shrink-0 text-sm text-bark hover:text-walnut underline underline-offset-4"
         >
-          Cambiar producto
+          {t("quoteForm.changeProduct")}
         </button>
       </header>
 
       <div className="relative aspect-[16/9] w-full rounded-xl bg-sand overflow-hidden">
         <ImageSlideshow
           images={getProduct("table")?.images ?? ["/mesa-1.jpeg"]}
-          alt="Mesa de madera maciza hecha en el taller de La Barraca"
+          alt={t("quoteForm.table.imageAlt")}
           sizes="(max-width: 768px) 100vw, 720px"
           priority
         />
       </div>
 
       <fieldset className="space-y-4">
-        <legend className="font-serif text-xl text-walnut">Medidas</legend>
+        <legend className="font-serif text-xl text-walnut">{t("quoteForm.dimensions")}</legend>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <DimensionField
-            label="Ancho"
+            label={t("quoteForm.width")}
             id="dim-width"
             value={dimensions.widthCm}
             range={ranges.widthCm}
             onChange={(widthCm) => setDimensions((d) => ({ ...d, widthCm }))}
           />
           <DimensionField
-            label="Largo"
+            label={t("quoteForm.length")}
             id="dim-length"
             value={dimensions.lengthCm}
             range={ranges.lengthCm}
             onChange={(lengthCm) => setDimensions((d) => ({ ...d, lengthCm }))}
           />
           <DimensionField
-            label="Alto"
+            label={t("quoteForm.height")}
             id="dim-height"
             value={dimensions.heightCm}
             range={ranges.heightCm}
@@ -104,7 +105,7 @@ export function TableQuoteForm({ onBack, onAdd, config }: TableQuoteFormProps) {
       <div className="pt-2 border-t border-sand flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         {estimatedPrice !== null && (
           <p className="text-sm text-walnut/70 sm:mr-auto">
-            Precio estimado del mueble:{" "}
+            {t("quoteForm.table.estimatedPrice")}{" "}
             <span className="font-serif text-walnut font-medium">
               {formatARS(estimatedPrice)}
             </span>
@@ -115,7 +116,7 @@ export function TableQuoteForm({ onBack, onAdd, config }: TableQuoteFormProps) {
           disabled={!dimensionsValid}
           className="inline-flex items-center justify-center rounded-lg bg-bark text-cream px-5 py-3 text-sm font-medium hover:bg-walnut transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Agregar al carrito
+          {t("quoteForm.addToCart")}
         </button>
       </div>
     </form>
@@ -135,6 +136,7 @@ function DimensionField({
   range: DimensionRange;
   onChange: (n: number) => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-medium text-walnut">
@@ -155,7 +157,7 @@ function DimensionField({
           cm
         </span>
       </div>
-      <p className="text-xs text-walnut/45">Entre {range.min} y {range.max} cm</p>
+      <p className="text-xs text-walnut/45">{t("quoteForm.rangeHint", { min: range.min, max: range.max })}</p>
     </div>
   );
 }

@@ -1,4 +1,7 @@
+"use client";
+
 import type { ProductDefinition } from "@/lib/products";
+import { pickText, useLanguage } from "@/lib/i18n/LanguageContext";
 import { ImageSlideshow } from "./ImageSlideshow";
 
 interface ProductCardProps {
@@ -7,6 +10,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onSelect }: ProductCardProps) {
+  const { language, t } = useLanguage();
   const disabled = !product.available;
 
   return (
@@ -25,7 +29,7 @@ export function ProductCard({ product, onSelect }: ProductCardProps) {
         {product.images && product.images.length > 0 ? (
           <ImageSlideshow
             images={product.images}
-            alt={product.name}
+            alt={pickText(language, product.name, product.nameEn)}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             objectFit={product.imageFit ?? "cover"}
           />
@@ -35,15 +39,15 @@ export function ProductCard({ product, onSelect }: ProductCardProps) {
       </div>
 
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="font-serif text-lg text-walnut">{product.name}</h3>
+        <h3 className="font-serif text-lg text-walnut">{pickText(language, product.name, product.nameEn)}</h3>
         {!product.available && (
           <span className="text-xs uppercase tracking-wide text-bark/70 bg-cream border border-sand rounded-full px-2 py-0.5">
-            Próximamente
+            {t("productCard.comingSoon")}
           </span>
         )}
       </div>
 
-      <p className="mt-1 text-sm text-walnut/70">{product.description}</p>
+      <p className="mt-1 text-sm text-walnut/70">{pickText(language, product.description, product.descriptionEn)}</p>
     </button>
   );
 }

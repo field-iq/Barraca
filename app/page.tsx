@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,99 +14,116 @@ import {
 import { Header } from "@/components/Header";
 import { CircularShowcase, type ShowcaseItem } from "@/components/ui/circular-showcase";
 import { ParallaxHero } from "@/components/ui/parallax-hero";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const WHATSAPP_URL = "https://wa.me/5491153791654";
 
-const featuredPieces: ShowcaseItem[] = [
-  {
-    title: "Mesas que reúnen historias",
-    eyebrow: "Mesas de comedor",
-    description: "Madera, color y marcas que hacen que cada mesa sea única. Piezas sólidas, pensadas para acompañar la vida cotidiana.",
-    detail: "Pieza lista para llevar",
-    src: "/mesa-2.jpeg",
-    alt: "Mesa de comedor artesanal de madera",
-    href: "/catalogo",
-  },
-  {
-    title: "Detalles con identidad propia",
-    eyebrow: "Mesas ratonas",
-    description: "Formatos bajos y versátiles con el carácter de la madera recuperada. Cada terminación conserva una historia distinta.",
-    detail: "Madera recuperada",
-    src: "/mesa-ratona-1.jpeg",
-    alt: "Mesa ratona artesanal con detalles recuperados",
-    href: "/catalogo",
-  },
-  {
-    title: "Piezas que ordenan el espacio",
-    eyebrow: "Muebles auxiliares",
-    description: "Estanterías y muebles de apoyo que combinan guardado, presencia y una terminación artesanal imposible de repetir en serie.",
-    detail: "Disponible a confirmar",
-    src: "/estanteria-1.jpeg",
-    alt: "Estantería artesanal de madera",
-    href: "/catalogo",
-  },
-  {
-    title: "Un lugar para bajar el ritmo",
-    eyebrow: "Bancos y camastros",
-    description: "Piezas amplias y firmes para galerías, livings y rincones de descanso, construidas para durar y disfrutarse.",
-    detail: "Consultá disponibilidad",
-    src: "/banco-1.jpeg",
-    alt: "Banco artesanal de madera",
-    href: "/catalogo",
-  },
-];
-
-const stores = [
+const storeAddresses = [
   {
     name: "Boulevard Sáenz Peña",
     address: "Boulevard Sáenz Peña 1213, esquina Guareschi",
-    hours: "Sábados y domingos de 9 a 19:30",
+    hoursKey: "home.stores.hours1",
     map: "https://www.google.com/maps/search/?api=1&query=Boulevard+Saenz+Pena+1213+Tigre",
   },
   {
     name: "Rincón de Milberg",
     address: "Av. Santa María 2148, Rincón de Milberg",
-    hours: "Lunes a sábados de 10 a 17",
+    hoursKey: "home.stores.hours2",
     map: "https://www.google.com/maps/search/?api=1&query=Av+Santa+Maria+2148+Rincon+de+Milberg",
   },
-];
+] as const;
 
 export default function HomePage() {
+  const { t } = useLanguage();
+
+  const featuredPieces: ShowcaseItem[] = [
+    {
+      title: t("home.piece1.title"),
+      eyebrow: t("home.piece1.eyebrow"),
+      description: t("home.piece1.description"),
+      detail: t("home.piece1.detail"),
+      src: "/mesa-2.jpeg",
+      alt: "Mesa de comedor artesanal de madera",
+      href: "/catalogo",
+    },
+    {
+      title: t("home.piece2.title"),
+      eyebrow: t("home.piece2.eyebrow"),
+      description: t("home.piece2.description"),
+      detail: t("home.piece2.detail"),
+      src: "/mesa-ratona-1.jpeg",
+      alt: "Mesa ratona artesanal con detalles recuperados",
+      href: "/catalogo",
+    },
+    {
+      title: t("home.piece3.title"),
+      eyebrow: t("home.piece3.eyebrow"),
+      description: t("home.piece3.description"),
+      detail: t("home.piece3.detail"),
+      src: "/estanteria-1.jpeg",
+      alt: "Estantería artesanal de madera",
+      href: "/catalogo",
+    },
+    {
+      title: t("home.piece4.title"),
+      eyebrow: t("home.piece4.eyebrow"),
+      description: t("home.piece4.description"),
+      detail: t("home.piece4.detail"),
+      src: "/banco-1.jpeg",
+      alt: "Banco artesanal de madera",
+      href: "/catalogo",
+    },
+    {
+      title: t("home.piece5.title"),
+      eyebrow: t("home.piece5.eyebrow"),
+      description: t("home.piece5.description"),
+      detail: t("home.piece5.detail"),
+      src: "/espejo-1.jpeg",
+      alt: "Espejo con marco de madera maciza",
+      href: "/catalogo",
+    },
+    {
+      title: t("home.piece6.title"),
+      eyebrow: t("home.piece6.eyebrow"),
+      description: t("home.piece6.description"),
+      detail: t("home.piece6.detail"),
+      src: "/catalogo/cilindros/1.jpeg",
+      alt: "Cilindros de madera maciza",
+      href: "/catalogo",
+    },
+  ];
+
+  const stores = storeAddresses.map((store) => ({ ...store, hours: t(store.hoursKey) }));
+
   return (
     <>
       <Header overlay />
       <main>
         <ParallaxHero />
 
-        <section id="coleccion" className="scroll-mt-4 border-b border-black/10 bg-[#f7f4ee]">
-          <div className="mx-auto grid max-w-7xl md:grid-cols-2">
-            <Link href="/catalogo" className="group flex min-h-48 items-center gap-5 border-b border-black/10 px-5 py-9 md:border-b-0 md:border-r sm:px-8 lg:px-12">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#233c33] text-white">
-                <ShoppingBag size={21} aria-hidden="true" />
+        <section id="coleccion" className="scroll-mt-4 bg-[#f7f4ee] px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+          <div className="mx-auto grid max-w-[1800px] gap-4 sm:gap-6 md:grid-cols-2">
+            <Link
+              href="/catalogo"
+              className="group flex items-center justify-center gap-5 rounded-2xl border border-sand bg-white p-8 shadow-[0_15px_25px_-5px_rgba(20,15,10,0.25),0_25px_45px_-10px_rgba(20,15,10,0.3)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_25px_35px_-5px_rgba(20,15,10,0.3),0_35px_60px_-12px_rgba(20,15,10,0.4)] sm:p-10 lg:p-12"
+            >
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#233c33] text-white">
+                <ShoppingBag size={24} aria-hidden="true" />
               </span>
-              <span className="min-w-0">
-                <span className="font-serif text-2xl text-walnut sm:text-3xl">Listos para llevar</span>
-                <span className="mt-2 block max-w-md text-sm leading-6 text-walnut/65">
-                  Piezas construidas, con medidas y precios definidos. Consultá disponibilidad y coordinamos la entrega.
-                </span>
-                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#216e4e]">
-                  Explorar catálogo <ArrowRight size={16} className="transition group-hover:translate-x-1" />
-                </span>
+              <span className="inline-flex items-center gap-2.5 font-serif text-2xl text-walnut sm:text-3xl">
+                {t("home.ready.cta")} <ArrowRight size={22} className="shrink-0 text-[#216e4e] transition group-hover:translate-x-1" />
               </span>
             </Link>
 
-            <Link href="/catalogo#a-medida" className="group flex min-h-48 items-center gap-5 px-5 py-9 sm:px-8 lg:px-12">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#b85c3d] text-white">
-                <Ruler size={21} aria-hidden="true" />
+            <Link
+              href="/catalogo#a-medida"
+              className="group flex items-center justify-center gap-5 rounded-2xl border border-sand bg-white p-8 shadow-[0_15px_25px_-5px_rgba(20,15,10,0.25),0_25px_45px_-10px_rgba(20,15,10,0.3)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_25px_35px_-5px_rgba(20,15,10,0.3),0_35px_60px_-12px_rgba(20,15,10,0.4)] sm:p-10 lg:p-12"
+            >
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#b85c3d] text-white">
+                <Ruler size={24} aria-hidden="true" />
               </span>
-              <span className="min-w-0">
-                <span className="font-serif text-2xl text-walnut sm:text-3xl">Hecho a tu medida</span>
-                <span className="mt-2 block max-w-md text-sm leading-6 text-walnut/65">
-                  Elegí el tipo de mueble y sus dimensiones. Te damos una referencia y confirmamos cada proyecto con vos.
-                </span>
-                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#b04d31]">
-                  Empezar cotización <ArrowRight size={16} className="transition group-hover:translate-x-1" />
-                </span>
+              <span className="inline-flex items-center gap-2.5 font-serif text-2xl text-walnut sm:text-3xl">
+                {t("home.custom.cta")} <ArrowRight size={22} className="shrink-0 text-[#b04d31] transition group-hover:translate-x-1" />
               </span>
             </Link>
           </div>
@@ -114,50 +133,8 @@ export default function HomePage() {
           <Image src="/textures/aged-painted-boards.jpg" alt="" fill sizes="100vw" className="object-cover" />
           <div aria-hidden="true" className="absolute inset-0 bg-[#14201c]/75" />
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-black/20" />
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#efb296]">Piezas reales</p>
-                <h2 className="mt-3 max-w-2xl font-serif text-4xl leading-tight text-[#f6f1e9] sm:text-5xl">
-                  El carácter está en cada detalle
-                </h2>
-              </div>
-              <Link href="/catalogo" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition hover:text-[#efb296]">
-                Ver todo el catálogo <ArrowRight size={17} />
-              </Link>
-            </div>
-            <div className="mt-8 sm:mt-12">
-              <CircularShowcase items={featuredPieces} tone="dark" />
-            </div>
-          </div>
-        </section>
-
-        <section className="grid bg-[#22372f] text-white lg:grid-cols-2">
-          <div className="relative min-h-[460px] lg:min-h-[680px]">
-            <Image
-              src="/textures/red-timber.jpg"
-              alt="Tablas de madera recuperada en tonos naturales y rojizos"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover object-center"
-            />
-          </div>
-          <div className="flex items-center px-5 py-14 sm:px-10 lg:px-16 lg:py-20">
-            <div className="max-w-xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e4a58d]">A medida</p>
-              <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">
-                Una pieza pensada para tu espacio
-              </h2>
-              <p className="mt-6 text-base leading-7 text-white/75">
-                Mesas, bancos y espejos con las dimensiones que necesitás. Armá una cotización inicial y nos ponemos en contacto para confirmar materiales, terminación y tiempos.
-              </p>
-              <Link
-                href="/catalogo#a-medida"
-                className="mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#e7a181] px-5 text-sm font-semibold text-[#1f2d28] transition hover:bg-[#f0b69c]"
-              >
-                Cotizar mi mueble <ArrowRight size={17} />
-              </Link>
-            </div>
+          <div className="relative mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8">
+            <CircularShowcase items={featuredPieces} tone="dark" />
           </div>
         </section>
 
@@ -165,21 +142,21 @@ export default function HomePage() {
           <div className="relative flex min-h-[360px] items-end overflow-hidden text-white sm:min-h-[460px]">
             <Image src="/textures/timber-rings.jpg" alt="Troncos de madera vistos de frente" fill sizes="100vw" className="object-cover object-center" />
             <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-[#1d241f]/90 via-[#1d241f]/55 to-black/15" />
-            <div className="relative mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+            <div className="relative mx-auto w-full max-w-[1800px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
               <div className="max-w-2xl border-l border-white/45 pl-5 sm:pl-8">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/65">Vení a conocernos</p>
-                <h2 className="mt-3 font-serif text-4xl sm:text-5xl">Encontranos en Tigre</h2>
-                <p className="mt-4 max-w-xl leading-7 text-white/75">
-                Visitá nuestros espacios para ver las piezas disponibles. Los envíos y retiros se coordinan una vez confirmado el pedido.
-                </p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/65">{t("home.stores.eyebrow")}</p>
+                <h2 className="mt-3 font-serif text-4xl sm:text-5xl">{t("home.stores.title")}</h2>
               </div>
             </div>
           </div>
 
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-            <div className="grid gap-px overflow-hidden border border-black/10 bg-black/10 md:grid-cols-2">
+          <div className="mx-auto max-w-[1800px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
               {stores.map((store) => (
-                <article key={store.name} className="bg-white p-6 sm:p-8">
+                <article
+                  key={store.name}
+                  className="rounded-2xl border border-sand bg-white p-6 shadow-[0_15px_25px_-5px_rgba(20,15,10,0.25),0_25px_45px_-10px_rgba(20,15,10,0.3)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_25px_35px_-5px_rgba(20,15,10,0.3),0_35px_60px_-12px_rgba(20,15,10,0.4)] sm:p-8"
+                >
                   <MapPin size={22} className="text-[#b04d31]" aria-hidden="true" />
                   <h3 className="mt-5 font-serif text-2xl text-walnut">{store.name}</h3>
                   <p className="mt-2 max-w-md text-sm leading-6 text-walnut/70">{store.address}</p>
@@ -188,7 +165,7 @@ export default function HomePage() {
                     {store.hours}
                   </p>
                   <a href={store.map} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#216e4e] hover:underline">
-                    Cómo llegar <ArrowRight size={16} />
+                    {t("home.stores.directions")} <ArrowRight size={16} />
                   </a>
                 </article>
               ))}
@@ -200,10 +177,10 @@ export default function HomePage() {
           <Image src="/textures/blue-boards.jpg" alt="" fill sizes="100vw" className="object-cover" />
           <div aria-hidden="true" className="absolute inset-0 bg-[#182522]/80 mix-blend-multiply" />
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-black/10" />
-          <div className="relative mx-auto flex max-w-7xl flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative mx-auto flex max-w-[1800px] flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="font-serif text-3xl sm:text-4xl">¿Tenés una idea en mente?</h2>
-              <p className="mt-2 text-sm text-white/80">Escribinos y la pensamos juntos.</p>
+              <h2 className="font-serif text-3xl sm:text-4xl">{t("home.idea.title")}</h2>
+              <p className="mt-2 text-sm text-white/80">{t("home.idea.description")}</p>
             </div>
             <div className="flex flex-wrap gap-3">
               <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="inline-flex h-12 items-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-[#77321f]">
@@ -218,9 +195,20 @@ export default function HomePage() {
       </main>
 
       <footer className="bg-[#17231f] text-white/65">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-7 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>La Barraca de Juan · Muebles &amp; deco</p>
-          <p>Disponibilidad y envíos sujetos a confirmación.</p>
+        <div className="mx-auto flex max-w-[1800px] flex-col gap-2 px-4 py-7 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <p>{t("footer.tagline")}</p>
+          <p>{t("footer.notice")}</p>
+        </div>
+        <div className="border-t border-white/10 px-4 py-3 text-center text-[11px] text-white/40 sm:px-6 lg:px-8">
+          {t("footer.developedBy")}{" "}
+          <a
+            href="https://taheebo.com.au"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 transition hover:text-white/70"
+          >
+            Taheebo
+          </a>
         </div>
       </footer>
     </>

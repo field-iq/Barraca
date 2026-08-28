@@ -13,6 +13,8 @@ import type {
   DeliveryOption,
   DeliverySelection,
 } from "@/lib/quoteTypes";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n/translations";
 import { ContactGate, isContactValid } from "./ContactGate";
 
 interface CheckoutFormProps {
@@ -35,6 +37,7 @@ const DEFAULT_CONTACT: ContactDetails = {
 };
 
 export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormProps) {
+  const { t } = useLanguage();
   const enabledZones = useMemo(
     () => config.delivery.zones.filter((zone) => zone.enabled),
     [config.delivery.zones],
@@ -109,7 +112,7 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
         deliverySelection,
       );
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "No se pudo enviar la cotización.");
+      setSubmitError(error instanceof Error ? error.message : t("checkout.submitError"));
     } finally {
       setSubmitting(false);
     }
@@ -122,9 +125,9 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
     >
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-serif text-2xl text-walnut sm:text-3xl">Finalizar cotización</h2>
+          <h2 className="font-serif text-2xl text-walnut sm:text-3xl">{t("checkout.title")}</h2>
           <p className="mt-1 text-sm text-walnut/70">
-            {items.length} {items.length === 1 ? "mueble" : "muebles"} · subtotal {formatARS(subtotal)}
+            {items.length} {items.length === 1 ? t("checkout.itemCountPiece") : t("checkout.itemCountPieces")} · subtotal {formatARS(subtotal)}
           </p>
         </div>
         <button
@@ -132,26 +135,26 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
           onClick={onBack}
           className="shrink-0 text-sm text-bark underline underline-offset-4 hover:text-walnut"
         >
-          Volver al carrito
+          {t("checkout.backToCart")}
         </button>
       </header>
 
       <fieldset className="space-y-5">
-        <legend className="font-serif text-xl text-walnut">Entrega</legend>
+        <legend className="font-serif text-xl text-walnut">{t("checkout.delivery")}</legend>
         <div className={`grid gap-3 ${deliveryAvailable ? "grid-cols-2" : "grid-cols-1"}`}>
           {deliveryAvailable && (
             <DeliveryOptionButton
               active={deliveryOption === "delivery"}
               onClick={() => setDeliveryOption("delivery")}
-              title="Envío a domicilio"
-              subtitle="Elegí zona o cálculo por km"
+              title={t("checkout.homeDelivery")}
+              subtitle={t("checkout.homeDeliverySubtitle")}
             />
           )}
           <DeliveryOptionButton
             active={deliveryOption === "pickup"}
             onClick={() => setDeliveryOption("pickup")}
-            title="Retiro en taller"
-            subtitle="Sáenz Peña 1213, Tigre · gratis"
+            title={t("checkout.pickup")}
+            subtitle={t("checkout.pickupSubtitle")}
           />
         </div>
 
@@ -159,18 +162,18 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
           <div className="space-y-5 border-t border-sand pt-5">
             {zoneAvailable && distanceAvailable && (
               <div>
-                <p className="mb-2 text-sm font-medium text-walnut">Cómo cotizar el envío</p>
+                <p className="mb-2 text-sm font-medium text-walnut">{t("checkout.howToQuoteShipping")}</p>
                 <div className="grid grid-cols-2 gap-2">
                   <DeliveryMethodButton
                     active={deliveryMethod === "zone"}
                     icon={<MapPin size={18} />}
-                    label="Por zona"
+                    label={t("checkout.byZone")}
                     onClick={() => setDeliveryMethod("zone")}
                   />
                   <DeliveryMethodButton
                     active={deliveryMethod === "distance"}
                     icon={<Route size={18} />}
-                    label="Por kilómetros"
+                    label={t("checkout.byKm")}
                     onClick={() => setDeliveryMethod("distance")}
                   />
                 </div>
@@ -178,12 +181,12 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
             )}
 
             <label className="block text-sm font-medium text-walnut">
-              Dirección de entrega
+              {t("checkout.deliveryAddress")}
               <input
                 type="text"
                 value={deliveryAddress}
                 onChange={(event) => setDeliveryAddress(event.target.value)}
-                placeholder="Ej: Av. Cabildo 2040, Belgrano, CABA"
+                placeholder={t("checkout.addressPlaceholder")}
                 autoComplete="street-address"
                 className="mt-1.5 w-full rounded-lg border border-sand bg-white px-3 py-2.5 text-walnut outline-none focus:border-transparent focus:ring-2 focus:ring-accent"
               />
@@ -192,7 +195,7 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
             {deliveryMethod === "zone" ? (
               <div>
                 <label className="block text-sm font-medium text-walnut">
-                  Zona de entrega
+                  {t("checkout.deliveryZone")}
                   <select
                     value={deliveryZoneId}
                     onChange={(event) => setDeliveryZoneId(event.target.value)}
@@ -204,13 +207,13 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
                   </select>
                 </label>
                 {selectedZone?.description && (
-                  <p className="mt-2 text-xs leading-5 text-walnut/55">Incluye: {selectedZone.description}</p>
+                  <p className="mt-2 text-xs leading-5 text-walnut/55">{t("checkout.includes", { description: selectedZone.description })}</p>
                 )}
               </div>
             ) : (
               <div className="space-y-3">
                 <label className="block text-sm font-medium text-walnut">
-                  Distancia aproximada desde el taller
+                  {t("checkout.approxDistance")}
                   <div className="relative mt-1.5">
                     <input
                       type="number"
@@ -220,23 +223,23 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
                       step="0.1"
                       value={distanceInput}
                       onChange={(event) => setDistanceInput(event.target.value)}
-                      placeholder="Ej: 24"
+                      placeholder={t("checkout.distancePlaceholder")}
                       className="h-11 w-full rounded-lg border border-sand bg-white px-3 pr-12 font-normal text-walnut outline-none focus:border-transparent focus:ring-2 focus:ring-accent"
                     />
                     <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-walnut/55">km</span>
                   </div>
                 </label>
                 <p className="text-xs leading-5 text-walnut/50">
-                  Consultá la ruta desde <strong className="font-medium text-walnut/70">{config.delivery.originAddress}</strong> e ingresá los kilómetros indicados. El valor es estimativo y se confirma antes de coordinar el envío.
+                  {t("checkout.routeHint", { origin: config.delivery.originAddress })}
                 </p>
                 {distanceValid && previewDeliveryCost !== null && (
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-                    Estimación para {distanceKm} km · <strong>{formatARS(previewDeliveryCost)}</strong>
+                    {t("checkout.distanceEstimate", { km: distanceKm, amount: formatARS(previewDeliveryCost) })}
                   </div>
                 )}
                 {distanceInput !== "" && !distanceValid && (
                   <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
-                    Ingresá una distancia entre 0,1 y {config.delivery.maximumDistanceKm} km.
+                    {t("checkout.distanceRangeError", { min: "0.1", max: config.delivery.maximumDistanceKm })}
                   </p>
                 )}
               </div>
@@ -254,18 +257,18 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
       )}
 
       <div className="space-y-2 border-t border-sand pt-6 text-sm">
-        <SummaryRow label="Muebles" value={formatARS(subtotal)} />
+        <SummaryRow label={t("checkout.furniture")} value={formatARS(subtotal)} />
         <SummaryRow
-          label="Envío"
+          label={t("checkout.shipping")}
           value={deliveryOption === "pickup"
-            ? "Gratis (retiro)"
+            ? t("checkout.freePickup")
             : previewDeliveryCost === null
-              ? "A calcular"
+              ? t("checkout.toCalculate")
               : formatARS(previewDeliveryCost)}
         />
         {previewTotal !== null && (
           <div className="flex justify-between border-t border-sand pt-3 font-serif text-lg text-walnut">
-            <span>Total estimado</span>
+            <span>{t("checkout.estimatedTotal")}</span>
             <span>{formatARS(previewTotal)}</span>
           </div>
         )}
@@ -274,7 +277,7 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
         {!canSubmit && !submitting && (
           <p className="text-xs text-walnut/60 sm:mr-auto">
-            {submitHint(deliveryOption, addressValid, deliveryMethod, methodValid, isContactValid(contact))}
+            {submitHint(t, deliveryOption, addressValid, deliveryMethod, methodValid, isContactValid(contact))}
           </p>
         )}
         <button
@@ -282,7 +285,7 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
           disabled={!canSubmit}
           className="inline-flex items-center justify-center rounded-lg bg-bark px-5 py-3 text-sm font-medium text-cream transition hover:bg-walnut disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {submitting ? "Enviando..." : "Enviar cotización"}
+          {submitting ? t("checkout.sending") : t("checkout.sendQuote")}
         </button>
       </div>
     </form>
@@ -290,16 +293,17 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
 }
 
 function submitHint(
+  t: (key: TranslationKey) => string,
   option: DeliveryOption,
   addressValid: boolean,
   method: DeliveryMethod,
   methodValid: boolean,
   contactValid: boolean,
 ): string {
-  if (option === "delivery" && !addressValid) return "Ingresá una dirección completa.";
-  if (option === "delivery" && method === "zone" && !methodValid) return "Elegí una zona disponible.";
-  if (option === "delivery" && method === "distance" && !methodValid) return "Ingresá la distancia aproximada en kilómetros.";
-  if (!contactValid) return "Completá tus datos de contacto y la confirmación.";
+  if (option === "delivery" && !addressValid) return t("checkout.hintAddress");
+  if (option === "delivery" && method === "zone" && !methodValid) return t("checkout.hintZone");
+  if (option === "delivery" && method === "distance" && !methodValid) return t("checkout.hintDistance");
+  if (!contactValid) return t("checkout.hintContact");
   return "";
 }
 

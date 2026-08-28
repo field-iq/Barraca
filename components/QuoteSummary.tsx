@@ -1,10 +1,14 @@
+"use client";
+
 import type { CartQuoteRequest } from "@/lib/quoteTypes";
 import { formatARS } from "@/lib/format";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n/translations";
 
-const PRODUCT_LABEL: Record<string, string> = {
-  table: "Mesa a medida",
-  bench: "Banco a medida",
-  mirror: "Espejo a medida",
+const PRODUCT_LABEL_KEY: Record<string, TranslationKey> = {
+  table: "cartItem.table",
+  bench: "cartItem.bench",
+  mirror: "cartItem.mirror",
 };
 
 interface QuoteSummaryProps {
@@ -24,6 +28,7 @@ export function QuoteSummary({
   total,
   onNew,
 }: QuoteSummaryProps) {
+  const { t } = useLanguage();
   const { contact, items, deliveryOption, deliveryAddress } = request;
 
   return (
@@ -45,33 +50,32 @@ export function QuoteSummary({
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <h2 className="font-serif text-2xl text-walnut">¡Gracias!</h2>
+        <h2 className="font-serif text-2xl text-walnut">{t("quoteSummary.thanks")}</h2>
         <p className="mt-2 text-walnut/80">
-          Te enviamos la cotización a tu{" "}
-          {contact.preferredMethod === "email" ? "email" : "WhatsApp"}.
+          {contact.preferredMethod === "email" ? t("quoteSummary.sentEmail") : t("quoteSummary.sentWhatsapp")}
         </p>
       </div>
 
       {/* Datos de contacto */}
       <dl className="mt-6 border-t border-sand pt-6 space-y-3 text-sm">
-        {contact.email && <Row label="Email" value={contact.email} />}
-        {contact.phone && <Row label="Teléfono / WhatsApp" value={contact.phone} />}
+        {contact.email && <Row label={t("contactGate.email")} value={contact.email} />}
+        {contact.phone && <Row label={t("contactGate.phone")} value={contact.phone} />}
         {deliveryOption === "delivery" && deliveryAddress && (
-          <Row label="Dirección de entrega" value={deliveryAddress} />
+          <Row label={t("quoteSummary.deliveryAddress")} value={deliveryAddress} />
         )}
         {deliveryOption === "pickup" && (
-          <Row label="Retiro en" value="Sáenz Peña 1213, Tigre" />
+          <Row label={t("quoteSummary.pickupAt")} value="Sáenz Peña 1213, Tigre" />
         )}
       </dl>
 
       {/* Lista de muebles */}
       <div className="mt-6 border-t border-sand pt-6">
-        <h3 className="font-serif text-lg text-walnut mb-3">Muebles cotizados</h3>
+        <h3 className="font-serif text-lg text-walnut mb-3">{t("quoteSummary.quotedFurniture")}</h3>
         <dl className="space-y-2 text-sm">
           {items.map((item) => (
             <div key={item.id} className="flex justify-between gap-4">
               <dt className="text-walnut/60">
-                {PRODUCT_LABEL[item.productType] ?? "Mueble a medida"} —{" "}
+                {t(PRODUCT_LABEL_KEY[item.productType] ?? "cartItem.fallback")} —{" "}
                 {item.dimensions.widthCm} × {item.dimensions.lengthCm} × {item.dimensions.heightCm} cm
               </dt>
             </div>
@@ -82,22 +86,21 @@ export function QuoteSummary({
       {/* Desglose de precios */}
       <div className="mt-6 border-t border-sand pt-6">
         <dl className="space-y-2 text-sm">
-          <Row label="Muebles" value={formatARS(subtotal)} />
+          <Row label={t("checkout.furniture")} value={formatARS(subtotal)} />
           <Row
-            label="Envío"
-            value={deliveryOption === "pickup" ? "Gratis (retiro)" : formatARS(deliveryCost)}
+            label={t("checkout.shipping")}
+            value={deliveryOption === "pickup" ? t("checkout.freePickup") : formatARS(deliveryCost)}
           />
           {deliveryOption === "delivery" && (
-            <Row label="Modalidad" value={deliveryDescription} />
+            <Row label={t("quoteSummary.method")} value={deliveryDescription} />
           )}
         </dl>
         <div className="mt-4 pt-4 border-t border-sand flex justify-between items-baseline">
-          <span className="font-serif text-walnut">Total estimado</span>
+          <span className="font-serif text-walnut">{t("checkout.estimatedTotal")}</span>
           <span className="font-serif text-2xl text-walnut">{formatARS(total)}</span>
         </div>
         <p className="mt-3 text-xs text-walnut/60">
-          Esta cotización es estimativa. Puede ajustarse según el tipo de madera
-          y la terminación elegida.
+          {t("quoteSummary.disclaimer")}
         </p>
       </div>
 
@@ -107,7 +110,7 @@ export function QuoteSummary({
           onClick={onNew}
           className="text-sm text-bark hover:text-walnut underline underline-offset-4"
         >
-          Hacer otra cotización
+          {t("quoteSummary.newQuote")}
         </button>
       </div>
     </section>

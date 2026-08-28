@@ -27,6 +27,7 @@ import type {
   StoreDeliveryOption,
   StoreOrderResult,
 } from "@/lib/orderTypes";
+import { pickText, useLanguage } from "@/lib/i18n/LanguageContext";
 import { useStoreCart } from "./StoreCartProvider";
 
 type DrawerStep = "cart" | "checkout" | "success";
@@ -48,6 +49,7 @@ const EMPTY_FORM: CustomerForm = {
 };
 
 export function StoreCartDrawer() {
+  const { language, t } = useLanguage();
   const {
     items,
     isOpen,
@@ -141,8 +143,8 @@ export function StoreCartDrawer() {
     if (sending || resolvedItems.length === 0) return;
     if (!deliveryValid) {
       setError(deliveryOption
-        ? "Completá los datos para calcular el envío."
-        : "Elegí si querés recibir el pedido con envío o retirarlo.");
+        ? t("storeCart.errorDeliveryDetails")
+        : t("storeCart.errorChooseDelivery"));
       return;
     }
     setSending(true);
@@ -173,7 +175,7 @@ export function StoreCartDrawer() {
       });
       const result = (await response.json()) as StoreOrderResult | { error?: string };
       if (!response.ok || !("ok" in result)) {
-        throw new Error("error" in result ? result.error : "No se pudo enviar el pedido.");
+        throw new Error("error" in result ? result.error : t("storeCart.errorOrderFailed"));
       }
 
       setOrderId(result.orderId);
@@ -183,7 +185,7 @@ export function StoreCartDrawer() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "No se pudo enviar el pedido. Intentá nuevamente.",
+          : t("storeCart.errorOrderFailedRetry"),
       );
     } finally {
       setSending(false);
@@ -196,7 +198,7 @@ export function StoreCartDrawer() {
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Carrito de compras">
       <button
         type="button"
-        aria-label="Cerrar carrito"
+        aria-label={t("storeCart.closeAriaLabel")}
         onClick={close}
         className="absolute inset-0 bg-black/35"
       />
@@ -210,8 +212,8 @@ export function StoreCartDrawer() {
                   setStep("cart");
                   setError("");
                 }}
-                title="Volver al carrito"
-                aria-label="Volver al carrito"
+                title={t("storeCart.backToCartAriaLabel")}
+                aria-label={t("storeCart.backToCartAriaLabel")}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-sand/50"
               >
                 <ChevronLeft size={20} />
@@ -219,16 +221,16 @@ export function StoreCartDrawer() {
             )}
             <ShoppingBag size={20} className="text-bark" aria-hidden="true" />
             <h2 className="font-serif text-xl">
-              {step === "cart" && "Tu carrito"}
-              {step === "checkout" && "Completar pedido"}
-              {step === "success" && "Pedido enviado"}
+              {step === "cart" && t("storeCart.title")}
+              {step === "checkout" && t("storeCart.checkoutTitle")}
+              {step === "success" && t("storeCart.successTitle")}
             </h2>
           </div>
           <button
             type="button"
             onClick={close}
-            title="Cerrar"
-            aria-label="Cerrar carrito"
+            title={t("storeCart.close")}
+            aria-label={t("storeCart.closeAriaLabel")}
             className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-sand/50"
           >
             <X size={20} />
@@ -241,21 +243,23 @@ export function StoreCartDrawer() {
               {resolvedItems.length === 0 ? (
                 <div className="flex min-h-72 flex-col items-center justify-center text-center">
                   <ShoppingBag size={36} className="text-walnut/25" />
-                  <p className="mt-4 font-serif text-xl">Tu carrito está vacío</p>
+                  <p className="mt-4 font-serif text-xl">{t("storeCart.empty")}</p>
                   <p className="mt-1 max-w-xs text-sm text-walnut/60">
-                    Agregá muebles del catálogo para preparar tu pedido.
+                    {t("storeCart.emptyDescription")}
                   </p>
                   <button
                     type="button"
                     onClick={closeCart}
                     className="mt-5 h-10 rounded-md bg-bark px-4 text-sm font-medium text-cream"
                   >
-                    Seguir viendo muebles
+                    {t("storeCart.keepBrowsing")}
                   </button>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {resolvedItems.map(({ productId, quantity, product }) => (
+                  {resolvedItems.map(({ productId, quantity, product }) => {
+                    const productName = pickText(language, product.name, product.nameEn);
+                    return (
                     <article key={productId} className="flex gap-3 border-b border-sand pb-4">
                       <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-md bg-sand">
                         {product.images[0] && (
@@ -271,14 +275,14 @@ export function StoreCartDrawer() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <h3 className="truncate text-sm font-semibold">{product.name}</h3>
+                            <h3 className="truncate text-sm font-semibold">{productName}</h3>
                             <p className="mt-0.5 truncate text-xs text-walnut/55">{product.dimensions}</p>
                           </div>
                           <button
                             type="button"
                             onClick={() => removeProduct(productId)}
-                            title="Quitar producto"
-                            aria-label={`Quitar ${product.name}`}
+                            title={t("storeCart.removeProductTitle")}
+                            aria-label={t("storeCart.removeProductAriaLabel", { name: productName })}
                             className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-red-600 hover:bg-red-50"
                           >
                             <Trash2 size={15} />
@@ -288,14 +292,14 @@ export function StoreCartDrawer() {
                         <div className="mt-2 flex items-center justify-between gap-3">
                           <div className="flex h-9 items-center rounded-md border border-sand bg-white">
                             <QuantityButton
-                              label={`Quitar una unidad de ${product.name}`}
+                              label={t("storeCart.removeOneAriaLabel", { name: productName })}
                               onClick={() => updateQuantity(productId, quantity - 1)}
                             >
                               <Minus size={14} />
                             </QuantityButton>
                             <span className="w-9 text-center text-sm font-medium">{quantity}</span>
                             <QuantityButton
-                              label={`Agregar una unidad de ${product.name}`}
+                              label={t("storeCart.addOneAriaLabel", { name: productName })}
                               disabled={quantity >= 20}
                               onClick={() => updateQuantity(productId, quantity + 1)}
                             >
@@ -306,7 +310,8 @@ export function StoreCartDrawer() {
                         </div>
                       </div>
                     </article>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -314,10 +319,10 @@ export function StoreCartDrawer() {
             {resolvedItems.length > 0 && (
               <footer className="shrink-0 border-t border-sand bg-white px-4 py-4 sm:px-5">
                 <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-sm text-walnut/65">Total en efectivo</span>
+                  <span className="text-sm text-walnut/65">{t("storeCart.totalCash")}</span>
                   <span className="font-serif text-2xl">{formatARS(total)}</span>
                 </div>
-                <p className="mt-1 text-xs text-walnut/50">Entrega y forma de pago se coordinan con el taller.</p>
+                <p className="mt-1 text-xs text-walnut/50">{t("storeCart.coordinateNotice")}</p>
                 <button
                   type="button"
                   onClick={() => {
@@ -329,7 +334,7 @@ export function StoreCartDrawer() {
                   }}
                   className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800"
                 >
-                  Continuar pedido <ChevronLeft size={17} className="rotate-180" />
+                  {t("storeCart.continueOrder")} <ChevronLeft size={17} className="rotate-180" />
                 </button>
               </footer>
             )}
@@ -341,34 +346,34 @@ export function StoreCartDrawer() {
             <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5 sm:px-5">
               <div className="rounded-md border border-sand bg-white px-4 py-3">
                 <div className="flex justify-between gap-4 text-sm text-walnut/65">
-                  <span>{resolvedItems.reduce((sum, item) => sum + item.quantity, 0)} artículos</span>
+                  <span>{resolvedItems.reduce((sum, item) => sum + item.quantity, 0)} {t("storeCart.items")}</span>
                   <span>{formatARS(total)}</span>
                 </div>
                 {deliveryOption && (
                   <div className="mt-2 flex justify-between gap-4 text-sm text-walnut/65">
-                    <span>{deliveryOption === "pickup" ? "Retiro" : "Envío"}</span>
-                    <span>{deliveryCost === null ? "A calcular" : deliveryCost === 0 ? "Sin cargo" : formatARS(deliveryCost)}</span>
+                    <span>{deliveryOption === "pickup" ? t("storeCart.pickup") : t("storeCart.shipping")}</span>
+                    <span>{deliveryCost === null ? t("checkout.toCalculate") : deliveryCost === 0 ? t("storeCart.free") : formatARS(deliveryCost)}</span>
                   </div>
                 )}
                 {deliveryCost !== null && deliveryOption && (
                   <div className="mt-3 flex items-baseline justify-between gap-4 border-t border-sand pt-3">
-                    <span className="text-sm font-medium text-walnut">Total estimado</span>
+                    <span className="text-sm font-medium text-walnut">{t("storeCart.estimatedTotal")}</span>
                     <span className="font-serif text-xl">{formatARS(orderTotal)}</span>
                   </div>
                 )}
                 </div>
 
               <fieldset>
-                <legend className="font-serif text-lg text-walnut">¿Querés envío?</legend>
+                <legend className="font-serif text-lg text-walnut">{t("storeCart.wantDelivery")}</legend>
                 <p className="mt-1 text-xs leading-5 text-walnut/55">
-                  Elegí cómo querés recibir el pedido. Los detalles se coordinan con el taller.
+                  {t("storeCart.wantDeliveryDescription")}
                 </p>
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <DeliveryChoice
                     active={deliveryOption === "delivery"}
                     icon={<Truck size={20} />}
-                    title="Con envío"
-                    subtitle="Calcular entrega"
+                    title={t("storeCart.withDelivery")}
+                    subtitle={t("storeCart.calculateDelivery")}
                     onClick={() => {
                       setDeliveryOption("delivery");
                       setDeliveryMethod(zoneAvailable ? "zone" : distanceAvailable ? "distance" : "");
@@ -379,8 +384,8 @@ export function StoreCartDrawer() {
                   <DeliveryChoice
                     active={deliveryOption === "pickup"}
                     icon={<Store size={20} />}
-                    title="Sin envío"
-                    subtitle="Retiro a coordinar"
+                    title={t("storeCart.withoutDelivery")}
+                    subtitle={t("storeCart.pickupToArrange")}
                     onClick={() => {
                       setDeliveryOption("pickup");
                       setDeliveryMethod("");
@@ -393,24 +398,24 @@ export function StoreCartDrawer() {
                   <div className="mt-4 space-y-4 border-t border-sand pt-4">
                     {!zoneAvailable && !distanceAvailable ? (
                       <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-                        El envío no está disponible en este momento. Elegí retiro o consultanos antes de enviar el pedido.
+                        {t("storeCart.deliveryUnavailable")}
                       </p>
                     ) : (
                       <>
                         {zoneAvailable && distanceAvailable && (
                           <div>
-                            <p className="mb-2 text-sm font-medium text-walnut">Cómo calcularlo</p>
+                            <p className="mb-2 text-sm font-medium text-walnut">{t("storeCart.howToCalculate")}</p>
                             <div className="grid grid-cols-2 gap-2">
                               <DeliveryMethodChoice
                                 active={deliveryMethod === "zone"}
                                 icon={<MapPin size={17} />}
-                                label="Por zona"
+                                label={t("checkout.byZone")}
                                 onClick={() => setDeliveryMethod("zone")}
                               />
                               <DeliveryMethodChoice
                                 active={deliveryMethod === "distance"}
                                 icon={<Route size={17} />}
-                                label="Por km"
+                                label={t("storeCart.byKm")}
                                 onClick={() => setDeliveryMethod("distance")}
                               />
                             </div>
@@ -418,7 +423,7 @@ export function StoreCartDrawer() {
                         )}
 
                         {deliveryMethod === "zone" && zoneAvailable && (
-                          <FormField label="Zona de entrega" htmlFor="store-delivery-zone">
+                          <FormField label={t("checkout.deliveryZone")} htmlFor="store-delivery-zone">
                             <select
                               id="store-delivery-zone"
                               value={deliveryZoneId}
@@ -430,13 +435,13 @@ export function StoreCartDrawer() {
                               ))}
                             </select>
                             {selectedZone?.description && (
-                              <p className="mt-1.5 text-xs leading-5 text-walnut/50">Incluye: {selectedZone.description}</p>
+                              <p className="mt-1.5 text-xs leading-5 text-walnut/50">{t("checkout.includes", { description: selectedZone.description })}</p>
                             )}
                           </FormField>
                         )}
 
                         {deliveryMethod === "distance" && distanceAvailable && (
-                          <FormField label="Distancia aproximada" htmlFor="store-delivery-distance">
+                          <FormField label={t("storeCart.approxDistance")} htmlFor="store-delivery-distance">
                             <div className="relative">
                               <input
                                 id="store-delivery-distance"
@@ -447,17 +452,17 @@ export function StoreCartDrawer() {
                                 step="0.1"
                                 value={distanceInput}
                                 onChange={(event) => setDistanceInput(event.target.value)}
-                                placeholder="Ej: 24"
+                                placeholder={t("checkout.distancePlaceholder")}
                                 className="h-11 w-full rounded-md border border-sand bg-white px-3 pr-12 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                               />
                               <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-walnut/55">km</span>
                             </div>
                             <p className="mt-1.5 text-xs leading-5 text-walnut/50">
-                              Calculá la ruta desde {pricingConfig.delivery.originAddress}. El importe es estimativo.
+                              {t("storeCart.routeHintShort", { origin: pricingConfig.delivery.originAddress })}
                             </p>
                             {distanceInput !== "" && !distanceValid && (
                               <p className="mt-2 text-xs text-amber-700">
-                                Ingresá entre 0,1 y {pricingConfig.delivery.maximumDistanceKm} km.
+                                {t("storeCart.distanceRangeError", { min: "0.1", max: pricingConfig.delivery.maximumDistanceKm })}
                               </p>
                             )}
                           </FormField>
@@ -465,7 +470,7 @@ export function StoreCartDrawer() {
 
                         {deliveryCost !== null && deliveryCost > 0 && (
                           <div className="flex items-center justify-between gap-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-sm text-emerald-900">
-                            <span>Envío estimado</span>
+                            <span>{t("storeCart.estimatedShipping")}</span>
                             <strong>{formatARS(deliveryCost)}</strong>
                           </div>
                         )}
@@ -476,7 +481,7 @@ export function StoreCartDrawer() {
               </fieldset>
 
               <div className="grid gap-4">
-                <FormField label="Nombre y apellido" htmlFor="order-name">
+                <FormField label={t("storeCart.fullName")} htmlFor="order-name">
                   <input
                     id="order-name"
                     required
@@ -487,7 +492,7 @@ export function StoreCartDrawer() {
                     className="h-11 w-full rounded-md border border-sand bg-white px-3 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
                 </FormField>
-                <FormField label="Email" htmlFor="order-email">
+                <FormField label={t("storeCart.email")} htmlFor="order-email">
                   <input
                     id="order-email"
                     type="email"
@@ -496,12 +501,12 @@ export function StoreCartDrawer() {
                     maxLength={254}
                     value={form.email}
                     onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
-                    placeholder="nombre@email.com"
+                    placeholder={t("contactGate.emailPlaceholder")}
                     className="h-11 w-full rounded-md border border-sand bg-white px-3 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
-                  <p className="mt-1.5 text-xs text-walnut/50">Te enviaremos una copia del pedido a este correo.</p>
+                  <p className="mt-1.5 text-xs text-walnut/50">{t("storeCart.emailCopyNotice")}</p>
                 </FormField>
-                <FormField label="Teléfono (opcional)" htmlFor="order-phone">
+                <FormField label={t("storeCart.phoneOptional")} htmlFor="order-phone">
                   <input
                     id="order-phone"
                     type="tel"
@@ -512,19 +517,19 @@ export function StoreCartDrawer() {
                     className="h-11 w-full rounded-md border border-sand bg-white px-3 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
                 </FormField>
-                <FormField label="Comentarios (opcional)" htmlFor="order-notes">
+                <FormField label={t("storeCart.commentsOptional")} htmlFor="order-notes">
                   <textarea
                     id="order-notes"
                     rows={4}
                     maxLength={1000}
                     value={form.notes}
                     onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
-                    placeholder="Entrega, terminación u otra consulta"
+                    placeholder={t("storeCart.commentsPlaceholder")}
                     className="w-full resize-y rounded-md border border-sand bg-white px-3 py-2 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   />
                 </FormField>
                 <label className="sr-only" aria-hidden="true">
-                  Sitio web
+                  {t("storeCart.website")}
                   <input
                     tabIndex={-1}
                     autoComplete="off"
@@ -546,10 +551,10 @@ export function StoreCartDrawer() {
                 disabled={sending || !deliveryValid}
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-50"
               >
-                <Send size={17} /> {sending ? "Enviando pedido..." : "Enviar pedido"}
+                <Send size={17} /> {sending ? t("storeCart.sendingOrder") : t("storeCart.sendOrder")}
               </button>
               <p className="mt-2 text-center text-xs text-walnut/50">
-                Este pedido no realiza un cobro. La Barraca confirmará disponibilidad y entrega.
+                {t("storeCart.noChargeNotice")}
               </p>
             </footer>
           </form>
@@ -560,17 +565,17 @@ export function StoreCartDrawer() {
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-700 text-white">
               <Check size={28} />
             </div>
-            <h3 className="mt-5 font-serif text-2xl">Recibimos tu pedido</h3>
+            <h3 className="mt-5 font-serif text-2xl">{t("storeCart.orderReceived")}</h3>
             <p className="mt-2 max-w-sm text-sm leading-6 text-walnut/65">
-              Enviamos una copia a <strong className="text-walnut">{form.email}</strong>. La Barraca se pondrá en contacto para confirmar los detalles.
+              {t("storeCart.orderReceivedDescription", { email: form.email })}
             </p>
-            <p className="mt-4 text-xs text-walnut/45">Pedido {orderId}</p>
+            <p className="mt-4 text-xs text-walnut/45">{t("storeCart.orderId", { orderId })}</p>
             <button
               type="button"
               onClick={close}
               className="mt-6 h-11 rounded-md bg-bark px-5 text-sm font-medium text-cream"
             >
-              Seguir viendo muebles
+              {t("storeCart.keepBrowsing")}
             </button>
           </div>
         )}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { StoreCartProvider } from "@/components/StoreCartProvider";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,7 +26,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="min-h-screen font-sans antialiased">
-        <StoreCartProvider>{children}</StoreCartProvider>
+        <LanguageProvider>
+          <StoreCartProvider>{children}</StoreCartProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

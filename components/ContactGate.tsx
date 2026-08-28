@@ -1,6 +1,7 @@
 "use client";
 
 import type { ContactDetails, ContactMethod } from "@/lib/quoteTypes";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export interface ContactGateProps {
   value: ContactDetails;
@@ -13,32 +14,33 @@ export interface ContactGateProps {
  * when to enable it.
  */
 export function ContactGate({ value, onChange }: ContactGateProps) {
+  const { t } = useLanguage();
   const update = (patch: Partial<ContactDetails>) =>
     onChange({ ...value, ...patch });
 
   return (
     <fieldset className="space-y-4">
       <legend className="font-serif text-xl text-walnut">
-        Datos de contacto
+        {t("contactGate.legend")}
       </legend>
       <p className="text-sm text-walnut/70 -mt-2">
-        Dejanos al menos un medio de contacto para enviarte la cotización.
+        {t("contactGate.description")}
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label="Email" htmlFor="contact-email">
+        <Field label={t("contactGate.email")} htmlFor="contact-email">
           <input
             id="contact-email"
             type="email"
             inputMode="email"
             autoComplete="email"
-            placeholder="tunombre@email.com"
+            placeholder={t("contactGate.emailPlaceholder")}
             value={value.email ?? ""}
             onChange={(e) => update({ email: e.target.value })}
             className={inputClass}
           />
         </Field>
-        <Field label="Teléfono / WhatsApp" htmlFor="contact-phone">
+        <Field label={t("contactGate.phone")} htmlFor="contact-phone">
           <input
             id="contact-phone"
             type="tel"
@@ -52,7 +54,7 @@ export function ContactGate({ value, onChange }: ContactGateProps) {
         </Field>
       </div>
 
-      <Field label="Preferís que te contactemos por..." htmlFor="contact-method">
+      <Field label={t("contactGate.preferredMethod")} htmlFor="contact-method">
         <select
           id="contact-method"
           value={value.preferredMethod}
@@ -61,8 +63,8 @@ export function ContactGate({ value, onChange }: ContactGateProps) {
           }
           className={inputClass}
         >
-          <option value="email">Email</option>
-          <option value="whatsapp">WhatsApp</option>
+          <option value="email">{t("contactGate.email")}</option>
+          <option value="whatsapp">{t("contactGate.whatsapp")}</option>
         </select>
       </Field>
 
@@ -74,7 +76,7 @@ export function ContactGate({ value, onChange }: ContactGateProps) {
           className="mt-1 h-5 w-5 rounded border-sand text-bark focus:ring-accent"
         />
         <span className="text-sm text-walnut">
-          Quiero recibir la cotización por email o WhatsApp.
+          {t("contactGate.consent")}
         </span>
       </label>
     </fieldset>
