@@ -28,14 +28,8 @@ const storeAddresses = [
   {
     name: "Boulevard Sáenz Peña",
     address: "Boulevard Sáenz Peña 1213, esquina Guareschi",
-    hoursKey: "home.stores.hours1",
+    hoursKey: "home.stores.hours",
     map: "https://www.google.com/maps/search/?api=1&query=Boulevard+Saenz+Pena+1213+Tigre",
-  },
-  {
-    name: "Rincón de Milberg",
-    address: "Av. Santa María 2148, Rincón de Milberg",
-    hoursKey: "home.stores.hours2",
-    map: "https://www.google.com/maps/search/?api=1&query=Av+Santa+Maria+2148+Rincon+de+Milberg",
   },
 ] as const;
 
@@ -180,7 +174,7 @@ export default function HomePage() {
           </div>
 
           <div className="mx-auto max-w-[1800px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-            <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+            <div className="grid gap-4 sm:gap-6 md:max-w-md">
               {stores.map((store) => (
                 <article
                   key={store.name}

@@ -66,8 +66,7 @@ export const translations = {
 
   "home.stores.eyebrow": { es: "Vení a conocernos", en: "Come visit us" },
   "home.stores.title": { es: "Encontranos en Tigre", en: "Find us in Tigre" },
-  "home.stores.hours1": { es: "Sábados y domingos de 9 a 19:30", en: "Saturdays and Sundays, 9 am to 7:30 pm" },
-  "home.stores.hours2": { es: "Lunes a sábados de 10 a 17", en: "Monday to Saturday, 10 am to 5 pm" },
+  "home.stores.hours": { es: "Sábados y domingos de 9 a 19:30", en: "Saturdays and Sundays, 9 am to 7:30 pm" },
   "home.stores.directions": { es: "Cómo llegar", en: "Get directions" },
 
   "home.idea.title": { es: "¿Tenés una idea en mente?", en: "Have an idea in mind?" },
