@@ -16,7 +16,11 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
 
   const otherLanguage = language === "es" ? "en" : "es";
-  const pathWithoutLocale = pathname.startsWith("/en") ? pathname.slice(3) || "/" : pathname;
+  // usePathname() can report either the external URL ("/catalogo") or the
+  // internal one the middleware rewrites Spanish requests to ("/es/catalogo")
+  // depending on the route — strip either locale segment so the toggle
+  // target is built from the bare path either way.
+  const pathWithoutLocale = pathname.replace(/^\/(en|es)(?=\/|$)/, "") || "/";
   const toggleHref = withLocalePrefix(pathWithoutLocale, otherLanguage);
 
   useEffect(() => {
