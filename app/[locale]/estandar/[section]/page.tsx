@@ -4,7 +4,7 @@ import { getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
 
 interface StandardItemPageProps {
-  params: { section: string };
+  params: { locale: string; section: string };
 }
 export const dynamic = "force-dynamic";
 

@@ -153,7 +153,8 @@ export default function HomePage() {
               slides={featuredPieces}
               label={t("home.featured.label")}
               radius={20}
-              height={340}
+              height="clamp(180px, 38cqi, 460px)"
+              aspectRatio={4 / 3}
               style={
                 {
                   "--foreground": "#f7efe4",

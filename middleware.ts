@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { getSessionToken } from "@/lib/adminAuth";
 
 const HAS_EXTENSION = /\.[^/]+$/;
-const LOCALE_HEADER = "x-app-locale";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -30,22 +29,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // English pages live at "/en" and "/en/*" in the URL, but are served by the
-  // same routes as the (default, unprefixed) Spanish site — rewrite the
-  // prefix away internally while keeping it visible in the address bar, and
-  // flag the request so the root layout can pick the right initial language.
+  // Public pages live under app/[locale]/*. English URLs already carry the
+  // "/en" segment the file structure expects, so they pass straight through.
+  // Spanish is the default and stays unprefixed in the address bar, so it's
+  // rewritten internally to the "/es" segment that actually renders it.
+  // Doing this as a route param (rather than a header the root layout reads)
+  // matters: Next.js only re-renders a layout on client-side navigation when
+  // one of its own route params changes, so the language has to live in the
+  // URL structure, not in a header a persistent layout reads once.
   if (pathname === "/en" || pathname.startsWith("/en/")) {
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set(LOCALE_HEADER, "en");
-
-    const url = request.nextUrl.clone();
-    url.pathname = pathname.slice(3) || "/";
-    return NextResponse.rewrite(url, { request: { headers: requestHeaders } });
+    return NextResponse.next();
   }
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(LOCALE_HEADER, "es");
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  const url = request.nextUrl.clone();
+  url.pathname = `/es${pathname === "/" ? "" : pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {

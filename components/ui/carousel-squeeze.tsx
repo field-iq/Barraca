@@ -154,6 +154,12 @@ export type SqueezeCarouselProps = {
     label?: string;
     /** Extra classes for a single panel. */
     panelClassName?: string;
+    /**
+     * Width divided by height of the block every picture is drawn at (see
+     * `Picture`). Default `16 / 9`. Lower it for portrait source photos so
+     * `object-cover` has less to crop away.
+     */
+    aspectRatio?: number;
 } & Omit<ComponentProps<"div">, "onSelect">;
 
 /**
@@ -179,6 +185,7 @@ export function SqueezeCarousel({
     accentForeground = "var(--sq-accent-foreground, var(--primary-foreground, white))",
     label = "Featured",
     panelClassName,
+    aspectRatio = 16 / 9,
     className,
     style,
     ...props
@@ -359,9 +366,10 @@ export function SqueezeCarousel({
         "--sq-ease": "cubic-bezier(0.16, 1, 0.3, 1)",
         "--sq-fill": accent,
         "--sq-on-fill": accentForeground,
-        // A 16:9 block sets both the open card and the size every picture is
-        // drawn at, so a picture keeps one scale however narrow its card gets.
-        "--sq-hero": "calc(var(--sq-h) * 16 / 9)",
+        // A fixed-ratio block sets both the open card and the size every
+        // picture is drawn at, so a picture keeps one scale however narrow
+        // its card gets.
+        "--sq-hero": `calc(var(--sq-h) * ${aspectRatio})`,
         "--sq-room": `calc(100cqi - var(--sq-hero) - ${
             slats
         } * var(--sq-slat-gap) - 3 * var(--sq-gap) - ${slats} * ${slat})`,
