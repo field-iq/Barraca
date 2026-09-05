@@ -13,6 +13,8 @@ export const translations = {
   // Home page
   "home.ready.cta": { es: "Explorar catálogo", en: "Browse the catalog" },
   "home.custom.cta": { es: "Empezar cotización", en: "Start a quote" },
+  "home.piece.cta": { es: "Ver catálogo", en: "View catalog" },
+  "home.featured.label": { es: "Piezas destacadas", en: "Featured pieces" },
 
   "home.piece1.title": { es: "Mesas que reúnen historias", en: "Tables that gather stories" },
   "home.piece1.eyebrow": { es: "Mesas de comedor", en: "Dining tables" },

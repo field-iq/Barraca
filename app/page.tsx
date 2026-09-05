@@ -12,9 +12,15 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { Header } from "@/components/Header";
-import { CircularShowcase, type ShowcaseItem } from "@/components/ui/circular-showcase";
+import { SqueezeCarousel, type SqueezeSlide } from "@/components/ui/carousel-squeeze";
 import { ParallaxHero } from "@/components/ui/parallax-hero";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
+
+const pieceTag = (category: string, status: string) => (
+  <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm">
+    {category} · {status}
+  </span>
+);
 
 const WHATSAPP_URL = "https://wa.me/5491153791654";
 
@@ -34,62 +40,71 @@ const storeAddresses = [
 ] as const;
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
-  const featuredPieces: ShowcaseItem[] = [
+  const catalogHref = withLocalePrefix("/catalogo", language);
+  const pieceCta = t("home.piece.cta");
+
+  const featuredPieces: SqueezeSlide[] = [
     {
+      id: "piece1",
       title: t("home.piece1.title"),
-      eyebrow: t("home.piece1.eyebrow"),
       description: t("home.piece1.description"),
-      detail: t("home.piece1.detail"),
-      src: "/mesa-2.jpeg",
-      alt: "Mesa de comedor artesanal de madera",
-      href: "/catalogo",
+      overlay: pieceTag(t("home.piece1.eyebrow"), t("home.piece1.detail")),
+      image: "/mesa-2.jpeg",
+      imageAlt: "Mesa de comedor artesanal de madera",
+      action: pieceCta,
+      href: catalogHref,
     },
     {
+      id: "piece2",
       title: t("home.piece2.title"),
-      eyebrow: t("home.piece2.eyebrow"),
       description: t("home.piece2.description"),
-      detail: t("home.piece2.detail"),
-      src: "/mesa-ratona-1.jpeg",
-      alt: "Mesa ratona artesanal con detalles recuperados",
-      href: "/catalogo",
+      overlay: pieceTag(t("home.piece2.eyebrow"), t("home.piece2.detail")),
+      image: "/mesa-ratona-1.jpeg",
+      imageAlt: "Mesa ratona artesanal con detalles recuperados",
+      action: pieceCta,
+      href: catalogHref,
     },
     {
+      id: "piece3",
       title: t("home.piece3.title"),
-      eyebrow: t("home.piece3.eyebrow"),
       description: t("home.piece3.description"),
-      detail: t("home.piece3.detail"),
-      src: "/estanteria-1.jpeg",
-      alt: "Estantería artesanal de madera",
-      href: "/catalogo",
+      overlay: pieceTag(t("home.piece3.eyebrow"), t("home.piece3.detail")),
+      image: "/estanteria-1.jpeg",
+      imageAlt: "Estantería artesanal de madera",
+      action: pieceCta,
+      href: catalogHref,
     },
     {
+      id: "piece4",
       title: t("home.piece4.title"),
-      eyebrow: t("home.piece4.eyebrow"),
       description: t("home.piece4.description"),
-      detail: t("home.piece4.detail"),
-      src: "/banco-1.jpeg",
-      alt: "Banco artesanal de madera",
-      href: "/catalogo",
+      overlay: pieceTag(t("home.piece4.eyebrow"), t("home.piece4.detail")),
+      image: "/banco-1.jpeg",
+      imageAlt: "Banco artesanal de madera",
+      action: pieceCta,
+      href: catalogHref,
     },
     {
+      id: "piece5",
       title: t("home.piece5.title"),
-      eyebrow: t("home.piece5.eyebrow"),
       description: t("home.piece5.description"),
-      detail: t("home.piece5.detail"),
-      src: "/espejo-1.jpeg",
-      alt: "Espejo con marco de madera maciza",
-      href: "/catalogo",
+      overlay: pieceTag(t("home.piece5.eyebrow"), t("home.piece5.detail")),
+      image: "/espejo-1.jpeg",
+      imageAlt: "Espejo con marco de madera maciza",
+      action: pieceCta,
+      href: catalogHref,
     },
     {
+      id: "piece6",
       title: t("home.piece6.title"),
-      eyebrow: t("home.piece6.eyebrow"),
       description: t("home.piece6.description"),
-      detail: t("home.piece6.detail"),
-      src: "/catalogo/cilindros/1.jpeg",
-      alt: "Cilindros de madera maciza",
-      href: "/catalogo",
+      overlay: pieceTag(t("home.piece6.eyebrow"), t("home.piece6.detail")),
+      image: "/catalogo/cilindros/1.jpeg",
+      imageAlt: "Cilindros de madera maciza",
+      action: pieceCta,
+      href: catalogHref,
     },
   ];
 
@@ -104,7 +119,7 @@ export default function HomePage() {
         <section id="coleccion" className="scroll-mt-4 bg-[#f7f4ee] px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div className="mx-auto grid max-w-[1800px] gap-4 sm:gap-6 md:grid-cols-2">
             <Link
-              href="/catalogo"
+              href={withLocalePrefix("/catalogo", language)}
               className="group flex items-center justify-center gap-5 rounded-2xl border border-sand bg-white p-8 shadow-[0_15px_25px_-5px_rgba(20,15,10,0.25),0_25px_45px_-10px_rgba(20,15,10,0.3)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_25px_35px_-5px_rgba(20,15,10,0.3),0_35px_60px_-12px_rgba(20,15,10,0.4)] sm:p-10 lg:p-12"
             >
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#233c33] text-white">
@@ -116,7 +131,7 @@ export default function HomePage() {
             </Link>
 
             <Link
-              href="/catalogo#a-medida"
+              href={withLocalePrefix("/catalogo#a-medida", language)}
               className="group flex items-center justify-center gap-5 rounded-2xl border border-sand bg-white p-8 shadow-[0_15px_25px_-5px_rgba(20,15,10,0.25),0_25px_45px_-10px_rgba(20,15,10,0.3)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_25px_35px_-5px_rgba(20,15,10,0.3),0_35px_60px_-12px_rgba(20,15,10,0.4)] sm:p-10 lg:p-12"
             >
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#b85c3d] text-white">
@@ -134,7 +149,20 @@ export default function HomePage() {
           <div aria-hidden="true" className="absolute inset-0 bg-[#14201c]/75" />
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-black/20" />
           <div className="relative mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8">
-            <CircularShowcase items={featuredPieces} tone="dark" />
+            <SqueezeCarousel
+              slides={featuredPieces}
+              label={t("home.featured.label")}
+              radius={20}
+              height={340}
+              style={
+                {
+                  "--foreground": "#f7efe4",
+                  "--muted-foreground": "#cbbfae",
+                  "--background": "#17211e",
+                  "--muted": "#22312c",
+                } as React.CSSProperties
+              }
+            />
           </div>
         </section>
 

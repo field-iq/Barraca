@@ -2,16 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Camera, Languages } from "lucide-react";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 import { StoreCartButton } from "./StoreCartButton";
 
 const WHATSAPP_URL = "https://wa.me/5491153791654";
 
 export function Header({ overlay = false }: { overlay?: boolean }) {
-  const { language, toggleLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+
+  const otherLanguage = language === "es" ? "en" : "es";
+  const pathWithoutLocale = pathname.startsWith("/en") ? pathname.slice(3) || "/" : pathname;
+  const toggleHref = withLocalePrefix(pathWithoutLocale, otherLanguage);
 
   useEffect(() => {
     if (!overlay) return;
@@ -37,7 +43,7 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
       }`}
     >
       <div className="mx-auto flex h-16 w-full max-w-[1800px] items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
-        <Link href="/" className="flex min-w-0 flex-1 items-center gap-3.5" aria-label={t("header.homeAriaLabel")}>
+        <Link href={withLocalePrefix("/", language)} className="flex min-w-0 flex-1 items-center gap-3.5" aria-label={t("header.homeAriaLabel")}>
           <span className={`relative h-9 w-9 shrink-0 overflow-hidden rounded-full ${transparent ? "ring-1 ring-white/30" : "bg-black"}`}>
             <Image
               src="/logo.jpg"
@@ -59,9 +65,9 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
         </Link>
 
         <nav className={`hidden items-center gap-6 text-sm font-medium lg:flex transition-colors duration-300 ${transparent ? "text-white/80" : "text-walnut/75"}`} aria-label="Principal">
-          <Link href="/catalogo" className={`transition ${transparent ? "hover:text-white" : "hover:text-walnut"}`}>{t("header.nav.ready")}</Link>
-          <Link href="/catalogo#a-medida" className={`transition ${transparent ? "hover:text-white" : "hover:text-walnut"}`}>{t("header.nav.custom")}</Link>
-          <Link href="/#locales" className={`transition ${transparent ? "hover:text-white" : "hover:text-walnut"}`}>{t("header.nav.stores")}</Link>
+          <Link href={withLocalePrefix("/catalogo", language)} className={`transition ${transparent ? "hover:text-white" : "hover:text-walnut"}`}>{t("header.nav.ready")}</Link>
+          <Link href={withLocalePrefix("/catalogo#a-medida", language)} className={`transition ${transparent ? "hover:text-white" : "hover:text-walnut"}`}>{t("header.nav.custom")}</Link>
+          <Link href={withLocalePrefix("/#locales", language)} className={`transition ${transparent ? "hover:text-white" : "hover:text-walnut"}`}>{t("header.nav.stores")}</Link>
           <a
             href="https://www.instagram.com/labarracadejuan_/"
             target="_blank"
@@ -75,9 +81,8 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-1 lg:gap-3">
-          <button
-            type="button"
-            onClick={toggleLanguage}
+          <Link
+            href={toggleHref}
             title={t("header.languageToggle")}
             aria-label={t("header.languageToggle")}
             className={`inline-flex h-10 items-center justify-center gap-1.5 rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition ${
@@ -88,7 +93,7 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
           >
             <Languages size={16} strokeWidth={1.7} aria-hidden="true" />
             {language === "es" ? "EN" : "ES"}
-          </button>
+          </Link>
           <a
             href={WHATSAPP_URL}
             target="_blank"

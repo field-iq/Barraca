@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { AddToStoreCartButton } from "@/components/AddToStoreCartButton";
 import { formatARS } from "@/lib/format";
 import type { CatalogProduct } from "@/lib/catalog";
-import { pickText, useLanguage } from "@/lib/i18n/LanguageContext";
+import { pickText, useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 
 interface StandardItemViewProps {
   item: CatalogProduct;
@@ -35,7 +35,7 @@ export function StandardItemView({ item, categoryName, categoryNameEn }: Standar
         <div aria-hidden="true" className="absolute inset-0 bg-[#15201c]/78" />
         <div className="relative mx-auto min-w-0 max-w-[1400px] px-4 py-10 sm:py-14">
         <Link
-          href="/catalogo"
+          href={withLocalePrefix("/catalogo", language)}
           className="text-sm text-[#efb296] underline underline-offset-4 hover:text-white"
         >
           {t("standard.backToCatalog")}

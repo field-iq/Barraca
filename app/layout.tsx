@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { StoreCartProvider } from "@/components/StoreCartProvider";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import type { Language } from "@/lib/i18n/translations";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,10 +25,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const locale: Language = headers().get("x-app-locale") === "en" ? "en" : "es";
+
   return (
-    <html lang="es">
+    <html lang={locale}>
       <body className="min-h-screen font-sans antialiased">
-        <LanguageProvider>
+        <LanguageProvider initialLanguage={locale}>
           <StoreCartProvider>{children}</StoreCartProvider>
         </LanguageProvider>
       </body>

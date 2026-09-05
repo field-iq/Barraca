@@ -1,21 +1,10 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { translations, type Language, type TranslationKey } from "./translations";
-
-const STORAGE_KEY = "barraca-lang";
 
 interface LanguageContextValue {
   language: Language;
-  setLanguage: (language: Language) => void;
-  toggleLanguage: () => void;
   t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
 }
 
@@ -28,39 +17,25 @@ function interpolate(template: string, vars?: Record<string, string | number>): 
   );
 }
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("es");
-  const [hydrated, setHydrated] = useState(false);
+export function LanguageProvider({
+  children,
+  initialLanguage,
+}: {
+  children: React.ReactNode;
+  initialLanguage: Language;
+}) {
+  const [language, setLanguage] = useState<Language>(initialLanguage);
 
-  // Reads the stored preference once on mount. Kept separate from the write
-  // effect below so a fresh mount never re-persists the "es" default before
-  // the stored value has been read (that race would clobber it — see the
-  // hydrated guard in the next effect).
+  // The URL is the source of truth for the language (see middleware.ts, which
+  // resolves "/en" vs. the unprefixed site). Re-sync whenever navigation
+  // brings a new initialLanguage from the server.
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored === "es" || stored === "en") setLanguageState(stored);
-    } catch {
-      // Ignore storage access errors (private browsing, disabled storage).
-    }
-    setHydrated(true);
-  }, []);
+    setLanguage(initialLanguage);
+  }, [initialLanguage]);
 
   useEffect(() => {
     document.documentElement.lang = language;
-    if (!hydrated) return;
-    try {
-      window.localStorage.setItem(STORAGE_KEY, language);
-    } catch {
-      // Ignore storage access errors (private browsing, disabled storage).
-    }
-  }, [language, hydrated]);
-
-  const setLanguage = useCallback((next: Language) => setLanguageState(next), []);
-  const toggleLanguage = useCallback(
-    () => setLanguageState((current) => (current === "es" ? "en" : "es")),
-    [],
-  );
+  }, [language]);
 
   const t = useCallback(
     (key: TranslationKey, vars?: Record<string, string | number>) =>
@@ -68,10 +43,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     [language],
   );
 
-  const value = useMemo<LanguageContextValue>(
-    () => ({ language, setLanguage, toggleLanguage, t }),
-    [language, setLanguage, toggleLanguage, t],
-  );
+  const value = useMemo<LanguageContextValue>(() => ({ language, t }), [language, t]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
@@ -85,4 +57,12 @@ export function useLanguage(): LanguageContextValue {
 /** Picks the English value when available and the active language is English, falling back to Spanish. */
 export function pickText(language: Language, es: string, en?: string): string {
   return language === "en" && en ? en : es;
+}
+
+/** Prefixes an internal path with "/en" when linking to the English site, leaving Spanish paths untouched. */
+export function withLocalePrefix(path: string, language: Language): string {
+  if (language !== "en") return path;
+  if (path === "/") return "/en";
+  if (path.startsWith("/#")) return `/en${path.slice(1)}`;
+  return `/en${path}`;
 }
