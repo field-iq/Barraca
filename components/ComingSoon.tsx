@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { Button } from "@/components/ui/button";
 
 interface ComingSoonProps {
   productName: string;
@@ -10,18 +11,14 @@ interface ComingSoonProps {
 export function ComingSoon({ productName, onBack }: ComingSoonProps) {
   const { t } = useLanguage();
   return (
-    <section className="max-w-xl mx-auto text-center bg-white border border-sand rounded-2xl p-8">
-      <h2 className="font-serif text-2xl text-walnut">{productName}</h2>
-      <p className="mt-3 text-walnut/70">
+    <section className="mx-auto max-w-xl rounded-soft-lg bg-nm-surface p-8 text-center shadow-soft">
+      <h2 className="font-heading text-2xl text-nm-text">{productName}</h2>
+      <p className="mt-3 text-nm-muted">
         {t("comingSoon.description")}
       </p>
-      <button
-        type="button"
-        onClick={onBack}
-        className="mt-6 inline-flex items-center justify-center rounded-lg bg-bark text-cream px-5 py-2.5 text-sm font-medium hover:bg-walnut transition"
-      >
+      <Button type="button" variant="accent" onClick={onBack} className="mt-6">
         {t("comingSoon.back")}
-      </button>
+      </Button>
     </section>
   );
 }

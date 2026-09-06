@@ -4,6 +4,7 @@ import { MapPin, Route } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { cartSubtotal, cartTotal } from "@/lib/cart";
 import { formatARS } from "@/lib/format";
+import { cn } from "@/lib/cn";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
 import { calculateDeliveryCost } from "@/lib/pricing/tablePricing";
 import type {
@@ -16,6 +17,13 @@ import type {
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translations";
 import { ContactGate, isContactValid } from "./ContactGate";
+import { Button } from "@/components/ui/button";
+import { RadioGroup } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { FormField } from "@/components/ui/form-field";
+import { Alert } from "@/components/feedback/alert";
+import { Divider } from "@/components/ui/divider";
 
 interface CheckoutFormProps {
   items: CartItem[];
@@ -121,48 +129,49 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-2xl space-y-8 rounded-2xl border border-sand bg-white p-5 sm:p-8"
+      className="mx-auto max-w-2xl space-y-8 rounded-soft-lg bg-nm-surface p-5 shadow-soft sm:p-8"
     >
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-serif text-2xl text-walnut sm:text-3xl">{t("checkout.title")}</h2>
-          <p className="mt-1 text-sm text-walnut/70">
+          <h2 className="font-heading text-2xl text-nm-text sm:text-3xl">{t("checkout.title")}</h2>
+          <p className="mt-1 text-sm text-nm-muted">
             {items.length} {items.length === 1 ? t("checkout.itemCountPiece") : t("checkout.itemCountPieces")} · subtotal {formatARS(subtotal)}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onBack}
-          className="shrink-0 text-sm text-bark underline underline-offset-4 hover:text-walnut"
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={onBack} className="shrink-0">
           {t("checkout.backToCart")}
-        </button>
+        </Button>
       </header>
 
       <fieldset className="space-y-5">
-        <legend className="font-serif text-xl text-walnut">{t("checkout.delivery")}</legend>
-        <div className={`grid gap-3 ${deliveryAvailable ? "grid-cols-2" : "grid-cols-1"}`}>
-          {deliveryAvailable && (
-            <DeliveryOptionButton
-              active={deliveryOption === "delivery"}
-              onClick={() => setDeliveryOption("delivery")}
-              title={t("checkout.homeDelivery")}
-              subtitle={t("checkout.homeDeliverySubtitle")}
-            />
-          )}
-          <DeliveryOptionButton
-            active={deliveryOption === "pickup"}
-            onClick={() => setDeliveryOption("pickup")}
-            title={t("checkout.pickup")}
-            subtitle={t("checkout.pickupSubtitle")}
-          />
-        </div>
+        <legend className="font-heading text-xl text-nm-text">{t("checkout.delivery")}</legend>
+        <RadioGroup
+          name="deliveryOption"
+          value={deliveryOption}
+          onChange={(value) => setDeliveryOption(value as DeliveryOption)}
+          className={cn(deliveryAvailable && "sm:grid-cols-2")}
+          options={[
+            ...(deliveryAvailable
+              ? [{
+                value: "delivery",
+                label: t("checkout.homeDelivery"),
+                hint: t("checkout.homeDeliverySubtitle"),
+              }]
+              : []),
+            {
+              value: "pickup",
+              label: t("checkout.pickup"),
+              hint: t("checkout.pickupSubtitle"),
+            },
+          ]}
+        />
 
         {deliveryOption === "delivery" && (
-          <div className="space-y-5 border-t border-sand pt-5">
+          <div className="space-y-5 pt-2">
+            <Divider />
             {zoneAvailable && distanceAvailable && (
               <div>
-                <p className="mb-2 text-sm font-medium text-walnut">{t("checkout.howToQuoteShipping")}</p>
+                <p className="mb-2 text-sm font-medium text-nm-text">{t("checkout.howToQuoteShipping")}</p>
                 <div className="grid grid-cols-2 gap-2">
                   <DeliveryMethodButton
                     active={deliveryMethod === "zone"}
@@ -180,67 +189,60 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
               </div>
             )}
 
-            <label className="block text-sm font-medium text-walnut">
-              {t("checkout.deliveryAddress")}
-              <input
+            <FormField label={t("checkout.deliveryAddress")} htmlFor="delivery-address">
+              <Input
+                id="delivery-address"
                 type="text"
                 value={deliveryAddress}
                 onChange={(event) => setDeliveryAddress(event.target.value)}
                 placeholder={t("checkout.addressPlaceholder")}
                 autoComplete="street-address"
-                className="mt-1.5 w-full rounded-lg border border-sand bg-white px-3 py-2.5 text-walnut outline-none focus:border-transparent focus:ring-2 focus:ring-accent"
               />
-            </label>
+            </FormField>
 
             {deliveryMethod === "zone" ? (
-              <div>
-                <label className="block text-sm font-medium text-walnut">
-                  {t("checkout.deliveryZone")}
-                  <select
-                    value={deliveryZoneId}
-                    onChange={(event) => setDeliveryZoneId(event.target.value)}
-                    className="mt-1.5 h-11 w-full rounded-lg border border-sand bg-white px-3 font-normal outline-none focus:border-transparent focus:ring-2 focus:ring-accent"
-                  >
-                    {enabledZones.map((zone) => (
-                      <option key={zone.id} value={zone.id}>{zone.name} · {formatARS(zone.price)}</option>
-                    ))}
-                  </select>
-                </label>
-                {selectedZone?.description && (
-                  <p className="mt-2 text-xs leading-5 text-walnut/55">{t("checkout.includes", { description: selectedZone.description })}</p>
-                )}
-              </div>
+              <FormField
+                label={t("checkout.deliveryZone")}
+                htmlFor="delivery-zone"
+                hint={selectedZone?.description ? t("checkout.includes", { description: selectedZone.description }) : undefined}
+              >
+                <Select
+                  id="delivery-zone"
+                  value={deliveryZoneId}
+                  onChange={(event) => setDeliveryZoneId(event.target.value)}
+                  options={enabledZones.map((zone) => ({
+                    value: zone.id,
+                    label: `${zone.name} · ${formatARS(zone.price)}`,
+                  }))}
+                />
+              </FormField>
             ) : (
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-walnut">
-                  {t("checkout.approxDistance")}
-                  <div className="relative mt-1.5">
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      min="0.1"
-                      max={config.delivery.maximumDistanceKm}
-                      step="0.1"
-                      value={distanceInput}
-                      onChange={(event) => setDistanceInput(event.target.value)}
-                      placeholder={t("checkout.distancePlaceholder")}
-                      className="h-11 w-full rounded-lg border border-sand bg-white px-3 pr-12 font-normal text-walnut outline-none focus:border-transparent focus:ring-2 focus:ring-accent"
-                    />
-                    <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-walnut/55">km</span>
-                  </div>
-                </label>
-                <p className="text-xs leading-5 text-walnut/50">
-                  {t("checkout.routeHint", { origin: config.delivery.originAddress })}
-                </p>
+                <FormField
+                  label={t("checkout.approxDistance")}
+                  htmlFor="delivery-distance"
+                  hint={t("checkout.routeHint", { origin: config.delivery.originAddress })}
+                >
+                  <Input
+                    id="delivery-distance"
+                    type="number"
+                    inputMode="decimal"
+                    min="0.1"
+                    max={config.delivery.maximumDistanceKm}
+                    step="0.1"
+                    value={distanceInput}
+                    onChange={(event) => setDistanceInput(event.target.value)}
+                    placeholder={t("checkout.distancePlaceholder")}
+                    trailing={<span className="text-xs">km</span>}
+                  />
+                </FormField>
                 {distanceValid && previewDeliveryCost !== null && (
-                  <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                  <div className="rounded-soft-sm bg-nm-surface px-4 py-3 text-sm text-nm-success shadow-soft-inset-sm">
                     {t("checkout.distanceEstimate", { km: distanceKm, amount: formatARS(previewDeliveryCost) })}
                   </div>
                 )}
                 {distanceInput !== "" && !distanceValid && (
-                  <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
-                    {t("checkout.distanceRangeError", { min: "0.1", max: config.delivery.maximumDistanceKm })}
-                  </p>
+                  <Alert tone="warning" title={t("checkout.distanceRangeError", { min: "0.1", max: config.delivery.maximumDistanceKm })} />
                 )}
               </div>
             )}
@@ -250,43 +252,38 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
 
       <ContactGate value={contact} onChange={setContact} />
 
-      {submitError && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
-          {submitError}
-        </p>
-      )}
+      {submitError && <Alert tone="danger" title={submitError} />}
 
-      <div className="space-y-2 border-t border-sand pt-6 text-sm">
-        <SummaryRow label={t("checkout.furniture")} value={formatARS(subtotal)} />
-        <SummaryRow
-          label={t("checkout.shipping")}
-          value={deliveryOption === "pickup"
-            ? t("checkout.freePickup")
-            : previewDeliveryCost === null
-              ? t("checkout.toCalculate")
-              : formatARS(previewDeliveryCost)}
-        />
-        {previewTotal !== null && (
-          <div className="flex justify-between border-t border-sand pt-3 font-serif text-lg text-walnut">
-            <span>{t("checkout.estimatedTotal")}</span>
-            <span>{formatARS(previewTotal)}</span>
-          </div>
-        )}
+      <div className="space-y-3">
+        <Divider />
+        <div className="space-y-2 pt-1 text-sm">
+          <SummaryRow label={t("checkout.furniture")} value={formatARS(subtotal)} />
+          <SummaryRow
+            label={t("checkout.shipping")}
+            value={deliveryOption === "pickup"
+              ? t("checkout.freePickup")
+              : previewDeliveryCost === null
+                ? t("checkout.toCalculate")
+                : formatARS(previewDeliveryCost)}
+          />
+          {previewTotal !== null && (
+            <div className="flex justify-between border-t border-nm-line pt-3">
+              <span className="font-heading text-lg text-nm-text">{t("checkout.estimatedTotal")}</span>
+              <span className="font-heading text-lg text-nm-accent">{formatARS(previewTotal)}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
         {!canSubmit && !submitting && (
-          <p className="text-xs text-walnut/60 sm:mr-auto">
+          <p className="text-xs text-nm-muted sm:mr-auto">
             {submitHint(t, deliveryOption, addressValid, deliveryMethod, methodValid, isContactValid(contact))}
           </p>
         )}
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="inline-flex items-center justify-center rounded-lg bg-bark px-5 py-3 text-sm font-medium text-cream transition hover:bg-walnut disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <Button type="submit" variant="accent" size="lg" disabled={!canSubmit} loading={submitting}>
           {submitting ? t("checkout.sending") : t("checkout.sendQuote")}
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -307,29 +304,6 @@ function submitHint(
   return "";
 }
 
-function DeliveryOptionButton({
-  active,
-  onClick,
-  title,
-  subtitle,
-}: {
-  active: boolean;
-  onClick: () => void;
-  title: string;
-  subtitle: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-xl border-2 p-4 text-left transition ${active ? "border-bark bg-bark/5" : "border-sand hover:border-bark/40"}`}
-    >
-      <p className={`text-sm font-medium ${active ? "text-bark" : "text-walnut"}`}>{title}</p>
-      <p className="mt-0.5 text-xs text-walnut/50">{subtitle}</p>
-    </button>
-  );
-}
-
 function DeliveryMethodButton({
   active,
   icon,
@@ -345,7 +319,11 @@ function DeliveryMethodButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex h-11 items-center justify-center gap-2 rounded-md border text-sm font-medium ${active ? "border-bark bg-bark text-cream" : "border-sand text-walnut hover:border-bark/50"}`}
+      aria-pressed={active}
+      className={cn(
+        "nm-transition flex h-11 items-center justify-center gap-2 rounded-soft-sm bg-nm-surface text-sm font-medium",
+        active ? "text-nm-accent shadow-soft-inset-sm" : "text-nm-text shadow-soft-sm hover:shadow-soft",
+      )}
     >
       {icon} {label}
     </button>
@@ -354,9 +332,9 @@ function DeliveryMethodButton({
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4 text-walnut/70">
+    <div className="flex justify-between gap-4 text-nm-muted">
       <span>{label}</span>
-      <span className="text-right">{value}</span>
+      <span className="text-right text-nm-text">{value}</span>
     </div>
   );
 }

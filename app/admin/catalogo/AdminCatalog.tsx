@@ -1,19 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowDown,
   ArrowUp,
-  ExternalLink,
   Eye,
   EyeOff,
   GripVertical,
   ImagePlus,
-  LogOut,
   Package,
   Plus,
-  Ruler,
   Save,
   Tags,
   Trash2,
@@ -25,6 +21,19 @@ import type {
   CatalogData,
   CatalogProduct,
 } from "@/lib/catalog";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { FormField } from "@/components/ui/form-field";
+import { Toggle } from "@/components/ui/toggle";
+import { Badge } from "@/components/ui/badge";
+import { Divider } from "@/components/ui/divider";
+import { Alert } from "@/components/feedback/alert";
+import { EmptyState } from "@/components/feedback/empty-state";
+import { cn } from "@/lib/cn";
 
 interface AdminCatalogProps {
   initialCatalog: CatalogData;
@@ -187,92 +196,36 @@ export function AdminCatalog({
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f4f1] text-walnut">
-      <header className="sticky top-0 z-20 border-b border-sand bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <div className="min-w-0">
-            <h1 className="truncate font-serif text-xl">Catálogo</h1>
-            <p className="text-xs text-walnut/55">La Barraca De Juan</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              target="_blank"
-              className="inline-flex h-10 items-center gap-2 rounded-md border border-sand px-3 text-sm hover:bg-sand/40"
-            >
-              <ExternalLink size={16} aria-hidden="true" />
-              <span className="hidden sm:inline">Ver tienda</span>
-            </Link>
-            <a
-              href="/api/admin/logout"
-              className="inline-flex h-10 items-center gap-2 rounded-md border border-sand px-3 text-sm hover:bg-sand/40"
-            >
-              <LogOut size={16} aria-hidden="true" />
-              <span className="hidden sm:inline">Salir</span>
-            </a>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
-        <nav className="mb-6 flex gap-1 border-b border-sand" aria-label="Administración">
-          <Link
-            href="/admin/catalogo"
-            aria-current="page"
-            className="inline-flex h-11 items-center gap-2 border-b-2 border-bark px-3 text-sm font-medium text-bark"
-          >
-            <Package size={17} /> Catálogo
-          </Link>
-          <Link
-            href="/admin/precios"
-            className="inline-flex h-11 items-center gap-2 border-b-2 border-transparent px-3 text-sm text-walnut/60 hover:text-walnut"
-          >
-            <Ruler size={17} /> A medida
-          </Link>
-        </nav>
-
-        <div className="mb-5 flex flex-col gap-3 border-b border-sand pb-5 lg:flex-row lg:items-center lg:justify-between">
+    <AdminShell title="Catálogo" active="catalogo" externalHref="/" externalLabel="Ver tienda">
+        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="font-serif text-2xl">Administrar tienda</h2>
-            <p className="mt-1 text-sm text-walnut/60">
+            <h2 className="font-heading text-2xl text-nm-text">Administrar tienda</h2>
+            <p className="mt-1 text-sm text-nm-muted">
               {cloudStorageConfigured
                 ? "Los cambios se guardan en Vercel y se publican al instante."
                 : "Modo local: conectá Vercel Blob antes de publicar en producción."}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={addProduct}
-              className="inline-flex h-10 items-center gap-2 rounded-md border border-bark px-3 text-sm font-medium text-bark hover:bg-sand/50"
-            >
-              <Plus size={17} aria-hidden="true" /> Nuevo producto
-            </button>
-            <button
-              type="button"
+            <Button variant="raised" onClick={addProduct} leading={<Plus size={17} aria-hidden="true" />}>
+              Nuevo producto
+            </Button>
+            <Button
+              variant="accent"
               onClick={saveCatalog}
-              disabled={saveState === "saving"}
-              className="inline-flex h-10 items-center gap-2 rounded-md bg-bark px-4 text-sm font-medium text-cream hover:bg-walnut disabled:opacity-50"
+              loading={saveState === "saving"}
+              leading={<Save size={17} aria-hidden="true" />}
             >
-              <Save size={17} aria-hidden="true" />
               {saveState === "saving" ? "Guardando..." : "Guardar y publicar"}
-            </button>
+            </Button>
           </div>
         </div>
 
         {(message || saveState === "success") && (
-          <div
-            className={`mb-5 rounded-md border px-4 py-3 text-sm ${
-              saveState === "success"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-amber-200 bg-amber-50 text-amber-900"
-            }`}
-          >
-            {message}
-          </div>
+          <Alert tone={saveState === "success" ? "success" : "warning"} title={message} className="mb-6" />
         )}
 
-        <div className="mb-5 flex gap-1 border-b border-sand" role="tablist">
+        <div className="mb-6 inline-flex gap-1 rounded-pill p-1.5 shadow-soft-inset" role="tablist">
           <TabButton
             active={tab === "products"}
             onClick={() => setTab("products")}
@@ -326,8 +279,7 @@ export function AdminCatalog({
             onMove={moveCategory}
           />
         )}
-      </main>
-    </div>
+    </AdminShell>
   );
 }
 
@@ -348,11 +300,10 @@ function TabButton({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`inline-flex h-11 items-center gap-2 border-b-2 px-3 text-sm font-medium ${
-        active
-          ? "border-bark text-bark"
-          : "border-transparent text-walnut/55 hover:text-walnut"
-      }`}
+      className={cn(
+        "nm-transition inline-flex h-10 items-center gap-2 rounded-pill px-5 text-sm font-semibold",
+        active ? "bg-nm-surface text-nm-accent shadow-soft-sm" : "text-nm-muted hover:text-nm-text",
+      )}
     >
       {icon}
       {children}
@@ -377,38 +328,40 @@ function ProductList({
   );
 
   return (
-    <aside className="overflow-hidden rounded-md border border-sand bg-white lg:sticky lg:top-24 lg:self-start">
-      <div className="border-b border-sand px-4 py-3 text-xs font-semibold uppercase text-walnut/50">
+    <aside className="overflow-hidden rounded-soft bg-nm-surface shadow-soft lg:sticky lg:top-24 lg:self-start">
+      <div className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-nm-muted">
         Orden de aparicion
       </div>
-      <div className="max-h-[70vh] overflow-y-auto">
+      <div className="max-h-[70vh] space-y-1 overflow-y-auto p-2">
         {ordered.map((product, index) => (
           <div
             key={product.id}
-            className={`flex items-center border-b border-sand/70 last:border-0 ${
-              selectedId === product.id ? "bg-sand/55" : "hover:bg-sand/25"
-            }`}
+            className={cn(
+              "nm-transition flex items-center rounded-soft-sm",
+              selectedId === product.id ? "shadow-soft-inset-sm" : "hover:shadow-soft-sm",
+            )}
           >
             <button
               type="button"
               onClick={() => onSelect(product.id)}
-              className="min-w-0 flex-1 px-4 py-3 text-left"
+              className="min-w-0 flex-1 px-3 py-2.5 text-left"
             >
               <span className="flex items-center gap-2">
                 {product.visible ? (
-                  <Eye size={14} className="shrink-0 text-emerald-700" />
+                  <Eye size={14} className="shrink-0 text-nm-success" />
                 ) : (
-                  <EyeOff size={14} className="shrink-0 text-walnut/35" />
+                  <EyeOff size={14} className="shrink-0 text-nm-muted/50" />
                 )}
-                <span className="truncate text-sm font-medium">{product.name}</span>
+                <span className="truncate text-sm font-medium text-nm-text">{product.name}</span>
               </span>
-              <span className="mt-1 block truncate pl-[22px] text-xs text-walnut/50">
+              <span className="mt-1 block truncate pl-[22px] text-xs text-nm-muted">
                 {product.dimensions || "Sin medidas"}
               </span>
             </button>
-            <div className="mr-2 flex flex-col">
+            <div className="mr-1 flex flex-col">
               <IconButton
                 label="Subir producto"
+                size="sm"
                 disabled={index === 0}
                 onClick={() => onMove(product.id, -1)}
               >
@@ -416,6 +369,7 @@ function ProductList({
               </IconButton>
               <IconButton
                 label="Bajar producto"
+                size="sm"
                 disabled={index === ordered.length - 1}
                 onClick={() => onMove(product.id, 1)}
               >
@@ -445,24 +399,20 @@ function ProductEditor({
     : 0;
 
   return (
-    <section className="overflow-hidden rounded-md border border-sand bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-sand px-4 py-4 sm:px-6">
+    <section className="overflow-hidden rounded-soft bg-nm-surface shadow-soft">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:px-6">
         <div className="min-w-0">
-          <h3 className="truncate font-serif text-xl">{product.name}</h3>
-          <p className="mt-0.5 text-xs text-walnut/45">ID: {product.id}</p>
+          <h3 className="truncate font-heading text-xl text-nm-text">{product.name}</h3>
+          <p className="mt-0.5 text-xs text-nm-muted">ID: {product.id}</p>
         </div>
-        <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium">
-          <input
-            type="checkbox"
-            checked={product.visible}
-            onChange={(event) => onChange({ visible: event.target.checked })}
-            className="h-4 w-4 accent-emerald-700"
-          />
-          Visible en la tienda
-        </label>
+        <Toggle
+          checked={product.visible}
+          onChange={(visible) => onChange({ visible })}
+          label="Visible en la tienda"
+        />
       </div>
 
-      <div className="space-y-8 p-4 sm:p-6">
+      <div className="space-y-8 p-5 sm:p-6">
         <EditorSection title="Información principal">
           <div className="grid gap-4 sm:grid-cols-2">
             <TextField
@@ -505,6 +455,8 @@ function ProductEditor({
           />
         </EditorSection>
 
+        <Divider />
+
         <EditorSection title="Precios y descuento">
           <div className="grid gap-4 sm:grid-cols-3">
             <NumberField
@@ -532,10 +484,12 @@ function ProductEditor({
               }
             />
           </div>
-          <p className="text-sm text-emerald-800">
+          <p className="text-sm text-nm-success">
             Ahorro mostrado en la tienda: ${Math.max(0, product.listPrice - product.cashPrice).toLocaleString("es-AR")}
           </p>
         </EditorSection>
+
+        <Divider />
 
         <EditorSection title="Fotos">
           <ImageManager
@@ -549,14 +503,12 @@ function ProductEditor({
           />
         </EditorSection>
 
-        <div className="flex justify-end border-t border-sand pt-5">
-          <button
-            type="button"
-            onClick={onDelete}
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-red-200 px-3 text-sm font-medium text-red-700 hover:bg-red-50"
-          >
-            <Trash2 size={16} /> Eliminar producto
-          </button>
+        <Divider />
+
+        <div className="flex justify-end">
+          <Button variant="danger" onClick={onDelete} leading={<Trash2 size={16} />}>
+            Eliminar producto
+          </Button>
         </div>
       </div>
     </section>
@@ -613,18 +565,18 @@ function ImageManager({
   return (
     <div className="space-y-4">
       <label
-        className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-sand bg-[#faf9f7] px-4 text-center hover:border-accent"
+        className="nm-transition flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-soft px-4 text-center shadow-soft-inset hover:shadow-soft-inset-lg"
         onDragOver={(event) => event.preventDefault()}
         onDrop={(event) => {
           event.preventDefault();
           void uploadFiles(event.dataTransfer.files);
         }}
       >
-        <UploadCloud size={28} className="text-bark" aria-hidden="true" />
-        <span className="mt-2 text-sm font-medium">
+        <UploadCloud size={28} className="text-nm-accent" aria-hidden="true" />
+        <span className="mt-2 text-sm font-medium text-nm-text">
           {uploading ? "Subiendo fotos..." : "Arrastrá fotos o seleccioná archivos"}
         </span>
-        <span className="mt-1 text-xs text-walnut/50">JPG, PNG o WebP, hasta 4 MB</span>
+        <span className="mt-1 text-xs text-nm-muted">JPG, PNG o WebP, hasta 4 MB</span>
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
@@ -638,7 +590,7 @@ function ImageManager({
         />
       </label>
 
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-sm text-nm-danger">{error}</p>}
 
       {product.images.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
@@ -652,21 +604,22 @@ function ImageManager({
                 if (draggedIndex !== null) moveImage(draggedIndex, index);
                 setDraggedIndex(null);
               }}
-              className="overflow-hidden rounded-md border border-sand bg-white"
+              className="overflow-hidden rounded-soft-sm bg-nm-surface shadow-soft"
             >
-              <div className="relative aspect-[3/4] bg-sand/50">
+              <div className="relative aspect-[3/4] shadow-soft-inset-sm">
                 <Image src={src} alt="" fill sizes="180px" className="object-contain" />
                 {index === 0 && (
-                  <span className="absolute left-2 top-2 rounded-md bg-walnut px-2 py-1 text-xs font-medium text-cream">
+                  <Badge tone="accent" className="absolute left-2 top-2 bg-nm-accent text-nm-accent-fg">
                     Principal
-                  </span>
+                  </Badge>
                 )}
               </div>
-              <div className="flex h-10 items-center justify-between px-1">
-                <GripVertical size={16} className="ml-1 text-walnut/35" />
+              <div className="flex items-center justify-between px-1 py-1">
+                <GripVertical size={16} className="ml-1 shrink-0 text-nm-muted/60" />
                 <div className="flex">
                   <IconButton
                     label="Mover foto a la izquierda"
+                    size="sm"
                     disabled={index === 0}
                     onClick={() => moveImage(index, index - 1)}
                   >
@@ -674,6 +627,7 @@ function ImageManager({
                   </IconButton>
                   <IconButton
                     label="Mover foto a la derecha"
+                    size="sm"
                     disabled={index === product.images.length - 1}
                     onClick={() => moveImage(index, index + 1)}
                   >
@@ -681,8 +635,9 @@ function ImageManager({
                   </IconButton>
                   <IconButton
                     label="Quitar foto"
+                    size="sm"
+                    className="text-nm-danger"
                     onClick={() => onChange(product.images.filter((_, itemIndex) => itemIndex !== index))}
-                    danger
                   >
                     <Trash2 size={15} />
                   </IconButton>
@@ -692,7 +647,7 @@ function ImageManager({
           ))}
         </div>
       ) : (
-        <div className="flex items-center gap-2 text-sm text-walnut/50">
+        <div className="flex items-center gap-2 text-sm text-nm-muted">
           <ImagePlus size={17} /> Este producto todavía no tiene fotos.
         </div>
       )}
@@ -718,24 +673,23 @@ function CategoryEditor({
   const ordered = [...categories].sort((a, b) => a.sortOrder - b.sortOrder);
 
   return (
-    <section className="overflow-hidden rounded-md border border-sand bg-white">
-      <div className="flex items-center justify-between gap-4 border-b border-sand px-4 py-4 sm:px-6">
+    <section className="overflow-hidden rounded-soft bg-nm-surface shadow-soft">
+      <div className="flex items-center justify-between gap-4 p-5 sm:px-6">
         <div>
-          <h3 className="font-serif text-xl">Categorías</h3>
-          <p className="mt-1 text-sm text-walnut/55">Organizan los productos de la tienda.</p>
+          <h3 className="font-heading text-xl text-nm-text">Categorías</h3>
+          <p className="mt-1 text-sm text-nm-muted">Organizan los productos de la tienda.</p>
         </div>
-        <button
-          type="button"
-          onClick={onAdd}
-          className="inline-flex h-10 items-center gap-2 rounded-md border border-bark px-3 text-sm font-medium text-bark"
-        >
-          <Plus size={17} /> Nueva
-        </button>
+        <Button variant="raised" onClick={onAdd} leading={<Plus size={17} />}>
+          Nueva
+        </Button>
       </div>
 
-      <div className="divide-y divide-sand">
+      <div className="space-y-3 p-3 sm:px-6 sm:pb-6">
         {ordered.map((category, index) => (
-          <div key={category.id} className="grid gap-4 px-4 py-5 sm:px-6 lg:grid-cols-[1fr_1.5fr_auto] lg:items-end">
+          <div
+            key={category.id}
+            className="nm-transition grid gap-4 rounded-soft-sm p-4 shadow-soft-sm hover:shadow-soft lg:grid-cols-[1fr_1.5fr_auto] lg:items-end"
+          >
             <TextField
               label="Nombre"
               value={category.name}
@@ -746,24 +700,20 @@ function CategoryEditor({
               value={category.description}
               onChange={(description) => onChange(category.id, { description })}
             />
-            <div className="flex h-10 items-center justify-between gap-2 lg:justify-end">
-              <label className="mr-2 inline-flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={category.visible}
-                  onChange={(event) => onChange(category.id, { visible: event.target.checked })}
-                  className="h-4 w-4 accent-emerald-700"
-                />
-                Visible
-              </label>
-              <span className="text-xs text-walnut/45">{productCounts[category.id] ?? 0} prod.</span>
-              <IconButton label="Subir categoría" disabled={index === 0} onClick={() => onMove(category.id, -1)}>
+            <div className="flex h-12 items-center justify-between gap-3 lg:justify-end">
+              <Toggle
+                checked={category.visible}
+                onChange={(visible) => onChange(category.id, { visible })}
+                label="Visible"
+              />
+              <span className="text-xs text-nm-muted">{productCounts[category.id] ?? 0} prod.</span>
+              <IconButton label="Subir categoría" size="sm" disabled={index === 0} onClick={() => onMove(category.id, -1)}>
                 <ArrowUp size={16} />
               </IconButton>
-              <IconButton label="Bajar categoría" disabled={index === ordered.length - 1} onClick={() => onMove(category.id, 1)}>
+              <IconButton label="Bajar categoría" size="sm" disabled={index === ordered.length - 1} onClick={() => onMove(category.id, 1)}>
                 <ArrowDown size={16} />
               </IconButton>
-              <IconButton label="Eliminar categoría" danger onClick={() => onDelete(category)}>
+              <IconButton label="Eliminar categoría" size="sm" className="text-nm-danger" onClick={() => onDelete(category)}>
                 <Trash2 size={16} />
               </IconButton>
             </div>
@@ -776,8 +726,8 @@ function CategoryEditor({
 
 function EditorSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <fieldset className="space-y-4 border-t border-sand pt-5 first:border-0 first:pt-0">
-      <legend className="mb-4 font-serif text-lg">{title}</legend>
+    <fieldset className="space-y-4">
+      <legend className="mb-1 font-heading text-lg text-nm-text">{title}</legend>
       {children}
     </fieldset>
   );
@@ -795,16 +745,14 @@ function TextField({
   placeholder?: string;
 }) {
   return (
-    <label className="block min-w-0 text-sm font-medium">
-      {label}
-      <input
+    <FormField label={label} className="min-w-0">
+      <Input
         type="text"
         value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-1.5 h-10 w-full rounded-md border border-sand bg-white px-3 font-normal outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
       />
-    </label>
+    </FormField>
   );
 }
 
@@ -820,15 +768,9 @@ function TextAreaField({
   rows: number;
 }) {
   return (
-    <label className="block text-sm font-medium">
-      {label}
-      <textarea
-        value={value}
-        rows={rows}
-        onChange={(event) => onChange(event.target.value)}
-        className="mt-1.5 w-full resize-y rounded-md border border-sand bg-white px-3 py-2 font-normal outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
-      />
-    </label>
+    <FormField label={label}>
+      <Textarea value={value} rows={rows} onChange={(event) => onChange(event.target.value)} />
+    </FormField>
   );
 }
 
@@ -844,18 +786,9 @@ function SelectField({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="block text-sm font-medium">
-      {label}
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="mt-1.5 h-10 w-full rounded-md border border-sand bg-white px-3 font-normal outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>{option.label}</option>
-        ))}
-      </select>
-    </label>
+    <FormField label={label}>
+      <Select value={value} options={options} onChange={(event) => onChange(event.target.value)} />
+    </FormField>
   );
 }
 
@@ -877,61 +810,27 @@ function NumberField({
   max?: number;
 }) {
   return (
-    <label className="block text-sm font-medium">
-      {label}
-      <span className="relative mt-1.5 block">
-        {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-walnut/45">{prefix}</span>}
-        <input
-          type="number"
-          min={min}
-          max={max}
-          value={value}
-          onChange={(event) => onChange(Number(event.target.value))}
-          className={`h-10 w-full rounded-md border border-sand bg-white px-3 font-normal outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 ${prefix ? "pl-7" : ""} ${suffix ? "pr-9" : ""}`}
-        />
-        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-walnut/45">{suffix}</span>}
-      </span>
-    </label>
-  );
-}
-
-function IconButton({
-  label,
-  onClick,
-  disabled,
-  danger,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  danger?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-md disabled:opacity-25 ${
-        danger ? "text-red-600 hover:bg-red-50" : "text-walnut/55 hover:bg-sand/60"
-      }`}
-    >
-      {children}
-    </button>
+    <FormField label={label}>
+      <Input
+        type="number"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        leading={prefix ? <span className="text-sm text-nm-muted">{prefix}</span> : undefined}
+        trailing={suffix ? <span className="text-sm text-nm-muted">{suffix}</span> : undefined}
+      />
+    </FormField>
   );
 }
 
 function EmptyProducts({ onAdd }: { onAdd: () => void }) {
   return (
-    <div className="flex min-h-80 flex-col items-center justify-center rounded-md border border-dashed border-sand bg-white p-8 text-center">
-      <Package size={32} className="text-walnut/30" />
-      <p className="mt-3 font-medium">Todavía no hay productos</p>
-      <button type="button" onClick={onAdd} className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-bark px-4 text-sm font-medium text-cream">
-        <Plus size={17} /> Agregar producto
-      </button>
-    </div>
+    <EmptyState
+      title="Todavía no hay productos"
+      body=""
+      action="Agregar producto"
+      onAction={onAdd}
+    />
   );
 }

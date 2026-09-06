@@ -9,12 +9,20 @@ export const translations = {
   "header.consultAriaLabel": { es: "Consultar por WhatsApp", en: "Contact us on WhatsApp" },
   "header.consult": { es: "Consultar", en: "Contact us" },
   "header.languageToggle": { es: "English", en: "Español" },
+  "header.menuAriaLabel": { es: "Abrir menú", en: "Open menu" },
 
   // Home page
   "home.ready.cta": { es: "Explorar catálogo", en: "Browse the catalog" },
   "home.custom.cta": { es: "Empezar cotización", en: "Start a quote" },
   "home.piece.cta": { es: "Ver catálogo", en: "View catalog" },
   "home.featured.label": { es: "Piezas destacadas", en: "Featured pieces" },
+
+  "home.hero.eyebrow": { es: "Hecho a mano en Tigre", en: "Handmade in Tigre" },
+  "home.hero.title": { es: "Muebles con historia, hechos para durar", en: "Furniture with history, built to last" },
+  "home.hero.body": {
+    es: "Piezas de madera maciza listas para llevar o hechas a medida en nuestro taller de Tigre.",
+    en: "Solid-wood pieces ready to take home, or made to order in our workshop in Tigre.",
+  },
 
   "home.piece1.title": { es: "Mesas que reúnen historias", en: "Tables that gather stories" },
   "home.piece1.eyebrow": { es: "Mesas de comedor", en: "Dining tables" },

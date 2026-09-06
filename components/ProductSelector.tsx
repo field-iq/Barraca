@@ -17,11 +17,11 @@ export function ProductSelector({ onSelect }: ProductSelectorProps) {
       <div className="text-center max-w-2xl mx-auto mb-8">
         <h1
           id="product-selector-title"
-          className="font-serif text-3xl sm:text-4xl text-walnut"
+          className="font-heading text-3xl text-nm-text sm:text-4xl"
         >
           {t("productSelector.title")}
         </h1>
-        <p className="mt-3 text-walnut/70">
+        <p className="mt-3 text-nm-muted">
           {t("productSelector.description")}
         </p>
       </div>

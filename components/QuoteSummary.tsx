@@ -1,9 +1,12 @@
 "use client";
 
+import { Check } from "lucide-react";
 import type { CartQuoteRequest } from "@/lib/quoteTypes";
 import { formatARS } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translations";
+import { Button } from "@/components/ui/button";
+import { Divider } from "@/components/ui/divider";
 
 const PRODUCT_LABEL_KEY: Record<string, TranslationKey> = {
   table: "cartItem.table",
@@ -32,49 +35,43 @@ export function QuoteSummary({
   const { contact, items, deliveryOption, deliveryAddress } = request;
 
   return (
-    <section className="max-w-xl mx-auto bg-white border border-sand rounded-2xl p-6 sm:p-8">
+    <section className="mx-auto max-w-xl rounded-soft-lg bg-nm-surface p-6 shadow-soft sm:p-8">
       <div className="flex flex-col items-center text-center">
-        <div
+        <span
           aria-hidden
-          className="h-12 w-12 rounded-full bg-bark text-cream flex items-center justify-center mb-4"
+          className="mb-4 grid size-12 place-items-center rounded-full bg-nm-accent text-nm-accent-fg shadow-soft"
         >
-          <svg
-            viewBox="0 0 24 24"
-            className="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </div>
-        <h2 className="font-serif text-2xl text-walnut">{t("quoteSummary.thanks")}</h2>
-        <p className="mt-2 text-walnut/80">
+          <Check className="size-6" strokeWidth={2.5} />
+        </span>
+        <h2 className="font-heading text-2xl text-nm-text">{t("quoteSummary.thanks")}</h2>
+        <p className="mt-2 text-nm-muted">
           {contact.preferredMethod === "email" ? t("quoteSummary.sentEmail") : t("quoteSummary.sentWhatsapp")}
         </p>
       </div>
 
       {/* Datos de contacto */}
-      <dl className="mt-6 border-t border-sand pt-6 space-y-3 text-sm">
-        {contact.email && <Row label={t("contactGate.email")} value={contact.email} />}
-        {contact.phone && <Row label={t("contactGate.phone")} value={contact.phone} />}
-        {deliveryOption === "delivery" && deliveryAddress && (
-          <Row label={t("quoteSummary.deliveryAddress")} value={deliveryAddress} />
-        )}
-        {deliveryOption === "pickup" && (
-          <Row label={t("quoteSummary.pickupAt")} value="Sáenz Peña 1213, Tigre" />
-        )}
-      </dl>
+      <div className="mt-6">
+        <Divider />
+        <dl className="mt-6 space-y-3 text-sm">
+          {contact.email && <Row label={t("contactGate.email")} value={contact.email} />}
+          {contact.phone && <Row label={t("contactGate.phone")} value={contact.phone} />}
+          {deliveryOption === "delivery" && deliveryAddress && (
+            <Row label={t("quoteSummary.deliveryAddress")} value={deliveryAddress} />
+          )}
+          {deliveryOption === "pickup" && (
+            <Row label={t("quoteSummary.pickupAt")} value="Sáenz Peña 1213, Tigre" />
+          )}
+        </dl>
+      </div>
 
       {/* Lista de muebles */}
-      <div className="mt-6 border-t border-sand pt-6">
-        <h3 className="font-serif text-lg text-walnut mb-3">{t("quoteSummary.quotedFurniture")}</h3>
-        <dl className="space-y-2 text-sm">
+      <div className="mt-6">
+        <Divider />
+        <h3 className="mt-6 font-heading text-lg text-nm-text">{t("quoteSummary.quotedFurniture")}</h3>
+        <dl className="mt-3 space-y-2 text-sm">
           {items.map((item) => (
             <div key={item.id} className="flex justify-between gap-4">
-              <dt className="text-walnut/60">
+              <dt className="text-nm-muted">
                 {t(PRODUCT_LABEL_KEY[item.productType] ?? "cartItem.fallback")} —{" "}
                 {item.dimensions.widthCm} × {item.dimensions.lengthCm} × {item.dimensions.heightCm} cm
               </dt>
@@ -84,8 +81,9 @@ export function QuoteSummary({
       </div>
 
       {/* Desglose de precios */}
-      <div className="mt-6 border-t border-sand pt-6">
-        <dl className="space-y-2 text-sm">
+      <div className="mt-6">
+        <Divider />
+        <dl className="mt-6 space-y-2 text-sm">
           <Row label={t("checkout.furniture")} value={formatARS(subtotal)} />
           <Row
             label={t("checkout.shipping")}
@@ -95,23 +93,21 @@ export function QuoteSummary({
             <Row label={t("quoteSummary.method")} value={deliveryDescription} />
           )}
         </dl>
-        <div className="mt-4 pt-4 border-t border-sand flex justify-between items-baseline">
-          <span className="font-serif text-walnut">{t("checkout.estimatedTotal")}</span>
-          <span className="font-serif text-2xl text-walnut">{formatARS(total)}</span>
+        <div className="mt-4 border-t border-nm-line pt-4">
+          <div className="flex items-baseline justify-between">
+            <span className="font-heading text-nm-text">{t("checkout.estimatedTotal")}</span>
+            <span className="font-heading text-2xl text-nm-accent">{formatARS(total)}</span>
+          </div>
         </div>
-        <p className="mt-3 text-xs text-walnut/60">
+        <p className="mt-3 text-xs text-nm-muted">
           {t("quoteSummary.disclaimer")}
         </p>
       </div>
 
       <div className="mt-6 flex justify-center">
-        <button
-          type="button"
-          onClick={onNew}
-          className="text-sm text-bark hover:text-walnut underline underline-offset-4"
-        >
+        <Button type="button" variant="ghost" onClick={onNew}>
           {t("quoteSummary.newQuote")}
-        </button>
+        </Button>
       </div>
     </section>
   );
@@ -120,8 +116,8 @@ export function QuoteSummary({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-4">
-      <dt className="text-walnut/60">{label}</dt>
-      <dd className="text-walnut font-medium text-right">{value}</dd>
+      <dt className="text-nm-muted">{label}</dt>
+      <dd className="text-right font-medium text-nm-text">{value}</dd>
     </div>
   );
 }

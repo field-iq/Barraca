@@ -28,3 +28,83 @@ html {
   background: #22372f;
   color: #ffffff;
 }
+
+/* Soft UI (neumorphic) tokens for the public-facing redesign.
+   Scoped to .nm-theme (applied in app/[locale]/layout.tsx) so the
+   admin area keeps its original look untouched. */
+.nm-theme {
+  /* Color tokens are space-separated R G B triplets (no `rgb()` wrapper) so
+     Tailwind's `bg-nm-surface/90`-style opacity modifiers work — see
+     tailwind.config.ts where these are consumed as `rgb(var(--nm-x) / <alpha-value>)`. */
+  --nm-bg: 233 228 222;
+  --nm-surface: 233 228 222;
+  --nm-sunken: 226 220 213;
+  --nm-text: 58 50 44;
+  --nm-muted: 133 122 113;
+  --nm-line: rgba(58, 50, 44, 0.08);
+  --nm-accent: 140 90 60;
+  --nm-accent-fg: 251 247 243;
+  --nm-accent-soft: 217 195 179;
+  --nm-success: 95 127 90;
+  --nm-warning: 184 137 60;
+  --nm-danger: 181 83 60;
+  --nm-shadow-dark: rgba(140, 125, 112, 0.45);
+  --nm-shadow-light: rgba(255, 255, 255, 0.95);
+}
+html.dark .nm-theme {
+  --nm-bg: 43 38 35;
+  --nm-surface: 43 38 35;
+  --nm-sunken: 38 33 32;
+  --nm-text: 237 230 223;
+  --nm-muted: 166 154 144;
+  --nm-line: rgba(255, 255, 255, 0.07);
+  --nm-accent: 192 138 94;
+  --nm-accent-fg: 33 28 25;
+  --nm-accent-soft: 74 58 47;
+  --nm-success: 138 168 133;
+  --nm-warning: 210 166 96;
+  --nm-danger: 211 120 95;
+  --nm-shadow-dark: rgba(0, 0, 0, 0.55);
+  --nm-shadow-light: rgba(255, 255, 255, 0.06);
+}
+
+.nm-theme {
+  background-color: rgb(var(--nm-bg));
+  color: rgb(var(--nm-text));
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+.nm-theme h1,
+.nm-theme h2,
+.nm-theme h3,
+.nm-theme h4 {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.nm-theme ::selection {
+  background: rgb(var(--nm-accent-soft));
+}
+.nm-theme :focus-visible {
+  outline: 2px solid rgb(var(--nm-accent));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.nm-raised {
+  background-color: rgb(var(--nm-surface));
+  border-radius: 20px;
+  box-shadow: 8px 8px 16px var(--nm-shadow-dark), -8px -8px 16px var(--nm-shadow-light);
+}
+.nm-sunken {
+  background-color: rgb(var(--nm-surface));
+  border-radius: 20px;
+  box-shadow: inset 5px 5px 10px var(--nm-shadow-dark), inset -5px -5px 10px var(--nm-shadow-light);
+}
+.nm-pressed {
+  box-shadow: inset 2px 2px 5px var(--nm-shadow-dark), inset -2px -2px 5px var(--nm-shadow-light);
+}
+.nm-transition {
+  transition-property: box-shadow, transform, background-color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}

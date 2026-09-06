@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/nav/footer";
 import { ProductSelector } from "@/components/ProductSelector";
 import { TableQuoteForm } from "@/components/TableQuoteForm";
 import { BenchQuoteForm } from "@/components/BenchQuoteForm";
@@ -119,33 +120,30 @@ export default function CatalogPage() {
 
   return (
     <>
-      <Header overlay />
-      <main className="relative -mt-16 min-h-screen overflow-hidden bg-[#18211e] pt-16">
-        <div aria-hidden="true" className="absolute inset-0 bg-[url('/textures/catalog-boards.jpg')] bg-[length:auto_980px] bg-repeat opacity-75" />
-        <div aria-hidden="true" className="absolute inset-0 bg-[#15201c]/75" />
-        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/25" />
+      <Header />
+      <main className="relative min-h-screen">
         <div className="relative mx-auto max-w-[1800px] px-4 py-10 sm:px-6 sm:py-16">
         {step.name === "select" && (
           <>
-            <StandardFurnitureSection tone="dark" />
-            <section id="a-medida" className="mt-14 scroll-mt-24 border-t border-white/20 pt-10 sm:mt-20 sm:pt-14">
+            <StandardFurnitureSection />
+            <section id="a-medida" className="mt-14 scroll-mt-24 border-t border-nm-line pt-10 sm:mt-20 sm:pt-14">
               {quoteSelectorOpen ? (
-                <div className="bg-[#f7f4ee] p-5 sm:p-10">
+                <div className="rounded-soft-lg bg-nm-surface p-5 shadow-soft sm:p-10">
                   <ProductSelector onSelect={handleProductSelect} />
                 </div>
               ) : (
-                <div className="grid gap-6 rounded-2xl bg-[#22372f] px-6 py-8 text-white shadow-[0_15px_25px_-5px_rgba(20,15,10,0.25),0_25px_45px_-10px_rgba(20,15,10,0.3)] sm:grid-cols-[1fr_auto] sm:items-center sm:px-10 sm:py-10">
+                <div className="grid gap-6 rounded-soft-lg bg-nm-surface px-6 py-8 shadow-soft sm:grid-cols-[1fr_auto] sm:items-center sm:px-10 sm:py-10">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e4a58d]">{t("header.nav.custom")}</p>
-                    <h2 className="mt-2 font-serif text-3xl sm:text-4xl">{t("catalogPage.needOtherSize")}</h2>
-                    <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-nm-accent">{t("header.nav.custom")}</p>
+                    <h2 className="mt-2 font-heading text-3xl text-nm-text sm:text-4xl">{t("catalogPage.needOtherSize")}</h2>
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-nm-muted">
                       {t("catalogPage.needOtherSizeDescription")}
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setQuoteSelectorOpen(true)}
-                    className="inline-flex h-12 items-center justify-center rounded-md bg-[#e7a181] px-5 text-sm font-semibold text-[#1f2d28] hover:bg-[#f0b69c]"
+                    className="nm-transition inline-flex h-12 items-center justify-center rounded-pill bg-nm-accent px-5 text-sm font-semibold text-nm-accent-fg shadow-soft hover:brightness-105 active:shadow-soft-inset-sm"
                   >
                     {t("catalogPage.quoteCustomPiece")}
                   </button>
@@ -206,22 +204,13 @@ export default function CatalogPage() {
         </div>
       </main>
 
-      <footer className="border-t border-white/10 bg-[#111916] text-white/60">
-        <div className="mx-auto max-w-[1800px] px-4 py-7 text-xs text-white/60 sm:px-6">
-          {t("footer.catalogNotice")}
-        </div>
-        <div className="border-t border-white/10 px-4 py-3 text-center text-[11px] text-white/40 sm:px-6">
-          {t("footer.developedBy")}{" "}
-          <a
-            href="https://taheebo.com.au"
-            target="_blank"
-            rel="noreferrer"
-            className="underline underline-offset-2 transition hover:text-white/70"
-          >
-            Taheebo
-          </a>
-        </div>
-      </footer>
+      <Footer
+        tagline={t("footer.tagline")}
+        notice={t("footer.notice")}
+        developedByLabel={t("footer.developedBy")}
+        instagramUrl="https://www.instagram.com/labarracadejuan_/"
+        whatsappUrl="https://wa.me/5491153791654"
+      />
     </>
   );
 }

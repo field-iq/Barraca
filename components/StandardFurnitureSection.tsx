@@ -13,7 +13,7 @@ import { pickText, useLanguage } from "@/lib/i18n/LanguageContext";
 import { ImageSlideshow } from "./ImageSlideshow";
 import { AddToStoreCartButton } from "./AddToStoreCartButton";
 
-export function StandardFurnitureSection({ tone = "light" }: { tone?: "light" | "dark" }) {
+export function StandardFurnitureSection() {
   const { language, t } = useLanguage();
   const [catalog, setCatalog] = useState<CatalogData>(DEFAULT_CATALOG);
 
@@ -27,7 +27,6 @@ export function StandardFurnitureSection({ tone = "light" }: { tone?: "light" | 
   }, []);
 
   const visibleProducts = useMemo(() => getVisibleProducts(catalog), [catalog]);
-  const isDark = tone === "dark";
   const visibleCategories = useMemo(
     () =>
       catalog.categories
@@ -41,7 +40,7 @@ export function StandardFurnitureSection({ tone = "light" }: { tone?: "light" | 
   return (
     <section aria-labelledby="standard-furniture-title">
       <div className="mb-7 mt-4 sm:mt-8">
-        <h1 id="standard-furniture-title" className={`font-serif text-4xl sm:text-5xl ${isDark ? "text-[#f6f1e9]" : "text-walnut"}`}>
+        <h1 id="standard-furniture-title" className="font-heading text-4xl text-nm-text sm:text-5xl">
           {t("standard.title")}
         </h1>
       </div>
@@ -54,12 +53,12 @@ export function StandardFurnitureSection({ tone = "light" }: { tone?: "light" | 
 
           return (
             <section key={category.id} aria-labelledby={`category-${category.id}`}>
-              <div className={`mb-4 border-b pb-3 ${isDark ? "border-white/20" : "border-sand"}`}>
-                <h2 id={`category-${category.id}`} className={`font-serif text-2xl ${isDark ? "text-[#f6f1e9]" : "text-walnut"}`}>
+              <div className="mb-4 border-b border-nm-line pb-3">
+                <h2 id={`category-${category.id}`} className="font-heading text-2xl text-nm-text">
                   {pickText(language, category.name, category.nameEn)}
                 </h2>
                 {category.description && (
-                  <p className={`mt-1 text-sm ${isDark ? "text-white/55" : "text-walnut/60"}`}>
+                  <p className="mt-1 text-sm text-nm-muted">
                     {pickText(language, category.description, category.descriptionEn)}
                   </p>
                 )}
@@ -86,11 +85,11 @@ function StandardProductCard({ product }: { product: CatalogProduct }) {
   const name = pickText(language, product.name, product.nameEn);
 
   return (
-    <article className="group relative aspect-[4/3] min-w-0 overflow-hidden rounded-2xl shadow-md transition duration-200 hover:-translate-y-1 hover:shadow-xl">
+    <article className="nm-transition group relative aspect-[4/3] min-w-0 overflow-hidden rounded-soft bg-nm-surface p-1.5 shadow-soft hover:shadow-soft-lg">
       <Link
         href={`/estandar/${product.id}`}
         aria-label={`${detailTitle} — ${formatARS(product.cashPrice)}`}
-        className="absolute inset-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className="absolute inset-1.5 overflow-hidden rounded-soft-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-nm-accent"
       >
         <ImageSlideshow
           images={product.images}
@@ -100,21 +99,21 @@ function StandardProductCard({ product }: { product: CatalogProduct }) {
         />
       </Link>
 
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-1.5 bottom-1.5 h-2/3 rounded-b-soft-sm bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
       {discountPercentage > 0 && (
-        <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-emerald-700/70 px-3 py-1 text-xs font-bold text-white shadow-sm ring-1 ring-white/25 backdrop-blur-md">
+        <span className="pointer-events-none absolute left-4 top-4 rounded-pill bg-nm-accent px-3 py-1 text-xs font-bold text-nm-accent-fg shadow-soft-xs">
           {discountPercentage}% OFF
         </span>
       )}
 
-      <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-xl bg-white/15 p-3 shadow-sm ring-1 ring-white/25 backdrop-blur-md">
+      <div className="pointer-events-none absolute inset-x-4 bottom-4 flex items-center gap-3 rounded-soft-sm bg-nm-surface/90 p-3 shadow-soft-sm backdrop-blur-sm">
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
-            <h3 className="truncate font-serif text-base text-white">{name}</h3>
-            <span className="shrink-0 text-[11px] text-white/75">{product.dimensions}</span>
+            <h3 className="truncate font-heading text-base text-nm-text">{name}</h3>
+            <span className="shrink-0 text-[11px] text-nm-muted">{product.dimensions}</span>
           </div>
-          <p className="mt-0.5 truncate font-serif text-xl text-white">{formatARS(product.cashPrice)}</p>
+          <p className="mt-0.5 truncate font-heading text-xl text-nm-accent">{formatARS(product.cashPrice)}</p>
         </div>
         <div className="pointer-events-auto shrink-0">
           <AddToStoreCartButton productId={product.id} compact />

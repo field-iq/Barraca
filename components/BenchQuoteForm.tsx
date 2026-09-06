@@ -13,6 +13,11 @@ import { formatARS } from "@/lib/format";
 import { getProduct } from "@/lib/products";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { ImageSlideshow } from "./ImageSlideshow";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
+import { Alert } from "@/components/feedback/alert";
+import { Divider } from "@/components/ui/divider";
 
 interface BenchQuoteFormProps {
   onBack: () => void;
@@ -42,25 +47,21 @@ export function BenchQuoteForm({ onBack, onAdd, config }: BenchQuoteFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-3xl mx-auto bg-white border border-sand rounded-2xl p-5 sm:p-8 space-y-8"
+      className="max-w-3xl mx-auto rounded-soft-lg bg-nm-surface p-5 shadow-soft sm:p-10 space-y-8"
     >
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-walnut">{t("quoteForm.bench.title")}</h2>
-          <p className="mt-1 text-sm text-walnut/70">
+          <h2 className="font-heading text-2xl sm:text-3xl text-nm-text">{t("quoteForm.bench.title")}</h2>
+          <p className="mt-1 text-sm text-nm-muted">
             {t("quoteForm.bench.description")}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onBack}
-          className="shrink-0 text-sm text-bark hover:text-walnut underline underline-offset-4"
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={onBack} className="shrink-0">
           {t("quoteForm.changeProduct")}
-        </button>
+        </Button>
       </header>
 
-      <div className="relative aspect-[16/9] w-full rounded-xl bg-sand overflow-hidden">
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-soft shadow-soft-inset">
         <ImageSlideshow
           images={getProduct("bench")?.images ?? ["/banco-1.jpeg"]}
           alt={t("quoteForm.bench.imageAlt")}
@@ -70,7 +71,7 @@ export function BenchQuoteForm({ onBack, onAdd, config }: BenchQuoteFormProps) {
       </div>
 
       <fieldset className="space-y-4">
-        <legend className="font-serif text-xl text-walnut">{t("quoteForm.dimensions")}</legend>
+        <legend className="font-heading text-xl text-nm-text">{t("quoteForm.dimensions")}</legend>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <DimensionField
             label={t("quoteForm.bench.seatWidth")}
@@ -97,28 +98,22 @@ export function BenchQuoteForm({ onBack, onAdd, config }: BenchQuoteFormProps) {
         </div>
       </fieldset>
 
-      {!dimensionsValid && (
-        <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900" role="alert">
-          {dimensionErrors[0]}
-        </p>
-      )}
+      {!dimensionsValid && <Alert tone="warning" title={dimensionErrors[0]} />}
 
-      <div className="pt-2 border-t border-sand flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
+      <Divider />
+
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
         {estimatedPrice !== null && (
-          <p className="text-sm text-walnut/70 sm:mr-auto">
+          <p className="text-sm text-nm-muted sm:mr-auto">
             {t("quoteForm.bench.estimatedPrice")}{" "}
-            <span className="font-serif text-walnut font-medium">
+            <span className="font-heading text-xl text-nm-accent">
               {formatARS(estimatedPrice)}
             </span>
           </p>
         )}
-        <button
-          type="submit"
-          disabled={!dimensionsValid}
-          className="inline-flex items-center justify-center rounded-lg bg-bark text-cream px-5 py-3 text-sm font-medium hover:bg-walnut transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+        <Button type="submit" variant="accent" size="lg" disabled={!dimensionsValid}>
           {t("quoteForm.addToCart")}
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -141,12 +136,9 @@ function DimensionField({
 }) {
   const { t } = useLanguage();
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-walnut">
-        {label}
-      </label>
-      <div className="relative">
-        <input
+    <div className="space-y-1.5">
+      <FormField label={label} htmlFor={id} hint={t("quoteForm.rangeHint", { min: range.min, max: range.max })}>
+        <Input
           id={id}
           type="number"
           inputMode="numeric"
@@ -154,16 +146,10 @@ function DimensionField({
           max={range.max}
           value={Number.isFinite(value) ? value : ""}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full rounded-lg border border-sand bg-white pl-3 pr-10 py-2.5 text-walnut focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+          trailing={<span className="text-xs">cm</span>}
         />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-walnut/50">
-          cm
-        </span>
-      </div>
-      <p className="text-xs text-walnut/45">{t("quoteForm.rangeHint", { min: range.min, max: range.max })}</p>
-      {hint && (
-        <p className="text-xs text-walnut/40">{hint}</p>
-      )}
+      </FormField>
+      {hint && <p className="px-1 text-xs text-nm-muted/70">{hint}</p>}
     </div>
   );
 }

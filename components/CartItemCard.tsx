@@ -1,11 +1,13 @@
 "use client";
 
+import { X } from "lucide-react";
 import { formatARS } from "@/lib/format";
 import { itemPrice } from "@/lib/cart";
 import type { CartItem } from "@/lib/quoteTypes";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translations";
+import { IconButton } from "@/components/ui/icon-button";
 
 const PRODUCT_LABEL_KEY: Record<string, TranslationKey> = {
   table: "cartItem.table",
@@ -25,27 +27,26 @@ export function CartItemCard({ item, onRemove, config }: CartItemCardProps) {
   const price = itemPrice(item, config);
 
   return (
-    <div className="flex items-start justify-between gap-4 py-4 border-b border-sand last:border-0">
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-walnut">
+    <div className="flex items-center justify-between gap-4 rounded-soft-sm bg-nm-surface p-4 shadow-soft-inset-sm">
+      <div className="min-w-0 flex-1">
+        <p className="font-medium text-nm-text">
           {t(PRODUCT_LABEL_KEY[item.productType] ?? "cartItem.fallback")}
         </p>
-        <p className="text-sm text-walnut/60 mt-0.5">
+        <p className="mt-0.5 text-sm text-nm-muted">
           {item.productType === "mirror"
             ? `${dimensions.widthCm} × ${dimensions.lengthCm} cm`
             : `${dimensions.widthCm} × ${dimensions.lengthCm} × ${dimensions.heightCm} cm`}
         </p>
       </div>
-      <div className="flex items-center gap-3 shrink-0">
-        <span className="font-serif text-walnut">{formatARS(price)}</span>
-        <button
-          type="button"
+      <div className="flex shrink-0 items-center gap-3">
+        <span className="font-heading text-nm-text">{formatARS(price)}</span>
+        <IconButton
+          label={t("cartItem.removeAriaLabel")}
+          size="sm"
           onClick={() => onRemove(item.id)}
-          aria-label={t("cartItem.removeAriaLabel")}
-          className="text-walnut/30 hover:text-bark transition text-lg leading-none"
         >
-          ×
-        </button>
+          <X className="size-4" />
+        </IconButton>
       </div>
     </div>
   );

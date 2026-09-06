@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/feedback/alert";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -30,31 +34,20 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-walnut mb-1.5"
-        >
-          Contraseña
-        </label>
-        <input
+      <FormField label="Contraseña" htmlFor="password">
+        <Input
           id="password"
           name="password"
           type="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-lg border border-sand bg-white px-3 py-2.5 text-walnut focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
           placeholder="••••••••"
         />
-      </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-lg bg-bark text-cream px-5 py-3 text-sm font-medium hover:bg-walnut transition disabled:opacity-50"
-      >
+      </FormField>
+      {error && <Alert tone="danger" title={error} />}
+      <Button type="submit" variant="accent" size="lg" block loading={loading}>
         {loading ? "Verificando..." : "Ingresar"}
-      </button>
+      </Button>
     </form>
   );
 }

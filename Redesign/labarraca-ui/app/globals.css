@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* La Barraca de Juan — Soft UI tokens
+   One warm-bone ground; every surface is the same tone as the ground and
+   is separated from it only by light/dark shadow pairs. */
+:root {
+  --nm-bg: #e9e4de;
+  --nm-surface: #e9e4de;
+  --nm-sunken: #e2dcd5;
+  --nm-text: #3a322c;
+  --nm-muted: #857a71;
+  --nm-line: rgba(58, 50, 44, 0.08);
+  --nm-accent: #8c5a3c;        /* walnut */
+  --nm-accent-fg: #fbf7f3;
+  --nm-accent-soft: #d9c3b3;
+  --nm-success: #5f7f5a;
+  --nm-warning: #b8893c;
+  --nm-danger: #b5533c;
+  --nm-shadow-dark: rgba(140, 125, 112, 0.45);
+  --nm-shadow-light: rgba(255, 255, 255, 0.95);
+  --font-heading: 'DM Serif Display';
+  --font-body: 'Manrope';
+}
+.dark {
+  --nm-bg: #2b2623;
+  --nm-surface: #2b2623;
+  --nm-sunken: #262120;
+  --nm-text: #ede6df;
+  --nm-muted: #a69a90;
+  --nm-line: rgba(255, 255, 255, 0.07);
+  --nm-accent: #c08a5e;
+  --nm-accent-fg: #211c19;
+  --nm-accent-soft: #4a3a2f;
+  --nm-success: #8aa885;
+  --nm-warning: #d2a660;
+  --nm-danger: #d3785f;
+  --nm-shadow-dark: rgba(0, 0, 0, 0.55);
+  --nm-shadow-light: rgba(255, 255, 255, 0.06);
+}
+
+@layer base {
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+  body { @apply bg-nm-bg text-nm-text font-body antialiased; }
+  h1, h2, h3, h4 { @apply font-heading font-normal tracking-tight; }
+  ::selection { background: var(--nm-accent-soft); }
+  :focus-visible { outline: 2px solid var(--nm-accent); outline-offset: 3px; border-radius: 4px; }
+}
+
+@layer components {
+  /* Raised surface — the default neumorphic card */
+  .nm-raised { @apply bg-nm-surface rounded-soft shadow-soft; }
+  /* Sunken surface — inputs, wells, tracks */
+  .nm-sunken { @apply bg-nm-surface rounded-soft shadow-soft-inset; }
+  /* Pressed state — used by buttons and toggles */
+  .nm-pressed { @apply shadow-soft-inset-sm; }
+  .nm-transition { @apply transition-[box-shadow,transform,background-color] duration-200 ease-soft; }
+}

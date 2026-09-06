@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0;background:#e9e4de}
+a{color:inherit;text-decoration:none}a:hover{color:var(--accent)}
+button{font-family:inherit}
+[data-nm]{--bg:#e9e4de;--sunken:#e2dcd5;--text:#3a322c;--muted:#857a71;--line:rgba(58,50,44,.08);--accent:#8c5a3c;--accent-fg:#fbf7f3;--accent-soft:#d9c3b3;--success:#5f7f5a;--warning:#b8893c;--danger:#b5533c;--sd:rgba(140,125,112,.45);--sl:rgba(255,255,255,.95);--d:8px;
+--sh:var(--d) var(--d) calc(var(--d)*2) var(--sd),calc(var(--d)*-1) calc(var(--d)*-1) calc(var(--d)*2) var(--sl);
+--sh-sm:calc(var(--d)/2) calc(var(--d)/2) var(--d) var(--sd),calc(var(--d)/-2) calc(var(--d)/-2) var(--d) var(--sl);
+--sh-lg:calc(var(--d)*1.75) calc(var(--d)*1.75) calc(var(--d)*3.5) var(--sd),calc(var(--d)*-1.75) calc(var(--d)*-1.75) calc(var(--d)*3.5) var(--sl);
+--sh-xs:calc(var(--d)/4) calc(var(--d)/4) calc(var(--d)/2) var(--sd),calc(var(--d)/-4) calc(var(--d)/-4) calc(var(--d)/2) var(--sl);
+--in:inset calc(var(--d)*.6) calc(var(--d)*.6) calc(var(--d)*1.2) var(--sd),inset calc(var(--d)*-.6) calc(var(--d)*-.6) calc(var(--d)*1.2) var(--sl);
+--in-sm:inset calc(var(--d)/4) calc(var(--d)/4) calc(var(--d)/1.6) var(--sd),inset calc(var(--d)/-4) calc(var(--d)/-4) calc(var(--d)/1.6) var(--sl);
+--in-lg:inset var(--d) var(--d) calc(var(--d)*2) var(--sd),inset calc(var(--d)*-1) calc(var(--d)*-1) calc(var(--d)*2) var(--sl);
+--head:'DM Serif Display',Georgia,serif;--body:'Manrope',system-ui,sans-serif;color:var(--text);font-family:var(--body)}
+[data-nm][data-theme="dark"]{--bg:#2b2623;--sunken:#262120;--text:#ede6df;--muted:#a69a90;--line:rgba(255,255,255,.07);--accent:#c08a5e;--accent-fg:#211c19;--accent-soft:#4a3a2f;--success:#8aa885;--warning:#d2a660;--danger:#d3785f;--sd:rgba(0,0,0,.55);--sl:rgba(255,255,255,.06)}
+[data-nm] input::placeholder{color:var(--muted);opacity:.7}
+[data-nm] :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+[data-nm] ::selection{background:var(--accent-soft)}
+@keyframes nmIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes nmShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</helmet>
+<div data-nm="1" data-theme="{{ theme }}" style="{{ rootStyle }}">
+<div style="min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--body);padding:32px clamp(16px,4vw,56px) 96px;transition:background .3s">
+<div style="max-width:1240px;margin:0 auto;display:grid;gap:56px">
+
+<!-- ═══ Header ═══ -->
+<header style="display:grid;gap:28px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div style="display:grid;gap:6px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">Soft UI component library · v0.1</span>
+      <h1 style="margin:0;font-family:var(--head);font-weight:400;font-size:clamp(34px,5vw,60px);line-height:1;letter-spacing:-.01em">La Barraca <span style="color:var(--accent)">de Juan</span></h1>
+      <p style="margin:6px 0 0;color:var(--muted);font-size:15px;max-width:560px;line-height:1.5">72 Next.js + Tailwind components for a made-to-order timber furniture store. Every surface is the ground colour; light and shadow do the separating.</p>
+    </div>
+    <button type="button" onClick="{{ toggleTheme }}" aria-label="Toggle theme" style="display:inline-flex;align-items:center;gap:12px;height:48px;padding:0 6px 0 20px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 14px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">
+      {{ themeLabel }}
+      <span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--in-sm);color:var(--accent)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ themeIcon }}"></path></svg>
+      </span>
+    </button>
+  </div>
+  <nav aria-label="Sections" style="display:flex;gap:10px;flex-wrap:wrap;padding:14px;border-radius:999px;box-shadow:var(--in)">
+    <sc-for list="{{ sections }}" as="s" hint-placeholder-count="12">
+      <a href="{{ s.href }}" style="display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:var(--bg);box-shadow:var(--sh-sm);font-size:12px;font-weight:700;color:var(--text)" style-hover="box-shadow:var(--in-sm);color:var(--accent)">{{ s.name }}<span style="color:var(--muted);font-weight:600">{{ s.count }}</span></a>
+    </sc-for>
+  </nav>
+</header>
+
+<!-- ═══ 01 Foundations ═══ -->
+<section id="foundations" data-screen-label="Foundations" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">01</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Foundations</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">tokens · globals.css</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px">
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Three surface states</span>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px;border-radius:24px;background:var(--bg)">
+        <div style="aspect-ratio:1;border-radius:20px;background:var(--bg);box-shadow:var(--sh);display:grid;place-items:end start;padding:12px;font-size:11px;font-weight:700">Raised</div>
+        <div style="aspect-ratio:1;border-radius:20px;box-shadow:var(--in);display:grid;place-items:end start;padding:12px;font-size:11px;font-weight:700">Sunken</div>
+        <div style="aspect-ratio:1;border-radius:20px;background:var(--accent);color:var(--accent-fg);box-shadow:var(--sh);display:grid;place-items:end start;padding:12px;font-size:11px;font-weight:700">Accent</div>
+      </div>
+    </div>
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Colour roles</span>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+        <sc-for list="{{ swatches }}" as="c" hint-placeholder-count="6">
+          <div style="display:grid;gap:8px"><span style="height:44px;border-radius:14px;box-shadow:var(--sh-sm);background:{{ c.bg }}"></span><span style="font-size:11px;font-weight:700">{{ c.name }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Type</span>
+      <div style="display:grid;gap:10px;padding:24px;border-radius:20px;box-shadow:var(--in)">
+        <span style="font-family:var(--head);font-size:40px;line-height:1">Oak &amp; walnut</span>
+        <span style="font-family:var(--head);font-size:22px;line-height:1.1;color:var(--muted)">DM Serif Display · headings, prices, quotes</span>
+        <span style="font-size:14px;line-height:1.5;margin-top:6px">Manrope 500–800 · body, labels, controls. Labels run uppercase at 11px with .12em tracking.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 02 Primitives ═══ -->
+<section id="primitives" data-screen-label="Primitives" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">02</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Primitives</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">26 · components/ui</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px 28px">
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Button · 4 variants</span>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+        <button type="button" style="display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 14px var(--body);cursor:pointer;transition:box-shadow .2s" style-hover="box-shadow:var(--sh-lg)" style-active="box-shadow:var(--in-sm)">Raised</button>
+        <button type="button" style="display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 14px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Accent <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></button>
+        <button type="button" style="display:inline-flex;align-items:center;height:44px;padding:0 24px;border:0;border-radius:999px;background:transparent;color:var(--text);font:600 14px var(--body);cursor:pointer" style-hover="box-shadow:var(--sh-sm)" style-active="box-shadow:var(--in-sm)">Ghost</button>
+        <button type="button" style="display:inline-flex;align-items:center;height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--danger);font:600 14px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Danger</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+        <button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 13px var(--body);cursor:pointer">Small</button>
+        <button type="button" style="height:56px;padding:0 32px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 15px var(--body);cursor:pointer">Large</button>
+        <button type="button" disabled style="height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 14px var(--body);opacity:.5">Disabled</button>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">IconButton · Toggle · Checkbox</span>
+      <div style="display:flex;flex-wrap:wrap;gap:18px;align-items:center">
+        <button type="button" aria-label="Search" style="display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer" style-active="box-shadow:var(--in-sm)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+        <button type="button" aria-label="Saved" aria-pressed="true" onClick="{{ toggleSaved }}" style="display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--bg);box-shadow:{{ savedShadow }};color:{{ savedColor }};cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="{{ savedFill }}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 12 5a5.5 5.5 0 0 0-10 3.5c0 2.3 1.5 4 3 5.5l7 7Z"></path></svg></button>
+        <button type="button" aria-label="Add" style="display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <label style="display:inline-flex;align-items:center;gap:12px;cursor:pointer;user-select:none">
+          <button type="button" role="switch" aria-checked="{{ toggleOn }}" onClick="{{ flipToggle }}" style="position:relative;width:56px;height:32px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--in);cursor:pointer;padding:0">
+            <span style="position:absolute;top:4px;width:24px;height:24px;border-radius:50%;box-shadow:var(--sh-sm);transition:left .2s,background .2s;left:{{ knobLeft }};background:{{ knobBg }}"></span>
+          </button><span style="font-size:14px;font-weight:600">{{ toggleText }}</span>
+        </label>
+      </div>
+      <div style="display:grid;gap:12px">
+        <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer" onClick="{{ flipCheck1 }}">
+          <span role="checkbox" aria-checked="{{ check1 }}" style="display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--bg);margin-top:1px;box-shadow:{{ check1Shadow }};color:{{ check1Color }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+          <span style="font-size:14px"><span style="font-weight:600">Include delivery &amp; assembly</span><span style="display:block;color:var(--muted)">Metro Melbourne, quoted per piece</span></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer" onClick="{{ flipCheck2 }}">
+          <span role="checkbox" aria-checked="{{ check2 }}" style="display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--bg);margin-top:1px;box-shadow:{{ check2Shadow }};color:{{ check2Color }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+          <span style="font-size:14px;font-weight:600">Send me workshop notes</span>
+        </label>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">RadioGroup</span>
+      <div role="radiogroup" style="display:grid;gap:12px">
+        <sc-for list="{{ radios }}" as="r" hint-placeholder-count="3">
+          <button type="button" role="radio" aria-checked="{{ r.on }}" onClick="{{ r.pick }}" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:0;border-radius:14px;background:var(--bg);text-align:left;cursor:pointer;color:var(--text);transition:box-shadow .2s;box-shadow:{{ r.shadow }}">
+            <span style="display:grid;place-items:center;width:20px;height:20px;border-radius:50%;box-shadow:var(--in-sm)"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent);transition:transform .2s;transform:{{ r.dot }}"></span></span>
+            <span style="font-size:14px;font-weight:600">{{ r.label }}</span><span style="margin-left:auto;font-size:12px;color:var(--muted)">{{ r.hint }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">FormField · Input · Select · Textarea</span>
+      <div style="display:grid;gap:8px">
+        <label style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Email <span style="color:var(--accent)">*</span></label>
+        <div style="display:flex;align-items:center;gap:12px;height:48px;padding:0 20px;border-radius:999px;box-shadow:var(--in)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><input placeholder="you@example.com" style="flex:1;min-width:0;background:transparent;border:0;outline:0;font:500 14px var(--body);color:var(--text)"></div>
+        <p style="margin:0;padding:0 4px;font-size:12px;color:var(--muted)">We reply within two business days.</p>
+      </div>
+      <div style="display:grid;gap:8px">
+        <label style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Timber</label>
+        <div style="position:relative;height:48px;border-radius:999px;box-shadow:var(--in)"><select style="width:100%;height:100%;appearance:none;-webkit-appearance:none;background:transparent;border:0;outline:0;padding:0 48px 0 20px;font:500 14px var(--body);color:var(--text)"><option>American oak</option><option>Blackbutt</option><option>Walnut</option><option>Not sure yet</option></select><svg style="position:absolute;right:18px;top:16px;pointer-events:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+      </div>
+      <div style="display:grid;gap:8px">
+        <label style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Details</label>
+        <textarea placeholder="A 2.4 m dining table for eight…" style="min-height:96px;resize:vertical;padding:16px 20px;border:0;border-radius:20px;background:transparent;box-shadow:var(--in);outline:0;font:500 14px var(--body);color:var(--text)"></textarea>
+      </div>
+      <div style="display:grid;gap:8px">
+        <label style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Phone</label>
+        <div style="display:flex;align-items:center;height:48px;padding:0 20px;border-radius:999px;box-shadow:var(--in),0 0 0 2px var(--danger)"><input value="04" readOnly style="flex:1;background:transparent;border:0;outline:0;font:500 14px var(--body);color:var(--text)"></div>
+        <p style="margin:0;padding:0 4px;font-size:12px;color:var(--danger)">Enter a 10-digit Australian mobile.</p>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Slider · Progress · QuantityInput</span>
+      <div style="display:grid;gap:12px">
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">Approximate budget</span><span style="color:var(--muted)">{{ budgetText }}</span></div>
+        <div style="position:relative;height:32px">
+          <div style="position:absolute;left:0;right:0;top:10px;height:12px;border-radius:999px;box-shadow:var(--in)"></div>
+          <div style="position:absolute;left:0;top:10px;height:12px;border-radius:999px;background:var(--accent);opacity:.85;width:{{ budgetPct }}"></div>
+          <div style="position:absolute;top:2px;width:28px;height:28px;border-radius:50%;background:var(--bg);box-shadow:var(--sh);pointer-events:none;left:{{ thumbLeft }}"></div>
+          <input type="range" min="1000" max="20000" step="250" value="{{ budget }}" onChange="{{ setBudget }}" aria-label="Budget" style="position:absolute;inset:0;width:100%;opacity:0;cursor:pointer;margin:0">
+        </div>
+      </div>
+      <div style="display:grid;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">Order progress</span><span style="color:var(--muted)">62%</span></div>
+        <div role="progressbar" aria-valuenow="62" style="height:16px;padding:4px;border-radius:999px;box-shadow:var(--in)"><div style="height:100%;width:62%;border-radius:999px;background:var(--accent);box-shadow:var(--sh-xs)"></div></div>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 6px;border-radius:999px;box-shadow:var(--in);width:max-content">
+        <button type="button" aria-label="Decrease" onClick="{{ decQty }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer" style-active="box-shadow:var(--in-sm)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+        <span style="width:32px;text-align:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums">{{ qty }}</span>
+        <button type="button" aria-label="Increase" onClick="{{ incQty }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer" style-active="box-shadow:var(--in-sm)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Badge · Chip · Avatar · Tooltip</span>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;box-shadow:var(--sh-xs);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">New</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;box-shadow:var(--in-sm);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--success)">In stock</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;box-shadow:var(--sh-xs);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--warning)">8–10 wks</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;box-shadow:var(--sh-xs);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Made to order</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+          <button type="button" onClick="{{ c.pick }}" style="display:inline-flex;align-items:center;height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--bg);font:600 13px var(--body);cursor:pointer;transition:box-shadow .2s;box-shadow:{{ c.shadow }};color:{{ c.color }}">{{ c.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <span style="display:grid;place-items:center;width:32px;height:32px;border-radius:50%;box-shadow:var(--sh-sm);font-family:var(--head);font-size:12px;color:var(--accent)">JB</span>
+        <span style="display:grid;place-items:center;width:44px;height:44px;border-radius:50%;box-shadow:var(--sh-sm);font-family:var(--head);font-size:15px;color:var(--accent)">MR</span>
+        <span style="display:grid;place-items:center;width:56px;height:56px;border-radius:50%;box-shadow:var(--sh-sm);font-family:var(--head);font-size:18px;color:var(--accent)">AL</span>
+        <span style="position:relative;display:inline-flex;margin-left:auto">
+          <button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 13px var(--body);cursor:pointer">Hover me</button>
+          <span role="tooltip" style="position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);white-space:nowrap;padding:6px 12px;border-radius:12px;background:var(--bg);box-shadow:var(--sh);font-size:12px;font-weight:600">Tooltip · 25-year guarantee</span>
+        </span>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Tabs · Divider · Skeleton</span>
+      <div role="tablist" style="display:inline-flex;gap:4px;padding:6px;border-radius:999px;box-shadow:var(--in);width:max-content">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+          <button type="button" role="tab" aria-selected="{{ t.on }}" onClick="{{ t.pick }}" style="height:40px;padding:0 20px;border:0;border-radius:999px;font:700 14px var(--body);cursor:pointer;transition:box-shadow .2s;background:{{ t.bg }};box-shadow:{{ t.shadow }};color:{{ t.color }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+      <p style="margin:0;font-size:14px;line-height:1.55;color:var(--muted)">{{ tabBody }}</p>
+      <div role="separator" style="display:flex;align-items:center;gap:16px"><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">or</span><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span></div>
+      <div style="display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:center">
+        <span style="width:56px;height:56px;border-radius:50%;box-shadow:var(--in-sm);background:linear-gradient(90deg,var(--sunken) 25%,var(--bg) 50%,var(--sunken) 75%);background-size:200% 100%;animation:nmShimmer 1.6s linear infinite"></span>
+        <span style="display:grid;gap:8px"><span style="height:14px;width:70%;border-radius:8px;box-shadow:var(--in-sm);background:linear-gradient(90deg,var(--sunken) 25%,var(--bg) 50%,var(--sunken) 75%);background-size:200% 100%;animation:nmShimmer 1.6s linear infinite"></span><span style="height:14px;width:45%;border-radius:8px;box-shadow:var(--in-sm);background:linear-gradient(90deg,var(--sunken) 25%,var(--bg) 50%,var(--sunken) 75%);background-size:200% 100%;animation:nmShimmer 1.6s linear infinite"></span></span>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Accordion</span>
+      <div style="display:grid;gap:14px">
+        <sc-for list="{{ faqs }}" as="q" hint-placeholder-count="3">
+          <div style="border-radius:20px;background:var(--bg);transition:box-shadow .25s;box-shadow:{{ q.shadow }}">
+            <button type="button" aria-expanded="{{ q.on }}" onClick="{{ q.pick }}" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border:0;background:transparent;text-align:left;font:700 15px var(--body);color:var(--text);cursor:pointer">{{ q.title }}<span style="display:grid;place-items:center;width:32px;height:32px;border-radius:50%;box-shadow:var(--sh-sm);transition:transform .25s;flex-shrink:0;transform:{{ q.rot }};color:{{ q.color }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span></button>
+            <sc-if value="{{ q.on }}" hint-placeholder-val="{{ false }}"><p style="margin:0;padding:0 24px 22px;font-size:14px;line-height:1.55;color:var(--muted);animation:nmIn .3s both">{{ q.body }}</p></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Stepper · Breadcrumbs · Pagination</span>
+      <ol style="display:flex;align-items:center;gap:12px;margin:0;padding:16px 24px;list-style:none;border-radius:999px;box-shadow:var(--in)">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+          <li style="display:flex;align-items:center;gap:12px;flex:{{ s.flex }}">
+            <span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;font-size:13px;font-weight:700;flex-shrink:0;background:{{ s.bg }};box-shadow:{{ s.shadow }};color:{{ s.color }}">{{ s.num }}</span>
+            <span style="font-size:13px;white-space:nowrap;font-weight:{{ s.weight }};color:{{ s.textColor }}">{{ s.label }}</span>
+            <sc-if value="{{ s.line }}" hint-placeholder-val="{{ true }}"><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span></sc-if>
+          </li>
+        </sc-for>
+      </ol>
+      <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:8px;font-size:14px;flex-wrap:wrap">
+        <a href="#primitives" style="color:var(--muted)">Home</a><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity=".6"><path d="m9 6 6 6-6 6"></path></svg>
+        <a href="#primitives" style="color:var(--muted)">Dining tables</a><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity=".6"><path d="m9 6 6 6-6 6"></path></svg>
+        <span aria-current="page" style="font-weight:700">Río table</span>
+      </nav>
+      <nav aria-label="Pagination" style="display:flex;align-items:center;gap:8px">
+        <button type="button" aria-label="Previous" onClick="{{ prevPage }}" style="display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 6-6 6 6 6"></path></svg></button>
+        <sc-for list="{{ pages }}" as="p" hint-placeholder-count="5">
+          <button type="button" onClick="{{ p.pick }}" style="display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:var(--bg);font:700 14px var(--body);cursor:pointer;transition:box-shadow .2s;box-shadow:{{ p.shadow }};color:{{ p.color }}">{{ p.n }}</button>
+        </sc-for>
+        <button type="button" aria-label="Next" onClick="{{ nextPage }}" style="display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"></path></svg></button>
+      </nav>
+    </div>
+
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">RatingStars · PriceTag</span>
+      <div style="display:grid;gap:18px;padding:24px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+        <span style="display:inline-flex;align-items:center;gap:4px" aria-label="4.8 out of 5 stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"></path></svg>
+          <span style="margin-left:6px;font-size:12px;color:var(--muted)">(36)</span>
+        </span>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:baseline">
+          <span style="display:inline-flex;align-items:baseline;gap:8px"><span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">from</span><span style="font-family:var(--head);font-size:32px">$4,200</span></span>
+          <span style="display:inline-flex;align-items:baseline;gap:8px"><span style="font-family:var(--head);font-size:22px">$1,850</span><span style="font-size:14px;color:var(--muted);text-decoration:line-through">$2,100</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 03 Navigation ═══ -->
+<section id="navigation" data-screen-label="Navigation" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">03</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Navigation &amp; header</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">5 · components/nav</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Navbar</span>
+    <div style="display:flex;align-items:center;gap:24px;height:64px;padding:0 16px 0 24px;border-radius:999px;background:var(--bg);box-shadow:var(--sh)">
+      <span style="font-family:var(--head);font-size:20px;white-space:nowrap">La Barraca <span style="color:var(--accent)">de Juan</span></span>
+      <nav style="display:flex;flex:1;justify-content:center;gap:4px;flex-wrap:wrap">
+        <a href="#navigation" style="padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted)" style-hover="box-shadow:var(--sh-sm);color:var(--text)">Tables</a><a href="#navigation" style="padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted)" style-hover="box-shadow:var(--sh-sm);color:var(--text)">Robes</a><a href="#navigation" style="padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted)" style-hover="box-shadow:var(--sh-sm);color:var(--text)">Kitchens</a><a href="#navigation" style="padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted)" style-hover="box-shadow:var(--sh-sm);color:var(--text)">Workshop</a><a href="#navigation" style="padding:8px 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted)" style-hover="box-shadow:var(--sh-sm);color:var(--text)">Journal</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="position:relative"><button type="button" aria-label="Cart" onClick="{{ openDrawer }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><path d="M3 6h18M16 10a4 4 0 0 1-8 0"></path></svg></button><span style="position:absolute;top:-4px;right:-4px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-size:10px;font-weight:800">{{ cartCount }}</span></span>
+        <button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 13px var(--body);cursor:pointer;white-space:nowrap">Get a quote</button>
+        <button type="button" aria-label="Menu" onClick="{{ openMenu }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px">
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">SearchBar</span>
+      <form role="search" style="display:flex;align-items:center;gap:12px;height:56px;padding:0 12px 0 24px;border-radius:999px;box-shadow:var(--in)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg><input value="{{ search }}" onChange="{{ setSearch }}" placeholder="Search tables, robes, timbers…" style="flex:1;min-width:0;background:transparent;border:0;outline:0;font:500 15px var(--body);color:var(--text)"><sc-if value="{{ hasSearch }}" hint-placeholder-val="{{ false }}"><button type="button" aria-label="Clear" onClick="{{ clearSearch }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></sc-if></form>
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:10px">MobileMenu · tap ☰ above</span>
+      <div style="display:grid;gap:10px;padding:20px;border-radius:24px;box-shadow:var(--in)">
+        <span style="padding:14px 20px;border-radius:16px;background:var(--bg);box-shadow:var(--sh);font-family:var(--head);font-size:20px">Tables</span>
+        <span style="padding:14px 20px;border-radius:16px;background:var(--bg);box-shadow:var(--sh);font-family:var(--head);font-size:20px">Robes</span>
+        <span style="padding:14px 20px;border-radius:16px;background:var(--bg);box-shadow:var(--in-sm);font-family:var(--head);font-size:20px;color:var(--accent)">Kitchens</span>
+      </div>
+    </div>
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">ContactCard</span>
+      <div style="display:grid;gap:16px;padding:28px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+        <h3 style="margin:0;font-family:var(--head);font-weight:400;font-size:24px">Visit the workshop</h3>
+        <sc-for list="{{ contact }}" as="c" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:16px"><span style="display:grid;place-items:center;width:44px;height:44px;border-radius:50%;box-shadow:var(--in-sm);color:var(--accent);flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.icon }}"></path></svg></span><span style="font-size:14px">{{ c.text }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Footer</span>
+    <footer style="padding:56px 40px 36px;border-radius:28px 28px 0 0;background:var(--bg);box-shadow:var(--sh-lg)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:40px">
+        <div style="grid-column:span 1;display:grid;gap:12px;align-content:start;min-width:220px">
+          <span style="font-family:var(--head);font-size:24px">La Barraca <span style="color:var(--accent)">de Juan</span></span>
+          <p style="margin:0;max-width:280px;font-size:14px;line-height:1.55;color:var(--muted)">Solid-timber tables, robes and cabinetry, made to order in our workshop.</p>
+          <div style="display:flex;gap:12px;margin-top:8px">
+            <span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--sh)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"></circle></svg></span>
+            <span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--sh)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></span>
+            <span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--sh)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span>
+          </div>
+        </div>
+        <sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="3">
+          <div style="display:grid;gap:10px;align-content:start">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">{{ col.title }}</span>
+            <sc-for list="{{ col.links }}" as="l" hint-placeholder-count="4"><a href="#navigation" style="font-size:14px">{{ l }}</a></sc-for>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)"><span>© 2026 La Barraca de Juan · ABN 00 000 000 000</span><span>Made in Australia</span></div>
+    </footer>
+  </div>
+</section>
+
+<!-- ═══ 04 Hero & banners ═══ -->
+<section id="marketing" data-screen-label="Hero and banners" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">04</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Hero &amp; banners</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">6 · components/marketing</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">AnnouncementBar</span>
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 24px;border-radius:999px;box-shadow:var(--in);font-size:14px"><span>Workshop open day · Saturday 24 October · <a href="#events" style="font-weight:700;color:var(--accent)">Reserve a spot</a></span><span style="display:grid;place-items:center;width:28px;height:28px;border-radius:50%;box-shadow:var(--sh-sm)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span></div>
+  </div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Hero</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px;align-items:center;padding:24px 0">
+      <div style="display:grid;gap:26px">
+        <span style="display:inline-flex;width:max-content;align-items:center;height:28px;padding:0 12px;border-radius:999px;box-shadow:var(--sh-xs);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">Made to order · Melbourne</span>
+        <h1 style="margin:0;font-family:var(--head);font-weight:400;font-size:clamp(40px,5.5vw,72px);line-height:1.02;letter-spacing:-.01em;text-wrap:pretty">Furniture that outlives <span style="color:var(--accent)">the house</span> it's made for.</h1>
+        <p style="margin:0;max-width:440px;font-size:17px;line-height:1.55;color:var(--muted)">Solid-timber tables, robes and cabinetry, cut and finished by hand from sustainably sourced Australian hardwoods.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+          <button type="button" style="display:inline-flex;align-items:center;gap:12px;height:56px;padding:0 32px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Browse the collection <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></button>
+          <button type="button" style="height:56px;padding:0 32px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 15px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Book a consultation</button>
+        </div>
+      </div>
+      <div style="padding:16px;border-radius:28px;box-shadow:var(--sh)"><div style="aspect-ratio:4/5;border-radius:20px;overflow:hidden;box-shadow:var(--in);position:relative"><image-slot id="hero" shape="rounded" radius="20" placeholder="Hero photo · finished dining table in a home"></image-slot></div></div>
+    </div>
+  </div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">SplitHero · stats</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;padding:clamp(28px,4vw,56px);border-radius:28px;background:var(--bg);box-shadow:var(--sh)">
+      <div style="display:grid;gap:20px;align-content:start"><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:clamp(32px,4vw,52px);line-height:1.05">Twenty years at the bench.</h2><p style="margin:0;max-width:460px;font-size:17px;line-height:1.55;color:var(--muted)">Juan started with a single dining table for his own kitchen. The workshop now makes about a hundred pieces a year, each one still passing through his hands.</p><button type="button" style="width:max-content;height:56px;padding:0 32px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer">Start your piece</button></div>
+      <dl style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:0;align-content:start">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div style="padding:24px;border-radius:20px;box-shadow:var(--in)"><dt style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">{{ s.label }}</dt><dd style="margin:8px 0 0;font-family:var(--head);font-size:40px;line-height:1;color:var(--accent)">{{ s.value }}</dd></div>
+        </sc-for>
+      </dl>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px">
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">PromoBanner · accent field</span>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;padding:40px;border-radius:28px;background:var(--accent);color:var(--accent-fg);box-shadow:var(--sh-lg)">
+        <div><p style="margin:0;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.8">Spring workshop sale</p><h2 style="margin:8px 0 0;font-family:var(--head);font-weight:400;font-size:clamp(26px,3vw,36px);line-height:1.1">15% off bedside tables until October.</h2></div>
+        <button type="button" style="height:56px;padding:0 32px;border:0;border-radius:999px;background:var(--bg);color:var(--text);font:600 15px var(--body);cursor:pointer;box-shadow:6px 6px 14px rgba(0,0,0,.25),-6px -6px 14px rgba(255,255,255,.15)">See bedsides</button>
+      </div>
+    </div>
+    <div style="display:grid;gap:14px;align-content:start">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">CtaSection</span>
+      <div style="padding:48px 40px;border-radius:28px;box-shadow:var(--in-lg);text-align:center"><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:36px;line-height:1.1">Have a room in mind?</h2><p style="margin:14px auto 0;max-width:380px;color:var(--muted);line-height:1.55">Send us a sketch or a photo and we'll come back with a drawing and a price.</p><div style="display:flex;justify-content:center;flex-wrap:wrap;gap:16px;margin-top:28px"><button type="button" style="height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer">Request a quote</button><button type="button" style="height:52px;padding:0 28px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 15px var(--body);cursor:pointer">Call the workshop</button></div></div>
+    </div>
+  </div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">FeatureGrid</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+      <sc-for list="{{ features }}" as="f" hint-placeholder-count="3">
+        <div style="padding:28px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)"><span style="display:grid;place-items:center;width:48px;height:48px;border-radius:50%;box-shadow:var(--in-sm);color:var(--accent)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ f.icon }}"></path></svg></span><h3 style="margin:20px 0 0;font-family:var(--head);font-weight:400;font-size:22px">{{ f.title }}</h3><p style="margin:8px 0 0;font-size:14px;line-height:1.55;color:var(--muted)">{{ f.body }}</p></div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 05 Product ═══ -->
+<section id="product" data-screen-label="Product" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">05</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Product &amp; catalogue</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">6 · components/product</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">ProductGrid · ProductCard</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="3">
+        <article style="padding:16px;border-radius:20px;background:var(--bg);box-shadow:var(--sh);transition:box-shadow .2s" style-hover="box-shadow:var(--sh-lg)">
+          <div style="position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;box-shadow:var(--in)">
+            <image-slot id="{{ p.slot }}" shape="rounded" radius="14" placeholder="{{ p.placeholder }}"></image-slot>
+            <sc-if value="{{ p.badge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:12px;top:12px;display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:999px;background:var(--bg);box-shadow:var(--sh-xs);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);pointer-events:none">{{ p.badge }}</span></sc-if>
+            <span style="position:absolute;right:12px;top:12px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);pointer-events:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 12 5a5.5 5.5 0 0 0-10 3.5c0 2.3 1.5 4 3 5.5l7 7Z"></path></svg></span>
+          </div>
+          <div style="padding:20px 8px 8px">
+            <p style="margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">{{ p.timber }}</p>
+            <a href="#product" style="display:block;margin-top:4px;font-family:var(--head);font-size:22px;line-height:1.15">{{ p.name }}</a>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:12px"><span style="display:inline-flex;align-items:baseline;gap:6px"><span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">from</span><span style="font-family:var(--head);font-size:18px">{{ p.price }}</span></span><span style="font-size:12px;color:var(--muted)">{{ p.lead }}</span></div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">ProductDetail · WoodSwatchPicker · DimensionSelector</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px">
+      <div style="display:grid;gap:16px;align-content:start">
+        <div style="padding:16px;border-radius:28px;box-shadow:var(--sh)"><div style="aspect-ratio:1;border-radius:20px;overflow:hidden;box-shadow:var(--in)"><image-slot id="detail-main" shape="rounded" radius="20" placeholder="Río dining table · main photo"></image-slot></div></div>
+        <div style="display:flex;gap:12px"><span style="width:76px;height:76px;padding:6px;border-radius:14px;box-shadow:var(--in)"><span style="display:block;width:100%;height:100%;border-radius:10px;background:var(--sunken)"></span></span><span style="width:76px;height:76px;padding:6px;border-radius:14px;box-shadow:var(--sh-sm)"><span style="display:block;width:100%;height:100%;border-radius:10px;background:var(--sunken)"></span></span><span style="width:76px;height:76px;padding:6px;border-radius:14px;box-shadow:var(--sh-sm)"><span style="display:block;width:100%;height:100%;border-radius:10px;background:var(--sunken)"></span></span></div>
+      </div>
+      <div style="display:grid;gap:30px;align-content:start">
+        <div><h1 style="margin:0;font-family:var(--head);font-weight:400;font-size:clamp(34px,4vw,48px);line-height:1.05">Río dining table</h1><p style="margin:14px 0 0;font-family:var(--head);font-size:32px">{{ detailPrice }}</p><p style="margin:14px 0 0;line-height:1.55;color:var(--muted)">A single-slab top on a tapered trestle base. Hand-finished with hardwax oil so it can be repaired, not replaced.</p></div>
+        <div style="display:grid;gap:14px">
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">Timber</span><span style="color:var(--muted)">{{ timberName }}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px">
+            <sc-for list="{{ timbers }}" as="t" hint-placeholder-count="4">
+              <button type="button" aria-label="{{ t.name }}" aria-pressed="{{ t.on }}" onClick="{{ t.pick }}" style="display:grid;place-items:center;width:56px;height:56px;padding:6px;border:0;border-radius:50%;background:var(--bg);cursor:pointer;transition:box-shadow .2s;box-shadow:{{ t.shadow }}"><span style="display:grid;place-items:center;width:100%;height:100%;border-radius:50%;color:rgba(255,255,255,.9);background:{{ t.grad }}"><sc-if value="{{ t.on }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></span></button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;gap:12px">
+          <span style="font-size:14px;font-weight:600">Size</span>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <sc-for list="{{ sizes }}" as="s" hint-placeholder-count="3">
+              <button type="button" aria-pressed="{{ s.on }}" onClick="{{ s.pick }}" style="padding:16px;border:0;border-radius:14px;background:var(--bg);text-align:left;cursor:pointer;transition:box-shadow .2s;box-shadow:{{ s.shadow }};color:{{ s.color }}"><span style="display:block;font-size:14px;font-weight:700">{{ s.label }}</span><span style="display:flex;justify-content:space-between;margin-top:4px;font-size:12px;color:var(--muted)"><span>{{ s.seats }}</span><span>{{ s.delta }}</span></span></button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+          <div style="display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 6px;border-radius:999px;box-shadow:var(--in)"><button type="button" aria-label="Decrease" onClick="{{ decQty }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"></path></svg></button><span style="width:32px;text-align:center;font-size:14px;font-weight:700">{{ qty }}</span><button type="button" aria-label="Increase" onClick="{{ incQty }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button></div>
+          <button type="button" onClick="{{ addToOrder }}" style="flex:1;min-width:180px;height:56px;padding:0 32px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Add to order</button>
+        </div>
+        <ul style="display:flex;flex-wrap:wrap;gap:12px 24px;margin:0;padding:0;list-style:none;font-size:13px;color:var(--muted)"><li style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>Made to order · 8–10 wks</li><li style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>Delivered &amp; assembled</li><li style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>25-year guarantee</li></ul>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">CategoryTile</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px">
+      <sc-for list="{{ categories }}" as="c" hint-placeholder-count="4">
+        <a href="#product" style="display:block;padding:12px;border-radius:20px;box-shadow:var(--sh);color:var(--text);transition:box-shadow .2s" style-hover="box-shadow:var(--sh-lg)"><div style="aspect-ratio:4/3;border-radius:14px;overflow:hidden;box-shadow:var(--in)"><image-slot id="{{ c.slot }}" shape="rounded" radius="14" placeholder="{{ c.name }}"></image-slot></div><div style="display:flex;align-items:center;justify-content:space-between;padding:16px 12px 8px"><div><p style="margin:0;font-family:var(--head);font-size:20px">{{ c.name }}</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted)">{{ c.count }} pieces</p></div><span style="display:grid;place-items:center;width:40px;height:40px;border-radius:50%;box-shadow:var(--sh-sm)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"></path></svg></span></div></a>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 06 Forms & booking ═══ -->
+<section id="forms" data-screen-label="Forms and booking" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">06</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Booking &amp; forms</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">4 · components/forms</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:28px;align-items:start">
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">QuoteRequestForm</span>
+      <form style="display:grid;gap:24px;padding:36px;border-radius:28px;background:var(--bg);box-shadow:var(--sh)">
+        <div><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Request a quote</h2><p style="margin:6px 0 0;font-size:14px;color:var(--muted)">Tell us about the piece. We reply within two business days.</p></div>
+        <div style="display:grid;gap:8px"><span style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">What are we making?</span><div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ chips }}" as="c" hint-placeholder-count="5"><button type="button" onClick="{{ c.pick }}" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--bg);font:600 13px var(--body);cursor:pointer;transition:box-shadow .2s;box-shadow:{{ c.shadow }};color:{{ c.color }}">{{ c.label }}</button></sc-for></div></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px">
+          <div style="display:grid;gap:8px"><label style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Name <span style="color:var(--accent)">*</span></label><div style="display:flex;align-items:center;height:48px;padding:0 20px;border-radius:999px;box-shadow:var(--in)"><input placeholder="Your name" style="flex:1;min-width:0;background:transparent;border:0;outline:0;font:500 14px var(--body);color:var(--text)"></div></div>
+          <div style="display:grid;gap:8px"><label style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Email <span style="color:var(--accent)">*</span></label><div style="display:flex;align-items:center;height:48px;padding:0 20px;border-radius:999px;box-shadow:var(--in)"><input placeholder="you@example.com" style="flex:1;min-width:0;background:transparent;border:0;outline:0;font:500 14px var(--body);color:var(--text)"></div></div>
+        </div>
+        <div style="display:grid;gap:12px"><div style="display:flex;justify-content:space-between;font-size:14px"><span style="font-weight:600">Approximate budget</span><span style="color:var(--muted)">{{ budgetText }}</span></div><div style="position:relative;height:32px"><div style="position:absolute;left:0;right:0;top:10px;height:12px;border-radius:999px;box-shadow:var(--in)"></div><div style="position:absolute;left:0;top:10px;height:12px;border-radius:999px;background:var(--accent);opacity:.85;width:{{ budgetPct }}"></div><div style="position:absolute;top:2px;width:28px;height:28px;border-radius:50%;background:var(--bg);box-shadow:var(--sh);pointer-events:none;left:{{ thumbLeft }}"></div><input type="range" min="1000" max="20000" step="250" value="{{ budget }}" onChange="{{ setBudget }}" aria-label="Budget" style="position:absolute;inset:0;width:100%;opacity:0;cursor:pointer;margin:0"></div></div>
+        <div style="display:grid;gap:8px"><label style="padding:0 4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Details</label><textarea placeholder="A 2.4 m dining table for eight…" style="min-height:100px;resize:vertical;padding:16px 20px;border:0;border-radius:20px;background:transparent;box-shadow:var(--in);outline:0;font:500 14px var(--body);color:var(--text)"></textarea><p style="margin:0;padding:0 4px;font-size:12px;color:var(--muted)">Dimensions, room, finish — anything you have in mind.</p></div>
+        <button type="button" onClick="{{ sendQuote }}" style="width:max-content;height:56px;padding:0 32px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Send request</button>
+      </form>
+    </div>
+    <div style="display:grid;gap:28px">
+      <div style="display:grid;gap:14px">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">ConsultationBooking · DatePicker</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;padding:28px;border-radius:28px;background:var(--bg);box-shadow:var(--sh)">
+          <div style="display:grid;gap:16px;align-content:start;padding:20px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--sh-sm)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 6-6 6 6 6"></path></svg></span><span style="font-family:var(--head);font-size:18px">October 2026</span><span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--sh-sm)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"></path></svg></span></div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted)"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+              <span></span><span></span><span></span>
+              <sc-for list="{{ days }}" as="d" hint-placeholder-count="31">
+                <button type="button" disabled="{{ d.off }}" onClick="{{ d.pick }}" style="display:grid;place-items:center;aspect-ratio:1;border:0;border-radius:50%;font:600 13px var(--body);cursor:pointer;transition:box-shadow .2s;background:{{ d.bg }};box-shadow:{{ d.shadow }};color:{{ d.color }}">{{ d.n }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;gap:20px;align-content:start">
+            <div><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:26px">Book a consultation</h2><p style="margin:4px 0 0;font-size:14px;color:var(--muted)">45 minutes with a maker. Free, no obligation.</p></div>
+            <div style="display:grid;gap:10px"><span style="font-size:14px;font-weight:600">Time</span><div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ slots }}" as="s" hint-placeholder-count="5"><button type="button" onClick="{{ s.pick }}" style="height:40px;padding:0 16px;border:0;border-radius:999px;background:var(--bg);font:700 13px var(--body);cursor:pointer;transition:box-shadow .2s;box-shadow:{{ s.shadow }};color:{{ s.color }}">{{ s.label }}</button></sc-for></div></div>
+            <button type="button" style="height:56px;padding:0 24px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer">{{ bookLabel }}</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;gap:14px">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">NewsletterForm</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;align-items:center;padding:36px;border-radius:28px;box-shadow:var(--in-lg)">
+          <div><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:28px">Workshop notes</h2><p style="margin:6px 0 0;font-size:14px;line-height:1.5;color:var(--muted)">New pieces, timber arrivals and the occasional open day. Monthly, at most.</p></div>
+          <div style="display:flex;align-items:center;height:56px;padding:6px 6px 6px 24px;border-radius:999px;background:var(--bg);box-shadow:var(--sh)"><input placeholder="you@example.com" style="flex:1;min-width:0;background:transparent;border:0;outline:0;font:500 14px var(--body);color:var(--text)"><button type="button" aria-label="Subscribe" onClick="{{ subscribe }}" style="display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--accent);box-shadow:var(--sh-xs);color:var(--accent-fg);cursor:pointer" style-active="box-shadow:var(--in-sm)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 07 Cart & checkout ═══ -->
+<section id="cart" data-screen-label="Cart and checkout" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">07</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Cart &amp; checkout</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">5 · components/cart</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">CheckoutSteps</span>
+    <ol style="display:flex;align-items:center;gap:12px;margin:0;padding:16px 24px;list-style:none;border-radius:999px;box-shadow:var(--in)">
+      <sc-for list="{{ checkoutSteps }}" as="s" hint-placeholder-count="4">
+        <li style="display:flex;align-items:center;gap:12px;flex:{{ s.flex }}"><span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;font-size:13px;font-weight:700;flex-shrink:0;background:{{ s.bg }};box-shadow:{{ s.shadow }};color:{{ s.color }}">{{ s.num }}</span><span style="font-size:13px;white-space:nowrap;font-weight:{{ s.weight }};color:{{ s.textColor }}">{{ s.label }}</span><sc-if value="{{ s.line }}" hint-placeholder-val="{{ true }}"><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span></sc-if></li>
+      </sc-for>
+    </ol>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;align-items:start">
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">CartItem · CartDrawer (tap the bag in the navbar)</span>
+      <sc-for list="{{ cart }}" as="l" hint-placeholder-count="2">
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:16px;padding:16px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+          <span style="width:80px;height:80px;border-radius:14px;box-shadow:var(--in);background:var(--sunken)"></span>
+          <div style="display:grid;gap:12px">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px"><div><p style="margin:0;font-family:var(--head);font-size:18px;line-height:1.15">{{ l.name }}</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted)">{{ l.spec }}</p></div><button type="button" aria-label="Remove" onClick="{{ l.remove }}" style="display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--muted);cursor:pointer;flex-shrink:0" style-hover="color:var(--danger)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"></path></svg></button></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div style="display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 4px;border-radius:999px;box-shadow:var(--in)"><button type="button" aria-label="Decrease" onClick="{{ l.dec }}" style="display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"></path></svg></button><span style="width:28px;text-align:center;font-size:13px;font-weight:700">{{ l.qty }}</span><button type="button" aria-label="Increase" onClick="{{ l.inc }}" style="display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button></div><span style="font-family:var(--head);font-size:18px">{{ l.total }}</span></div>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;place-items:center;gap:16px;padding:40px;border-radius:20px;box-shadow:var(--in);text-align:center"><span style="display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--accent)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M3 11h18v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM6 19v2M18 19v2"></path></svg></span><div><p style="margin:0;font-family:var(--head);font-size:20px">Nothing here yet</p><p style="margin:4px 0 0;font-size:14px;color:var(--muted)">Pieces you add will appear here. (EmptyState)</p></div><button type="button" onClick="{{ restoreCart }}" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 14px var(--body);cursor:pointer">Restore demo items</button></div>
+      </sc-if>
+    </div>
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">OrderSummary</span>
+      <aside style="display:grid;gap:16px;padding:28px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+        <h3 style="margin:0;font-family:var(--head);font-weight:400;font-size:24px">Summary</h3>
+        <dl style="display:grid;gap:10px;margin:0;font-size:14px">
+          <div style="display:flex;justify-content:space-between"><dt style="color:var(--muted)">Subtotal</dt><dd style="margin:0">{{ subtotal }}</dd></div>
+          <div style="display:flex;justify-content:space-between"><dt style="color:var(--muted)">Delivery &amp; assembly</dt><dd style="margin:0">Quoted</dd></div>
+          <div style="display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid var(--line);font-size:16px;font-weight:700"><dt>Total</dt><dd style="margin:0">{{ subtotal }}</dd></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:14px;box-shadow:var(--in-sm)"><dt style="color:var(--muted)">Deposit today (50%)</dt><dd style="margin:0;font-family:var(--head);font-size:20px;color:var(--accent)">{{ deposit }}</dd></div>
+        </dl>
+        <button type="button" style="height:56px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Pay deposit</button>
+        <p style="margin:0;text-align:center;font-size:12px;color:var(--muted)">Balance due before delivery. Cancel free within 7 days.</p>
+      </aside>
+    </div>
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">PaymentMethod</span>
+      <div role="radiogroup" style="display:grid;gap:12px">
+        <sc-for list="{{ payments }}" as="p" hint-placeholder-count="3">
+          <button type="button" role="radio" aria-checked="{{ p.on }}" onClick="{{ p.pick }}" style="display:flex;align-items:center;gap:14px;padding:18px 20px;border:0;border-radius:20px;background:var(--bg);text-align:left;cursor:pointer;transition:box-shadow .2s;box-shadow:{{ p.shadow }};color:{{ p.color }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ p.icon }}"></path></svg><span style="font-size:14px;font-weight:700">{{ p.label }}</span><span style="margin-left:auto;font-size:12px;color:var(--muted)">{{ p.hint }}</span></button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 08 Reviews ═══ -->
+<section id="reviews" data-screen-label="Reviews" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">08</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Reviews &amp; testimonials</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">2 · components/reviews</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">ReviewList · TestimonialCard</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;align-items:start">
+      <div style="display:grid;gap:20px;padding:28px;border-radius:20px;box-shadow:var(--in)">
+        <div><p style="margin:0;font-family:var(--head);font-size:64px;line-height:1">4.8</p><p style="margin:6px 0 0;font-size:12px;color:var(--muted)">★★★★★ · 36 reviews</p></div>
+        <div style="display:grid;gap:8px">
+          <sc-for list="{{ dist }}" as="d" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:14px 1fr 28px;align-items:center;gap:12px;font-size:12px"><span>{{ d.star }}</span><div style="height:12px;padding:3px;border-radius:999px;box-shadow:var(--in-sm)"><div style="height:100%;border-radius:999px;background:var(--accent);width:{{ d.pct }}"></div></div><span style="text-align:right;color:var(--muted)">{{ d.n }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="2">
+        <figure style="display:grid;gap:18px;margin:0;padding:28px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+          <span style="font-size:13px;letter-spacing:2px;color:var(--accent)">★★★★★</span>
+          <blockquote style="margin:0;font-family:var(--head);font-size:20px;line-height:1.3">“{{ r.quote }}”</blockquote>
+          <figcaption style="display:flex;align-items:center;gap:12px"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:50%;box-shadow:var(--sh-sm);font-family:var(--head);font-size:12px;color:var(--accent)">{{ r.initials }}</span><div style="font-size:14px;line-height:1.2"><p style="margin:0;font-weight:700">{{ r.name }}</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted)">{{ r.meta }}</p></div></figcaption>
+        </figure>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 09 Gallery & media ═══ -->
+<section id="media" data-screen-label="Gallery and media" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">09</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Gallery &amp; media</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">4 · components/media</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">GalleryGrid · Lightbox on click</span>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:20px">
+      <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="5">
+        <div style="position:relative;padding:12px;border-radius:20px;box-shadow:var(--sh);transition:box-shadow .2s;grid-column:{{ g.col }};grid-row:{{ g.row }}" style-hover="box-shadow:var(--sh-lg)"><div style="width:100%;height:100%;border-radius:14px;overflow:hidden;box-shadow:var(--in)"><image-slot id="{{ g.slot }}" shape="rounded" radius="14" placeholder="{{ g.alt }}"></image-slot></div><button type="button" aria-label="Open" onClick="{{ g.open }}" style="position:absolute;right:20px;bottom:20px;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);color:var(--text);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg></button></div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;align-items:start">
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">BeforeAfter · drag</span>
+      <div style="padding:16px;border-radius:28px;box-shadow:var(--sh)">
+        <div style="position:relative;aspect-ratio:16/10;border-radius:20px;overflow:hidden;box-shadow:var(--in);user-select:none">
+          <div style="position:absolute;inset:0;background:linear-gradient(135deg,#a97c50,#6e4a2c);display:grid;place-items:center;color:rgba(255,255,255,.85);font:700 12px var(--body);letter-spacing:.1em;text-transform:uppercase">Finished piece</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(135deg,#c9b8a3,#8f7d68);display:grid;place-items:center;color:rgba(255,255,255,.85);font:700 12px var(--body);letter-spacing:.1em;text-transform:uppercase;clip-path:{{ baClip }}">Raw slab</div>
+          <div style="position:absolute;top:0;bottom:0;width:4px;transform:translateX(-50%);background:var(--bg);left:{{ baLeft }}"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-4 4 4 4M16 8l4 4-4 4"></path></svg></span></div>
+          <input type="range" min="0" max="100" value="{{ ba }}" onChange="{{ setBa }}" aria-label="Compare" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0">
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">VideoCard</span>
+      <div style="position:relative;padding:12px;border-radius:20px;box-shadow:var(--sh)">
+        <div style="aspect-ratio:16/9;border-radius:14px;overflow:hidden;box-shadow:var(--in)"><image-slot id="video-poster" shape="rounded" radius="14" placeholder="Video poster · workshop tour"></image-slot></div>
+        <span style="position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--accent);pointer-events:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"></path></svg></span>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 8px 4px"><span style="font-family:var(--head);font-size:18px">Inside the workshop</span><span style="font-size:12px;color:var(--muted)">3:42</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 10 Events ═══ -->
+<section id="events" data-screen-label="Events" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">10</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Events &amp; calendar</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">2 · components/events</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;align-items:start">
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">EventCard</span>
+      <sc-for list="{{ events }}" as="e" hint-placeholder-count="2">
+        <article style="display:grid;grid-template-columns:72px 1fr;gap:20px;padding:20px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+          <div style="display:grid;place-content:center;aspect-ratio:1;border-radius:14px;box-shadow:var(--in);text-align:center"><span style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)">{{ e.month }}</span><span style="font-family:var(--head);font-size:30px;line-height:1">{{ e.day }}</span></div>
+          <div style="display:grid;gap:8px"><h3 style="margin:0;font-family:var(--head);font-weight:400;font-size:20px;line-height:1.15">{{ e.title }}</h3><p style="margin:0;font-size:14px;line-height:1.5;color:var(--muted)">{{ e.body }}</p><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:4px"><span style="font-size:12px;color:var(--muted)">{{ e.place }}</span><button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 13px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Reserve</button></div></div>
+        </article>
+      </sc-for>
+    </div>
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">CalendarMonth</span>
+      <div style="padding:24px;border-radius:28px;background:var(--bg);box-shadow:var(--sh)">
+        <h3 style="margin:0;font-family:var(--head);font-weight:400;font-size:24px">October 2026</h3>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:20px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted)"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px">
+          <span></span><span></span><span></span>
+          <sc-for list="{{ calDays }}" as="d" hint-placeholder-count="31">
+            <div style="min-height:56px;padding:8px;border-radius:12px;font-size:12px;box-shadow:{{ d.shadow }};color:{{ d.color }}"><span style="font-weight:700">{{ d.n }}</span><sc-if value="{{ d.ev }}" hint-placeholder-val="{{ false }}"><p style="margin:4px 0 0;padding:2px 6px;border-radius:999px;background:var(--accent);color:var(--accent-fg);font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.ev }}</p></sc-if></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 11 Feedback ═══ -->
+<section id="feedback" data-screen-label="Feedback" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">11</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Feedback</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">5 · components/feedback</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;align-items:start">
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Alert · 4 tones</span>
+      <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="4">
+        <div role="alert" style="display:flex;gap:16px;padding:18px 20px;border-radius:20px;box-shadow:var(--in)"><span style="display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--bg);box-shadow:var(--sh-sm);flex-shrink:0;color:{{ a.color }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ a.icon }}"></path></svg></span><div style="font-size:14px"><p style="margin:0;font-weight:700">{{ a.title }}</p><p style="margin:2px 0 0;color:var(--muted)">{{ a.body }}</p></div></div>
+      </sc-for>
+    </div>
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Toast · Modal · ConfirmDialog</span>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <button type="button" onClick="{{ pushToast }}" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 14px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Show toast</button>
+        <button type="button" onClick="{{ openModal }}" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 14px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Open modal</button>
+        <button type="button" onClick="{{ openConfirm }}" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--danger);font:600 14px var(--body);cursor:pointer" style-active="box-shadow:var(--in-sm)">Cancel order…</button>
+      </div>
+      <div role="status" style="display:flex;align-items:flex-start;gap:12px;width:min(340px,100%);padding:16px;border-radius:20px;background:var(--bg);box-shadow:var(--sh-lg)"><span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--in-sm);color:var(--success);flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1M22 4 12 14l-3-3"></path></svg></span><div style="flex:1;font-size:14px"><p style="margin:0;font-weight:700">Added to your order</p><p style="margin:0;color:var(--muted)">Río dining table · Blackbutt · 2.4 m</p></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></div>
+      <div style="display:grid;place-items:center;gap:16px;padding:36px;border-radius:20px;box-shadow:var(--in);text-align:center"><span style="display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--accent)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M3 11h18v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM6 19v2M18 19v2"></path></svg></span><div><p style="margin:0;font-family:var(--head);font-size:20px">No saved pieces</p><p style="margin:4px 0 0;font-size:14px;color:var(--muted)">Tap the heart on anything you like. (EmptyState)</p></div><button type="button" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:var(--bg);box-shadow:var(--sh);color:var(--text);font:600 14px var(--body);cursor:pointer">Browse tables</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 12 Data display ═══ -->
+<section id="data" data-screen-label="Data display" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">12</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Data display</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">4 · components/data</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">StatCard</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px">
+      <sc-for list="{{ statCards }}" as="s" hint-placeholder-count="4">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:24px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)"><div><p style="margin:0;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">{{ s.label }}</p><p style="margin:8px 0 0;font-family:var(--head);font-size:36px;line-height:1">{{ s.value }}</p><p style="margin:6px 0 0;font-size:12px;color:var(--success)">{{ s.delta }}</p></div><span style="display:grid;place-items:center;width:44px;height:44px;border-radius:50%;box-shadow:var(--in-sm);color:var(--accent)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ s.icon }}"></path></svg></span></div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;align-items:start">
+    <div style="display:grid;gap:14px;grid-column:span 1">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">DataTable</span>
+      <div style="padding:8px;border-radius:20px;background:var(--bg);box-shadow:var(--sh);overflow-x:auto">
+        <table style="width:100%;border-collapse:separate;border-spacing:0;font-size:14px">
+          <caption style="padding:14px 16px;text-align:left;font-family:var(--head);font-size:20px">Open orders</caption>
+          <thead><tr><th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Order</th><th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Piece</th><th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Stage</th><th style="padding:10px 16px;text-align:right;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Due</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ orders }}" as="o" hint-placeholder-count="4">
+              <tr style="transition:box-shadow .2s" style-hover="box-shadow:var(--in-sm)"><td style="padding:14px 16px;border-radius:14px 0 0 14px;font-weight:700;font-variant-numeric:tabular-nums">{{ o.id }}</td><td style="padding:14px 16px">{{ o.piece }}</td><td style="padding:14px 16px"><span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;box-shadow:var(--sh-xs);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{{ o.color }}">{{ o.stage }}</span></td><td style="padding:14px 16px;border-radius:0 14px 14px 0;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)">{{ o.due }}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Timeline · order progress</span>
+      <ol style="margin:0;padding:24px 28px 0;list-style:none;border-radius:20px;background:var(--bg);box-shadow:var(--sh)">
+        <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+          <li style="display:grid;grid-template-columns:28px 1fr;gap:20px">
+            <div style="display:grid;justify-items:center"><span style="display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:{{ t.bg }};box-shadow:{{ t.shadow }}"><sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></span></sc-if></span><sc-if value="{{ t.line }}" hint-placeholder-val="{{ true }}"><span style="width:4px;flex:1;min-height:24px;margin:4px 0;border-radius:999px;box-shadow:var(--in-sm)"></span></sc-if></div>
+            <div style="padding-bottom:28px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><p style="margin:0;font-weight:700;color:{{ t.color }}">{{ t.title }}</p><span style="font-size:12px;color:var(--muted);white-space:nowrap">{{ t.date }}</span></div><p style="margin:4px 0 0;font-size:14px;color:var(--muted)">{{ t.body }}</p></div>
+          </li>
+        </sc-for>
+      </ol>
+    </div>
+    <div style="display:grid;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">SpecList</span>
+      <div style="padding:24px;border-radius:20px;box-shadow:var(--in)">
+        <h3 style="margin:0;font-family:var(--head);font-weight:400;font-size:20px">Specifications</h3>
+        <dl style="margin:16px 0 0;font-size:14px">
+          <sc-for list="{{ specs }}" as="s" hint-placeholder-count="6">
+            <div style="display:flex;justify-content:space-between;gap:24px;padding:12px 0;border-bottom:1px solid var(--line)"><dt style="color:var(--muted)">{{ s.k }}</dt><dd style="margin:0;text-align:right;font-weight:600">{{ s.v }}</dd></div>
+          </sc-for>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 13 Journal ═══ -->
+<section id="blog" data-screen-label="Journal" style="display:grid;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-family:var(--head);font-size:14px;color:var(--accent)">13</span><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:30px">Journal</h2><span style="flex:1;height:4px;border-radius:999px;box-shadow:var(--in-sm)"></span><span style="font-size:12px;font-weight:700;color:var(--muted)">4 · components/blog</span></div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">ArticleHeader · AuthorByline · TableOfContents</span>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:40px;align-items:start">
+      <header style="display:grid;gap:24px">
+        <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:8px;font-size:14px"><a href="#blog" style="color:var(--muted)">Journal</a><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity=".6"><path d="m9 6 6 6-6 6"></path></svg><a href="#blog" style="color:var(--muted)">Timber</a><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity=".6"><path d="m9 6 6 6-6 6"></path></svg><span style="font-weight:700">Why we oil, not lacquer</span></nav>
+        <h1 style="margin:0;font-family:var(--head);font-weight:400;font-size:clamp(36px,4.5vw,56px);line-height:1.05;text-wrap:pretty">Why we oil, not lacquer</h1>
+        <p style="margin:0;max-width:640px;font-size:19px;line-height:1.5;color:var(--muted)">A hardwax-oil finish can be repaired with a rag and ten minutes. A lacquer has to be stripped. Here's how we think about the trade-off.</p>
+        <div style="display:inline-flex;width:max-content;align-items:center;gap:12px;padding:8px 24px 8px 8px;border-radius:999px;box-shadow:var(--in-sm)"><span style="display:grid;place-items:center;width:32px;height:32px;border-radius:50%;box-shadow:var(--sh-sm);font-family:var(--head);font-size:12px;color:var(--accent)">JB</span><div style="font-size:14px;line-height:1.2"><p style="margin:0;font-weight:700">Juan Barraca</p><p style="margin:2px 0 0;font-size:12px;color:var(--muted)">Founder &amp; maker · 12 Sep 2026</p></div></div>
+        <div style="padding:16px;border-radius:28px;box-shadow:var(--sh)"><div style="aspect-ratio:21/9;border-radius:20px;overflow:hidden;box-shadow:var(--in)"><image-slot id="article-hero" shape="rounded" radius="20" placeholder="Article hero · oiling a tabletop"></image-slot></div></div>
+      </header>
+      <nav aria-label="On this page" style="padding:20px;border-radius:20px;box-shadow:var(--in);position:sticky;top:24px">
+        <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">On this page</p>
+        <ol style="display:grid;gap:4px;margin:12px 0 0;padding:0;list-style:none">
+          <sc-for list="{{ toc }}" as="t" hint-placeholder-count="4">
+            <li><button type="button" onClick="{{ t.pick }}" style="width:100%;padding:8px 16px;border:0;border-radius:999px;text-align:left;font:600 14px var(--body);cursor:pointer;transition:box-shadow .2s;background:{{ t.bg }};box-shadow:{{ t.shadow }};color:{{ t.color }}">{{ t.label }}</button></li>
+          </sc-for>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <div style="display:grid;gap:14px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">ArticleCard</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
+      <sc-for list="{{ articles }}" as="a" hint-placeholder-count="3">
+        <article style="display:grid;gap:16px;padding:16px;border-radius:20px;background:var(--bg);box-shadow:var(--sh);transition:box-shadow .2s" style-hover="box-shadow:var(--sh-lg)">
+          <div style="aspect-ratio:16/10;border-radius:14px;overflow:hidden;box-shadow:var(--in)"><image-slot id="{{ a.slot }}" shape="rounded" radius="14" placeholder="{{ a.title }}"></image-slot></div>
+          <div style="display:grid;gap:10px;padding:0 8px 8px"><div style="display:flex;align-items:center;gap:12px"><span style="display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;box-shadow:var(--in-sm);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">{{ a.cat }}</span><span style="font-size:12px;color:var(--muted)">{{ a.meta }}</span></div><a href="#blog" style="font-family:var(--head);font-size:24px;line-height:1.15">{{ a.title }}</a><p style="margin:0;font-size:14px;line-height:1.55;color:var(--muted)">{{ a.excerpt }}</p></div>
+        </article>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<!-- overlays -->
+<sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeModal }}" style="position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px;background:rgba(0,0,0,.2);backdrop-filter:blur(6px)">
+    <div role="dialog" aria-modal="true" onClick="{{ stop }}" style="width:100%;max-width:520px;padding:32px;border-radius:28px;background:var(--bg);box-shadow:var(--sh-lg);color:var(--text);font-family:var(--body);animation:nmIn .3s both">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:26px">{{ modalTitle }}</h2><button type="button" aria-label="Close" onClick="{{ closeModal }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+      <p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:var(--muted)">{{ modalBody }}</p>
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:32px"><button type="button" onClick="{{ closeModal }}" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:transparent;color:var(--text);font:600 14px var(--body);cursor:pointer" style-hover="box-shadow:var(--sh-sm)">Cancel</button><button type="button" onClick="{{ closeModal }}" style="height:44px;padding:0 24px;border:0;border-radius:999px;box-shadow:var(--sh);font:600 14px var(--body);cursor:pointer;background:{{ modalBtnBg }};color:{{ modalBtnColor }}">{{ modalConfirm }}</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" style="position:fixed;inset:0;z-index:50;padding:24px;background:var(--bg);color:var(--text);font-family:var(--body);animation:nmIn .3s both;overflow:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:var(--head);font-size:22px">La Barraca <span style="color:var(--accent)">de Juan</span></span><button type="button" aria-label="Close" onClick="{{ closeMenu }}" style="display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+    <nav style="display:grid;gap:12px;margin-top:40px;max-width:520px">
+      <sc-for list="{{ menuLinks }}" as="l" hint-placeholder-count="5"><a href="#navigation" onClick="{{ closeMenu }}" style="padding:20px 24px;border-radius:20px;background:var(--bg);box-shadow:var(--sh);font-family:var(--head);font-size:26px;color:var(--text)" style-active="box-shadow:var(--in)">{{ l }}</a></sc-for>
+    </nav>
+    <button type="button" onClick="{{ closeMenu }}" style="display:block;width:100%;max-width:520px;height:56px;margin-top:32px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer">Get a quote</button>
+  </div>
+</sc-if>
+
+<div onClick="{{ closeDrawer }}" style="position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.2);backdrop-filter:blur(4px);transition:opacity .3s;opacity:{{ drawerOpacity }};pointer-events:{{ drawerEvents }}"></div>
+<aside role="dialog" aria-label="Cart" style="position:fixed;top:12px;bottom:12px;right:12px;z-index:50;display:flex;flex-direction:column;gap:20px;width:min(420px,calc(100vw - 24px));padding:24px;border-radius:28px;background:var(--bg);box-shadow:var(--sh-lg);color:var(--text);font-family:var(--body);transition:transform .35s cubic-bezier(.2,.8,.2,1);transform:{{ drawerTransform }}">
+  <div style="display:flex;align-items:center;justify-content:space-between"><h2 style="margin:0;font-family:var(--head);font-weight:400;font-size:26px">Your order</h2><button type="button" aria-label="Close" onClick="{{ closeDrawer }}" style="display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+  <div style="display:grid;gap:12px;flex:1;overflow:auto;align-content:start;padding:4px">
+    <sc-for list="{{ cart }}" as="l" hint-placeholder-count="2">
+      <div style="display:grid;grid-template-columns:64px 1fr;gap:14px;padding:14px;border-radius:20px;background:var(--bg);box-shadow:var(--sh)"><span style="width:64px;height:64px;border-radius:12px;box-shadow:var(--in);background:var(--sunken)"></span><div style="display:grid;gap:4px;align-content:center"><p style="margin:0;font-family:var(--head);font-size:16px;line-height:1.15">{{ l.name }}</p><p style="margin:0;font-size:12px;color:var(--muted)">{{ l.spec }} · ×{{ l.qty }}</p><p style="margin:2px 0 0;font-family:var(--head);font-size:16px">{{ l.total }}</p></div></div>
+    </sc-for>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-radius:14px;box-shadow:var(--in-sm)"><span style="font-size:13px;color:var(--muted)">Deposit today</span><span style="font-family:var(--head);font-size:22px;color:var(--accent)">{{ deposit }}</span></div>
+  <button type="button" style="height:56px;border:0;border-radius:999px;background:var(--accent);box-shadow:var(--sh);color:var(--accent-fg);font:600 15px var(--body);cursor:pointer">Pay deposit</button>
+</aside>
+
+<sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);animation:nmIn .3s both;color:var(--text);font-family:var(--body)">
+    <div onClick="{{ stop }}" style="position:relative;width:min(900px,100%);padding:16px;border-radius:28px;background:var(--bg);box-shadow:var(--sh-lg)">
+      <div style="aspect-ratio:3/2;border-radius:20px;overflow:hidden;box-shadow:var(--in)"><image-slot id="{{ lightboxSlot }}" shape="rounded" radius="20" placeholder="{{ lightboxAlt }}"></image-slot></div>
+      <p style="margin:12px 0 0;padding:0 8px;font-size:14px;color:var(--muted)">{{ lightboxAlt }} · {{ lightboxIndex }} / 5 · ← → to navigate, Esc to close</p>
+      <button type="button" aria-label="Close" onClick="{{ closeLightbox }}" style="position:absolute;right:-12px;top:-12px;display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+      <button type="button" aria-label="Previous" onClick="{{ prevLightbox }}" style="position:absolute;left:-20px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:48px;height:48px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 6-6 6 6 6"></path></svg></button>
+      <button type="button" aria-label="Next" onClick="{{ nextLightbox }}" style="position:absolute;right:-20px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:48px;height:48px;border:0;border-radius:50%;background:var(--bg);box-shadow:var(--sh);color:var(--text);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"></path></svg></button>
+    </div>
+  </div>
+</sc-if>
+
+<div style="position:fixed;right:24px;bottom:24px;z-index:70;display:grid;gap:12px;color:var(--text);font-family:var(--body)">
+  <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="0">
+    <div role="status" style="display:flex;align-items:flex-start;gap:12px;width:340px;max-width:calc(100vw - 48px);padding:16px;border-radius:20px;background:var(--bg);box-shadow:var(--sh-lg);animation:nmIn .3s both"><span style="display:grid;place-items:center;width:36px;height:36px;border-radius:50%;box-shadow:var(--in-sm);flex-shrink:0;color:{{ t.color }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.icon }}"></path></svg></span><div style="flex:1;font-size:14px"><p style="margin:0;font-weight:700">{{ t.title }}</p><p style="margin:0;color:var(--muted)">{{ t.body }}</p></div><button type="button" aria-label="Dismiss" onClick="{{ t.dismiss }}" style="border:0;background:transparent;color:var(--muted);cursor:pointer;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+  </sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Walnut&quot;,&quot;Blackbutt&quot;,&quot;Charcoal&quot;],&quot;default&quot;:&quot;Walnut&quot;,&quot;tsType&quot;:&quot;'Walnut' | 'Blackbutt' | 'Charcoal'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;depth&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:8,&quot;min&quot;:4,&quot;max&quot;:14,&quot;step&quot;:1,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Shadows&quot;}}">
+class Component extends DCLogic {
+  state = {
+    theme: null, toggleOn: true, check1: true, check2: false, radio: 'workshop', budget: 6500, tab: 'details', acc: 'a1',
+    page: 3, qty: 1, timber: 'oak', size: 'm', chip: 'Dining table', saved: true, modal: null, menuOpen: false, drawerOpen: false,
+    lightbox: null, toasts: [], search: '', ba: 50, day: 14, slot: '10:30', pay: 'card', toc: 't1', cartCount: 2,
+    cart: [
+      { id: 'a', name: 'Río dining table', spec: 'Blackbutt · 2.4 m · seats 8', price: 5400, qty: 1 },
+      { id: 'b', name: 'Ola bedside', spec: 'American oak · pair', price: 1850, qty: 1 },
+    ],
+  };
+  componentDidMount() {
+    this.onKey = e => {
+      if (e.key === 'Escape') this.setState({ modal: null, menuOpen: false, drawerOpen: false, lightbox: null });
+      if (this.state.lightbox !== null) { if (e.key === 'ArrowRight') this.stepLightbox(1); if (e.key === 'ArrowLeft') this.stepLightbox(-1); }
+    };
+    addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { removeEventListener('keydown', this.onKey); }
+  stepLightbox(d) { this.setState(s => ({ lightbox: (s.lightbox + d + 5) % 5 })); }
+  toast(t) { const id = Date.now() + Math.random(); this.setState(s => ({ toasts: [...s.toasts, { ...t, id }] })); setTimeout(() => this.setState(s => ({ toasts: s.toasts.filter(x => x.id !== id) })), 5000); }
+  renderVals() {
+    const s = this.state, p = this.props;
+    const theme = s.theme ?? p.theme ?? 'light';
+    const accents = { Walnut: null, Blackbutt: ['#a8783f', '#2a2118', '#e2c99b'], Charcoal: ['#4a4744', '#f3efea', '#8f8a84'] };
+    const acc = accents[p.accent ?? 'Walnut'];
+    const rootStyle = { '--d': (p.depth ?? 8) + 'px' };
+    if (acc) { rootStyle['--accent'] = theme === 'dark' ? acc[2] : acc[0]; rootStyle['--accent-fg'] = theme === 'dark' ? '#211c19' : acc[1]; }
+    const R = 'var(--sh)', RS = 'var(--sh-sm)', I = 'var(--in)', IS = 'var(--in-sm)', T = 'var(--text)', M = 'var(--muted)', A = 'var(--accent)';
+    const money = n => '$' + n.toLocaleString('en-AU');
+    const sel = (on, offSh = RS) => ({ shadow: on ? IS : offSh, color: on ? A : T });
+    const ICON = {
+      check: 'M20 6 9 17l-5-5', info: 'M12 16v-4M12 8h.01M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0', warn: 'm21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3M12 9v4M12 17h.01',
+      ok: 'M22 11.1V12a10 10 0 1 1-5.9-9.1M22 4 12 14l-3-3', x: 'M15 9l-6 6M9 9l6 6M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0',
+      pin: 'M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6', phone: 'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2', clock: 'M12 6v6l4 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0',
+      hammer: 'm15 12-8.4 8.4a2 2 0 0 1-2.8-2.8L12 9M17.6 15 22 10.6 13.4 2 9 6.4', truck: 'M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.7a1 1 0 0 0-.3-.7l-3.4-3.4a1 1 0 0 0-.7-.2H14M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4M17 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4', shield: 'M20 13c0 5-3.5 7.5-7.7 9a.6.6 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4-4',
+      card: 'M2 5h20v14H2zM2 10h20', bank: 'M3 22h18M6 18V11M10 18V11M14 18V11M18 18V11M12 2 2 7h20z', wallet: 'M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z',
+      table: 'M3 9h18M3 9v11M21 9v11M5 9V5h14v4', users: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8', tree: 'M12 22v-8M8 14a5 5 0 0 1-3-8 4 4 0 0 1 7-4 4 4 0 0 1 7 4 5 5 0 0 1-3 8z', star: 'm12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z',
+    };
+    const chipNames = ['Dining table', 'Coffee table', 'Robe', 'Bedside', 'Sideboard', 'Kitchen', 'Something else'];
+    const timberList = [{ id: 'oak', name: 'American oak', hex: '#c9a877', note: 'light, straight grain' }, { id: 'blackbutt', name: 'Blackbutt', hex: '#b58b5a', note: 'Australian, warm' }, { id: 'walnut', name: 'Walnut', hex: '#5e3f2a', note: 'deep, figured' }, { id: 'spotted', name: 'Spotted gum', hex: '#8a5e3c', note: 'dense, dark' }];
+    const sizeList = [{ id: 's', label: '1.8 m', seats: 'seats 6', delta: 0 }, { id: 'm', label: '2.4 m', seats: 'seats 8', delta: 1200 }, { id: 'l', label: '3.0 m', seats: 'seats 10', delta: 2600 }];
+    const stepsOf = (labels, cur) => labels.map((label, i) => { const done = i < cur, act = i === cur; return { label, num: done ? '✓' : String(i + 1), flex: i < labels.length - 1 ? '1' : '0 0 auto', line: i < labels.length - 1, bg: done ? A : 'var(--bg)', shadow: done ? 'var(--sh-xs)' : act ? IS : RS, color: done ? 'var(--accent-fg)' : act ? A : M, weight: act ? '700' : '500', textColor: act ? T : M }; });
+    const faqData = [{ id: 'a1', title: 'How long does a table take?', body: 'Eight to ten weeks from deposit. Timber is selected in week one, you approve a drawing in week two, and we oil and cure the piece in the final fortnight.' }, { id: 'a2', title: 'Can I see the timber before you cut?', body: 'Yes — we photograph the boards we\'ve pulled for your piece and send them before a saw touches anything.' }, { id: 'a3', title: 'What if it gets scratched?', body: 'A hardwax-oil finish is repaired locally with fine paper and a rag. We include a care kit and will show you how.' }];
+    const gal = [{ alt: 'Río table, oiled', col: 'span 2', row: 'span 2' }, { alt: 'Dovetail detail' }, { alt: 'Blackbutt boards' }, { alt: 'Ola bedside pair' }, { alt: 'Workshop bench', col: 'span 2' }];
+    const cartTotal = s.cart.reduce((n, l) => n + l.price * l.qty, 0);
+    const events = { 3: 'Open day', 17: 'Oiling class', 24: 'Open day' };
+    const tocItems = [{ id: 't1', label: 'What oil actually does' }, { id: 't2', label: 'Where lacquer wins' }, { id: 't3', label: 'Repairing a scratch' }, { id: 't4', label: 'Our care kit' }];
+    const modals = {
+      info: { title: 'About lead times', body: 'Every piece is made to order. Once your deposit is in, we pull timber within the week and send photographs for approval. Delivery is scheduled with you two weeks before completion.', confirm: 'Got it', bg: A, color: 'var(--accent-fg)' },
+      confirm: { title: 'Cancel this order?', body: 'Your deposit of ' + money(cartTotal / 2) + ' is fully refundable for 7 days after ordering. After that, timber has usually been cut for your piece.', confirm: 'Cancel order', bg: 'var(--bg)', color: 'var(--danger)' },
+    };
+    const m = modals[s.modal] ?? modals.info;
+    return {
+      theme, rootStyle, themeLabel: theme === 'dark' ? 'Dark' : 'Light',
+      themeIcon: theme === 'dark' ? 'M12 3v1M12 20v1M4.2 4.2l.7.7M19.1 19.1l.7.7M3 12h1M20 12h1M4.2 19.8l.7-.7M19.1 4.9l.7-.7M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10' : 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9',
+      toggleTheme: () => this.setState({ theme: theme === 'dark' ? 'light' : 'dark' }),
+      sections: [['Foundations', 'foundations', 3], ['Primitives', 'primitives', 26], ['Navigation', 'navigation', 5], ['Hero & banners', 'marketing', 6], ['Product', 'product', 6], ['Booking & forms', 'forms', 4], ['Cart', 'cart', 5], ['Reviews', 'reviews', 2], ['Gallery', 'media', 4], ['Events', 'events', 2], ['Feedback', 'feedback', 5], ['Data', 'data', 4], ['Journal', 'blog', 4]].map(([name, id, count]) => ({ name, href: '#' + id, count })),
+      swatches: [['Ground', 'var(--bg)'], ['Text', 'var(--text)'], ['Muted', 'var(--muted)'], ['Accent', 'var(--accent)'], ['Success', 'var(--success)'], ['Danger', 'var(--danger)']].map(([name, bg]) => ({ name, bg })),
+      savedShadow: s.saved ? IS : R, savedColor: s.saved ? A : T, savedFill: s.saved ? 'currentColor' : 'none', toggleSaved: () => this.setState({ saved: !s.saved }),
+      toggleOn: s.toggleOn, knobLeft: s.toggleOn ? '28px' : '4px', knobBg: s.toggleOn ? A : 'var(--bg)', toggleText: s.toggleOn ? 'Assembly included' : 'Flat-packed', flipToggle: () => this.setState({ toggleOn: !s.toggleOn }),
+      check1: s.check1, check1Shadow: s.check1 ? IS : RS, check1Color: s.check1 ? A : 'transparent', flipCheck1: e => { e.preventDefault(); this.setState({ check1: !s.check1 }); },
+      check2: s.check2, check2Shadow: s.check2 ? IS : RS, check2Color: s.check2 ? A : 'transparent', flipCheck2: e => { e.preventDefault(); this.setState({ check2: !s.check2 }); },
+      radios: [['workshop', 'At the workshop', 'See timbers in person'], ['home', 'At your home', 'Metro only'], ['video', 'Video call', '']].map(([v, label, hint]) => ({ label, hint, on: s.radio === v, shadow: s.radio === v ? IS : RS, dot: s.radio === v ? 'scale(1)' : 'scale(0)', pick: () => this.setState({ radio: v }) })),
+      budget: s.budget, budgetText: money(s.budget) + (s.budget === 20000 ? '+' : ''), budgetPct: ((s.budget - 1000) / 19000 * 100) + '%', thumbLeft: 'calc(' + ((s.budget - 1000) / 19000 * 100) + '% - ' + ((s.budget - 1000) / 19000 * 28) + 'px)', setBudget: e => this.setState({ budget: +e.target.value }),
+      qty: s.qty, decQty: () => this.setState({ qty: Math.max(1, s.qty - 1) }), incQty: () => this.setState({ qty: Math.min(9, s.qty + 1) }),
+      chips: chipNames.map(label => ({ label, ...sel(s.chip === label), pick: () => this.setState({ chip: label }) })),
+      tabs: [['details', 'Details'], ['timber', 'Timber'], ['care', 'Care']].map(([id, label]) => ({ label, on: s.tab === id, bg: s.tab === id ? 'var(--bg)' : 'transparent', shadow: s.tab === id ? RS : 'none', color: s.tab === id ? A : M, pick: () => this.setState({ tab: id }) })),
+      tabBody: { details: 'A single-slab top on a tapered trestle base. 40 mm top, 720 mm high, breadboard ends to keep it flat through the seasons.', timber: 'Kiln-dried Australian hardwood, selected board by board for colour and grain match. We photograph your boards before cutting.', care: 'Wipe with a damp cloth. Re-oil once a year with the kit we include — a ten-minute job.' }[s.tab],
+      faqs: faqData.map(q => ({ ...q, on: s.acc === q.id, shadow: s.acc === q.id ? I : R, rot: s.acc === q.id ? 'rotate(45deg)' : 'none', color: s.acc === q.id ? A : T, pick: () => this.setState({ acc: s.acc === q.id ? null : q.id }) })),
+      steps: stepsOf(['Details', 'Delivery', 'Deposit', 'Confirm'], 1), checkoutSteps: stepsOf(['Details', 'Delivery', 'Deposit', 'Confirm'], 2),
+      pages: [1, 2, 3, 4, 8].map(n => ({ n, ...sel(s.page === n), pick: () => this.setState({ page: n }) })), prevPage: () => this.setState({ page: Math.max(1, s.page - 1) }), nextPage: () => this.setState({ page: Math.min(8, s.page + 1) }),
+      search: s.search, hasSearch: s.search.length > 0, setSearch: e => this.setState({ search: e.target.value }), clearSearch: () => this.setState({ search: '' }),
+      cartCount: s.cart.reduce((n, l) => n + l.qty, 0), openDrawer: () => this.setState({ drawerOpen: true }), closeDrawer: () => this.setState({ drawerOpen: false }),
+      drawerOpacity: s.drawerOpen ? 1 : 0, drawerEvents: s.drawerOpen ? 'auto' : 'none', drawerTransform: s.drawerOpen ? 'translateX(0)' : 'translateX(110%)',
+      openMenu: () => this.setState({ menuOpen: true }), closeMenu: () => this.setState({ menuOpen: false }), menuOpen: s.menuOpen, menuLinks: ['Tables', 'Robes', 'Kitchens', 'Workshop', 'Journal'],
+      contact: [[ICON.pin, '14 Foundry Lane, Brunswick VIC 3056'], [ICON.phone, '(03) 9000 0000'], [ICON.clock, 'Tue–Sat · 9 am – 4 pm']].map(([icon, text]) => ({ icon, text })),
+      footerCols: [{ title: 'Shop', links: ['Dining tables', 'Coffee tables', 'Robes & storage', 'Kitchens'] }, { title: 'Workshop', links: ['Our process', 'Timbers', 'Care guide', 'Open days'] }, { title: 'Company', links: ['About Juan', 'Journal', 'Trade enquiries', 'Contact'] }],
+      stats: [['Years at the bench', '20'], ['Pieces a year', '~100'], ['Guarantee', '25 yr'], ['Timber species', '6']].map(([label, value]) => ({ label, value })),
+      features: [{ icon: ICON.tree, title: 'Sustainably sourced', body: 'Every board is Australian hardwood from certified regrowth forests or reclaimed stock.' }, { icon: ICON.hammer, title: 'Made by hand', body: 'Joinery is cut and fitted at the bench, not on a CNC. Each piece is signed and dated.' }, { icon: ICON.shield, title: 'Guaranteed for 25 years', body: 'Structural joinery is covered for a quarter century. Finishes are repairable, not disposable.' }],
+      products: [{ slot: 'p-rio', placeholder: 'Río dining table', name: 'Río dining table', timber: 'Blackbutt', price: money(4200), lead: '8–10 wks', badge: 'New' }, { slot: 'p-ola', placeholder: 'Ola bedside', name: 'Ola bedside', timber: 'American oak', price: money(925), lead: '6 wks', badge: '' }, { slot: 'p-mar', placeholder: 'Mar robe', name: 'Mar robe', timber: 'Walnut & oak', price: money(6800), lead: '10–12 wks', badge: 'Best seller' }],
+      detailPrice: money((4200 + (sizeList.find(x => x.id === s.size)?.delta ?? 0)) * s.qty), timberName: timberList.find(t => t.id === s.timber)?.name + ' · ' + timberList.find(t => t.id === s.timber)?.note,
+      timbers: timberList.map(t => ({ ...t, on: s.timber === t.id, shadow: s.timber === t.id ? I : R, grad: 'linear-gradient(135deg,' + t.hex + ',color-mix(in oklch,' + t.hex + ',black 28%))', pick: () => this.setState({ timber: t.id }) })),
+      sizes: sizeList.map(x => ({ ...x, delta: x.delta ? '+' + money(x.delta) : 'included', on: s.size === x.id, shadow: s.size === x.id ? I : RS, color: s.size === x.id ? A : T, pick: () => this.setState({ size: x.id }) })),
+      addToOrder: () => this.toast({ title: 'Added to your order', body: 'Río dining table · ' + timberList.find(t => t.id === s.timber)?.name, tone: 'ok' }),
+      categories: [['Dining tables', 14, 'c-dining'], ['Coffee tables', 9, 'c-coffee'], ['Robes & storage', 11, 'c-robes'], ['Kitchens', 6, 'c-kitchens']].map(([name, count, slot]) => ({ name, count, slot })),
+      days: Array.from({ length: 31 }, (_, i) => { const n = i + 1, dow = (i + 3) % 7, off = dow === 6 || n < 6, on = s.day === n; return { n, off, on, bg: on ? A : 'transparent', shadow: on ? 'var(--sh-xs)' : 'none', color: on ? 'var(--accent-fg)' : off ? 'color-mix(in srgb,var(--muted) 45%,transparent)' : T, pick: () => this.setState({ day: n }) }; }),
+      slots: ['9:00', '10:30', '12:00', '14:00', '15:30'].map(label => ({ label, ...sel(s.slot === label), pick: () => this.setState({ slot: label }) })),
+      bookLabel: 'Confirm ' + s.day + ' Oct at ' + s.slot,
+      sendQuote: () => this.toast({ title: 'Request sent', body: 'We\'ll reply within two business days.', tone: 'ok' }), subscribe: () => this.toast({ title: 'You\'re on the list', body: 'Workshop notes, monthly at most.', tone: 'ok' }),
+      cart: s.cart.map(l => ({ ...l, total: money(l.price * l.qty), inc: () => this.setState({ cart: s.cart.map(x => x.id === l.id ? { ...x, qty: Math.min(9, x.qty + 1) } : x) }), dec: () => this.setState({ cart: s.cart.map(x => x.id === l.id ? { ...x, qty: Math.max(1, x.qty - 1) } : x) }), remove: () => this.setState({ cart: s.cart.filter(x => x.id !== l.id) }) })),
+      cartEmpty: s.cart.length === 0, restoreCart: () => this.setState({ cart: [{ id: 'a', name: 'Río dining table', spec: 'Blackbutt · 2.4 m · seats 8', price: 5400, qty: 1 }, { id: 'b', name: 'Ola bedside', spec: 'American oak · pair', price: 1850, qty: 1 }] }),
+      subtotal: money(cartTotal), deposit: money(cartTotal / 2),
+      payments: [['card', 'Card', 'Visa, Mastercard, Amex', ICON.card], ['bank', 'Bank transfer', 'Details on invoice', ICON.bank], ['afterpay', 'Afterpay', 'Deposits under $2,000', ICON.wallet]].map(([id, label, hint, icon]) => ({ label, hint, icon, on: s.pay === id, shadow: s.pay === id ? I : R, color: s.pay === id ? A : T, pick: () => this.setState({ pay: id }) })),
+      dist: [29, 5, 1, 1, 0].map((n, i) => ({ star: 5 - i, n, pct: (n / 36 * 100) + '%' })),
+      reviews: [{ quote: 'The table arrived, they set it up, and it looked like it had always been there.', name: 'Meg Rowley', initials: 'MR', meta: 'Northcote · Río dining table' }, { quote: 'Juan sent photos of the actual boards before cutting. Nobody else does that.', name: 'Anil Lal', initials: 'AL', meta: 'Kew · Mar robe' }],
+      gallery: gal.map((g, i) => ({ ...g, slot: 'g' + i, col: g.col ?? 'auto', row: g.row ?? 'auto', open: () => this.setState({ lightbox: i }) })),
+      lightboxOpen: s.lightbox !== null, lightboxSlot: 'lb' + s.lightbox, lightboxAlt: gal[s.lightbox ?? 0].alt, lightboxIndex: (s.lightbox ?? 0) + 1, closeLightbox: () => this.setState({ lightbox: null }), prevLightbox: () => this.stepLightbox(-1), nextLightbox: () => this.stepLightbox(1),
+      ba: s.ba, baClip: 'inset(0 ' + (100 - s.ba) + '% 0 0)', baLeft: s.ba + '%', setBa: e => this.setState({ ba: +e.target.value }),
+      events: [{ month: 'Oct', day: '24', title: 'Workshop open day', body: 'Walk the floor, see pieces mid-build, talk timber with the makers.', place: 'Brunswick workshop · 12 spots left' }, { month: 'Nov', day: '7', title: 'Oiling & care class', body: 'Bring a small piece. Learn to repair a scratch and re-oil a top in an hour.', place: 'Brunswick workshop · 6 spots left' }],
+      calDays: Array.from({ length: 31 }, (_, i) => { const n = i + 1, ev = events[n]; return { n, ev: ev ?? false, shadow: ev ? R : IS, color: ev ? T : M }; }),
+      alerts: [['info', ICON.info, A, 'Lead time is 8–10 weeks', 'Timber is pulled the week your deposit clears.'], ['ok', ICON.ok, 'var(--success)', 'Deposit received', 'Thanks — your drawing is on its way.'], ['warn', ICON.warn, 'var(--warning)', 'Walnut is limited this season', 'We have boards for about six more tables.'], ['x', ICON.x, 'var(--danger)', 'Card declined', 'Try another card or pay by bank transfer.']].map(([k, icon, color, title, body]) => ({ icon, color, title, body })),
+      pushToast: () => this.toast({ title: 'Saved to your pieces', body: 'Ola bedside · American oak', tone: 'ok' }),
+      openModal: () => this.setState({ modal: 'info' }), openConfirm: () => this.setState({ modal: 'confirm' }), closeModal: () => this.setState({ modal: null }), modalOpen: s.modal !== null, stop: e => e.stopPropagation(),
+      modalTitle: m.title, modalBody: m.body, modalConfirm: m.confirm, modalBtnBg: m.bg, modalBtnColor: m.color,
+      toasts: s.toasts.map(t => ({ ...t, icon: t.tone === 'ok' ? ICON.ok : ICON.info, color: t.tone === 'ok' ? 'var(--success)' : A, dismiss: () => this.setState(st => ({ toasts: st.toasts.filter(x => x.id !== t.id) })) })),
+      statCards: [['Open orders', '14', '+3 this month', ICON.table], ['Avg. lead time', '9.2 wks', '−0.6 vs last qtr', ICON.clock], ['Repeat clients', '38%', '+5 pts', ICON.users], ['Rating', '4.8', '36 reviews', ICON.star]].map(([label, value, delta, icon]) => ({ label, value, delta, icon })),
+      orders: [['#1042', 'Río dining table · Blackbutt', 'Oiling', '18 Sep', 'var(--success)'], ['#1043', 'Mar robe · Walnut', 'Joinery', '2 Oct', A], ['#1044', 'Ola bedside ×2 · Oak', 'Timber', '9 Oct', M], ['#1045', 'Kitchen · Spotted gum', 'Drawing', '30 Oct', 'var(--warning)']].map(([id, piece, stage, due, color]) => ({ id, piece, stage, due, color })),
+      timeline: [['done', 'Deposit received', '1 Sep', 'Order #1042 confirmed.'], ['done', 'Timber selected', '5 Sep', 'Four Blackbutt boards photographed and approved.'], ['active', 'Joinery & assembly', 'now', 'Breadboard ends fitted; base glued up this week.'], ['todo', 'Oil & cure', '~18 Sep', 'Three coats of hardwax oil, ten days to cure.'], ['todo', 'Delivery', 'week of 29 Sep', 'We\'ll call to book a two-hour window.']].map(([state, title, date, body], i, arr) => ({ title, date, body, active: state === 'active', line: i < arr.length - 1, bg: state === 'done' ? A : 'var(--bg)', shadow: state === 'done' ? 'var(--sh-xs)' : state === 'active' ? IS : RS, color: state === 'todo' ? M : T })),
+      specs: [['Length', '2400 mm'], ['Width', '1000 mm'], ['Height', '740 mm'], ['Top thickness', '40 mm'], ['Timber', 'Blackbutt, kiln-dried'], ['Finish', 'Hardwax oil, natural']].map(([k, v]) => ({ k, v })),
+      toc: tocItems.map(t => ({ ...t, on: s.toc === t.id, bg: s.toc === t.id ? 'var(--bg)' : 'transparent', shadow: s.toc === t.id ? RS : 'none', color: s.toc === t.id ? A : M, pick: () => this.setState({ toc: t.id }) })),
+      articles: [{ slot: 'a1', cat: 'Timber', meta: '12 Sep · 6 min', title: 'Why we oil, not lacquer', excerpt: 'A hardwax-oil finish can be repaired with a rag and ten minutes. A lacquer has to be stripped.' }, { slot: 'a2', cat: 'Process', meta: '28 Aug · 4 min', title: 'Choosing boards for a single-slab top', excerpt: 'Colour, grain direction and how the tree grew all decide which boards sit next to each other.' }, { slot: 'a3', cat: 'Workshop', meta: '14 Aug · 3 min', title: 'A new bandsaw, and why it matters', excerpt: 'Resawing our own boards lets us book-match veneers and waste less timber.' }],
+    };
+  }
+}
+</script>
+</body>
+</html>

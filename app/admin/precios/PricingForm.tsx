@@ -1,7 +1,8 @@
 "use client";
 
 import { Calculator, MapPin, Plus, Route, Save, Trash2, Truck } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
+import { cn } from "@/lib/cn";
 import { formatARS } from "@/lib/format";
 import { calculateBenchQuote } from "@/lib/pricing/benchPricing";
 import { calculateMirrorQuote } from "@/lib/pricing/mirrorPricing";
@@ -12,6 +13,15 @@ import {
   type ProductPricingConfig,
 } from "@/lib/pricing/pricingConfig";
 import { calculateTableQuote } from "@/lib/pricing/tablePricing";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
+import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Toggle } from "@/components/ui/toggle";
+import { Alert } from "@/components/feedback/alert";
+import { Divider } from "@/components/ui/divider";
+import { EmptyState } from "@/components/feedback/empty-state";
 
 interface PricingFormProps {
   initialConfig: PricingConfig;
@@ -67,41 +77,35 @@ export function PricingForm({ initialConfig, cloudStorageConfigured }: PricingFo
   }
 
   return (
-    <div>
-      <div className="mb-5 flex flex-col gap-4 border-b border-sand pb-5 lg:flex-row lg:items-end lg:justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h2 className="font-serif text-2xl">Precios y límites de fabricación</h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-walnut/60">
+          <h2 className="font-heading text-2xl text-nm-text sm:text-3xl">Precios y límites de fabricación</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-nm-muted">
             Definí cuánto cuesta cada pieza y qué medidas puede pedir el cliente. El cotizador se actualiza al publicar.
           </p>
-          <p className="mt-1 text-xs text-walnut/45">
+          <p className="mt-1 text-xs text-nm-muted/70">
             {cloudStorageConfigured
               ? "Los cambios se guardan en Vercel y quedan disponibles en producción."
               : "Modo local: conectá Vercel Blob antes de publicar en producción."}
           </p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="accent"
+          size="lg"
           onClick={save}
-          disabled={saveState === "saving"}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-bark px-4 text-sm font-medium text-cream hover:bg-walnut disabled:opacity-50"
+          loading={saveState === "saving"}
+          leading={<Save size={17} aria-hidden="true" />}
+          className="shrink-0"
         >
-          <Save size={17} aria-hidden="true" />
           {saveState === "saving" ? "Guardando..." : "Guardar y publicar"}
-        </button>
+        </Button>
       </div>
 
-      {message && (
-        <div className={`mb-5 rounded-md border px-4 py-3 text-sm ${
-          saveState === "success"
-            ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-            : "border-amber-200 bg-amber-50 text-amber-900"
-        }`} role="status">
-          {message}
-        </div>
-      )}
+      {message && <Alert tone={saveState === "success" ? "success" : "warning"} title={message} />}
 
-      <div className="mb-5 flex gap-1 overflow-x-auto border-b border-sand" role="tablist">
+      <div role="tablist" className="inline-flex flex-wrap gap-1 rounded-pill p-1.5 shadow-soft-inset">
         {(Object.keys(PRODUCT_META) as ProductKey[]).map((key) => (
           <TabButton key={key} active={tab === key} onClick={() => setTab(key)}>
             {PRODUCT_META[key].name}
@@ -162,78 +166,85 @@ function ProductEditor({
       ];
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-      <section className="overflow-hidden rounded-md border border-sand bg-white">
-        <div className="border-b border-sand px-5 py-4 sm:px-6">
-          <h3 className="font-serif text-xl">{meta.name}</h3>
-          <p className="mt-1 text-sm text-walnut/55">{meta.subtitle}</p>
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <section className="space-y-8 rounded-soft-lg bg-nm-surface p-6 shadow-soft sm:p-8">
+        <div>
+          <h3 className="font-heading text-xl text-nm-text">{meta.name}</h3>
+          <p className="mt-1 text-sm text-nm-muted">{meta.subtitle}</p>
         </div>
 
-        <div className="space-y-8 p-5 sm:p-6">
-          <EditorSection title="Cómo se calcula el precio">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <NumberField label="Material por m²" value={product.materialCostPerM2} prefix="$" onChange={(materialCostPerM2) => onChange({ materialCostPerM2 })} />
-              <NumberField label="Mano de obra fija" value={product.baseLabourCost} prefix="$" onChange={(baseLabourCost) => onChange({ baseLabourCost })} />
-              <NumberField label="Terminación fija" value={product.finishCost} prefix="$" onChange={(finishCost) => onChange({ finishCost })} />
-              <NumberField
-                label="Margen sobre costos"
-                value={Math.round((product.marginMultiplier - 1) * 10000) / 100}
-                suffix="%"
-                min={-99}
-                max={1900}
-                step={0.01}
-                onChange={(margin) => onChange({ marginMultiplier: 1 + margin / 100 })}
-              />
-              <NumberField
-                label="Precio mínimo"
-                value={product.minimumPrice}
-                prefix="$"
-                onChange={(minimumPrice) => onChange({ minimumPrice })}
-              />
-            </div>
-            <p className="text-xs leading-5 text-walnut/50">
-              Fórmula: superficie × material + mano de obra + terminación; luego se aplica el margen. Si el resultado es menor, se usa el precio mínimo.
-            </p>
-          </EditorSection>
+        <Divider />
 
-          <EditorSection title="Medidas permitidas">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[560px] text-left text-sm">
-                <thead className="border-b border-sand text-xs text-walnut/50">
-                  <tr>
-                    <th className="pb-2 font-medium">Dimensión</th>
-                    <th className="pb-2 font-medium">Mínimo</th>
-                    <th className="pb-2 font-medium">Valor inicial</th>
-                    <th className="pb-2 font-medium">Máximo</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-sand">
-                  {dimensionRows.map(({ key, label }) => {
-                    const range = product.dimensions[key];
-                    return (
-                      <tr key={key}>
-                        <th className="py-3 pr-4 font-medium">{label}</th>
-                        <td className="py-3 pr-3"><CompactNumber value={range.min} onChange={(min) => updateRange(key, { min })} /></td>
-                        <td className="py-3 pr-3"><CompactNumber value={range.default} onChange={(defaultValue) => updateRange(key, { default: defaultValue })} /></td>
-                        <td className="py-3"><CompactNumber value={range.max} onChange={(max) => updateRange(key, { max })} /></td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </EditorSection>
-        </div>
+        <EditorSection title="Cómo se calcula el precio">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <NumberField label="Material por m²" value={product.materialCostPerM2} prefix="$" onChange={(materialCostPerM2) => onChange({ materialCostPerM2 })} />
+            <NumberField label="Mano de obra fija" value={product.baseLabourCost} prefix="$" onChange={(baseLabourCost) => onChange({ baseLabourCost })} />
+            <NumberField label="Terminación fija" value={product.finishCost} prefix="$" onChange={(finishCost) => onChange({ finishCost })} />
+            <NumberField
+              label="Margen sobre costos"
+              value={Math.round((product.marginMultiplier - 1) * 10000) / 100}
+              suffix="%"
+              min={-99}
+              max={1900}
+              step={0.01}
+              onChange={(margin) => onChange({ marginMultiplier: 1 + margin / 100 })}
+            />
+            <NumberField
+              label="Precio mínimo"
+              value={product.minimumPrice}
+              prefix="$"
+              onChange={(minimumPrice) => onChange({ minimumPrice })}
+            />
+          </div>
+          <p className="text-xs leading-5 text-nm-muted/70">
+            Fórmula: superficie × material + mano de obra + terminación; luego se aplica el margen. Si el resultado es menor, se usa el precio mínimo.
+          </p>
+        </EditorSection>
+
+        <Divider />
+
+        <EditorSection title="Medidas permitidas">
+          <div className="overflow-x-auto rounded-soft p-2 shadow-soft-inset">
+            <table className="w-full min-w-[560px] text-left text-sm">
+              <thead>
+                <tr>
+                  <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-nm-muted">Dimensión</th>
+                  <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-nm-muted">Mínimo</th>
+                  <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-nm-muted">Valor inicial</th>
+                  <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-nm-muted">Máximo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dimensionRows.map(({ key, label }) => {
+                  const range = product.dimensions[key];
+                  return (
+                    <tr key={key}>
+                      <th className="px-3 py-2.5 text-left font-medium text-nm-text">{label}</th>
+                      <td className="px-3 py-2.5"><CompactNumber value={range.min} onChange={(min) => updateRange(key, { min })} /></td>
+                      <td className="px-3 py-2.5"><CompactNumber value={range.default} onChange={(defaultValue) => updateRange(key, { default: defaultValue })} /></td>
+                      <td className="px-3 py-2.5"><CompactNumber value={range.max} onChange={(max) => updateRange(key, { max })} /></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </EditorSection>
       </section>
 
-      <aside className="h-fit rounded-md border border-sand bg-[#20352d] p-5 text-white xl:sticky xl:top-24">
-        <div className="flex items-center gap-2 text-white/65">
-          <Calculator size={17} />
+      <aside className="h-fit space-y-4 rounded-soft-lg bg-nm-surface p-6 shadow-soft-lg xl:sticky xl:top-24">
+        <div className="flex items-center gap-2 text-nm-muted">
+          <span className="grid size-9 shrink-0 place-items-center rounded-full text-nm-accent shadow-soft-inset-sm">
+            <Calculator size={16} />
+          </span>
           <span className="text-xs font-semibold uppercase tracking-[0.12em]">Vista previa</span>
         </div>
-        <p className="mt-5 text-sm text-white/65">Con las medidas iniciales</p>
-        <p className="mt-1 font-serif text-3xl">{formatARS(preview)}</p>
-        <p className="mt-4 border-t border-white/15 pt-4 text-xs leading-5 text-white/55">
+        <div>
+          <p className="text-sm text-nm-muted">Con las medidas iniciales</p>
+          <p className="mt-1 font-heading text-3xl text-nm-accent">{formatARS(preview)}</p>
+        </div>
+        <Divider />
+        <p className="text-xs leading-5 text-nm-muted/70">
           No incluye envío. El precio final nunca será inferior a {formatARS(product.minimumPrice)}.
         </p>
       </aside>
@@ -275,18 +286,20 @@ function DeliveryEditor({ config, onChange }: { config: PricingConfig; onChange:
   }
 
   return (
-    <section className="overflow-hidden rounded-md border border-sand bg-white">
-      <div className="flex items-center gap-3 border-b border-sand px-5 py-4 sm:px-6">
-        <Truck size={20} className="text-bark" />
+    <section className="space-y-8 rounded-soft-lg bg-nm-surface p-6 shadow-soft sm:p-8">
+      <div className="flex items-start gap-3">
+        <span className="grid size-11 shrink-0 place-items-center rounded-full text-nm-accent shadow-soft-inset-sm">
+          <Truck size={20} />
+        </span>
         <div>
-          <h3 className="font-serif text-xl">Métodos de envío</h3>
-          <p className="mt-1 text-sm text-walnut/55">
+          <h3 className="font-heading text-xl text-nm-text">Métodos de envío</h3>
+          <p className="mt-1 text-sm text-nm-muted">
             Configurá precios fijos por zona y estimaciones según los kilómetros informados.
           </p>
         </div>
       </div>
 
-      <div className="grid gap-3 border-b border-sand p-5 sm:grid-cols-2 sm:p-6">
+      <div className="grid gap-3 sm:grid-cols-2">
         <MethodToggle
           icon={<MapPin size={19} />}
           title="Precios por zona"
@@ -303,31 +316,32 @@ function DeliveryEditor({ config, onChange }: { config: PricingConfig; onChange:
         />
       </div>
 
-      <div className="border-b border-sand p-5 sm:p-6">
+      <Divider />
+
+      <div>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h4 className="font-serif text-lg">Zonas con precio fijo</h4>
-            <p className="mt-1 text-sm text-walnut/55">
+            <h4 className="font-heading text-lg text-nm-text">Zonas con precio fijo</h4>
+            <p className="mt-1 text-sm text-nm-muted">
               Usá la descripción para aclarar barrios, partidos o límites incluidos.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={addZone}
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-bark px-3 text-sm font-medium text-bark hover:bg-sand/40"
-          >
-            <Plus size={17} /> Agregar zona
-          </button>
+          <Button type="button" variant="raised" size="sm" leading={<Plus size={17} />} onClick={addZone}>
+            Agregar zona
+          </Button>
         </div>
 
         {delivery.zones.length === 0 ? (
-          <div className="mt-5 rounded-md border border-dashed border-sand bg-[#faf9f7] px-4 py-8 text-center text-sm text-walnut/50">
-            Todavía no hay zonas. Agregá la primera para ofrecer precios fijos.
+          <div className="mt-5">
+            <EmptyState
+              title="Todavía no hay zonas"
+              body="Agregá la primera para ofrecer precios fijos a tus clientes."
+            />
           </div>
         ) : (
-          <div className="mt-5 divide-y divide-sand border-y border-sand">
+          <div className="mt-5 space-y-4">
             {delivery.zones.map((zone) => (
-              <div key={zone.id} className="grid gap-4 py-5 lg:grid-cols-[1fr_1.4fr_180px_auto] lg:items-end">
+              <div key={zone.id} className="grid gap-4 rounded-soft p-4 shadow-soft-inset lg:grid-cols-[1fr_1.4fr_180px_auto] lg:items-end">
                 <TextField
                   label="Nombre de la zona"
                   value={zone.name}
@@ -346,25 +360,19 @@ function DeliveryEditor({ config, onChange }: { config: PricingConfig; onChange:
                   prefix="$"
                   onChange={(price) => updateZone(zone.id, { price })}
                 />
-                <div className="flex h-10 items-center justify-between gap-3 lg:justify-end">
-                  <label className="inline-flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={zone.enabled}
-                      onChange={(event) => updateZone(zone.id, { enabled: event.target.checked })}
-                      className="h-4 w-4 accent-emerald-700"
-                    />
-                    Visible
-                  </label>
-                  <button
-                    type="button"
-                    title={`Eliminar ${zone.name}`}
-                    aria-label={`Eliminar ${zone.name}`}
+                <div className="flex h-12 items-center justify-between gap-3 lg:justify-end">
+                  <Checkbox
+                    checked={zone.enabled}
+                    onChange={(enabled) => updateZone(zone.id, { enabled })}
+                    label="Visible"
+                  />
+                  <IconButton
+                    label={`Eliminar ${zone.name}`}
                     onClick={() => removeZone(zone.id, zone.name)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-md text-red-600 hover:bg-red-50"
+                    className="text-nm-danger"
                   >
                     <Trash2 size={17} />
-                  </button>
+                  </IconButton>
                 </div>
               </div>
             ))}
@@ -372,10 +380,12 @@ function DeliveryEditor({ config, onChange }: { config: PricingConfig; onChange:
         )}
       </div>
 
-      <div className="p-5 sm:p-6">
+      <Divider />
+
+      <div>
         <div>
-          <h4 className="font-serif text-lg">Cálculo por kilómetros</h4>
-          <p className="mt-1 text-sm text-walnut/55">
+          <h4 className="font-heading text-lg text-nm-text">Cálculo por kilómetros</h4>
+          <p className="mt-1 text-sm text-nm-muted">
             Fórmula: costo base + distancia × tarifa por km, respetando el precio mínimo.
           </p>
         </div>
@@ -412,26 +422,21 @@ function MethodToggle({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-md border border-sand p-4 hover:bg-sand/20">
-      <span className="mt-0.5 text-bark">{icon}</span>
+    <div className="flex items-start gap-3 rounded-soft p-4 shadow-soft-inset-sm">
+      <span className="mt-0.5 text-nm-accent">{icon}</span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-medium">{title}</span>
-        <span className="mt-1 block text-xs leading-5 text-walnut/50">{description}</span>
+        <span className="block text-sm font-medium text-nm-text">{title}</span>
+        <span className="mt-1 block text-xs leading-5 text-nm-muted">{description}</span>
       </span>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onChange(event.target.checked)}
-        className="mt-0.5 h-4 w-4 accent-emerald-700"
-      />
-    </label>
+      <Toggle checked={checked} onChange={onChange} />
+    </div>
   );
 }
 
 function EditorSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <fieldset className="space-y-4 border-t border-sand pt-6 first:border-0 first:pt-0">
-      <legend className="mb-4 font-serif text-lg">{title}</legend>
+    <fieldset className="space-y-4">
+      <legend className="mb-1 font-heading text-lg text-nm-text">{title}</legend>
       {children}
     </fieldset>
   );
@@ -444,7 +449,10 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`h-11 shrink-0 border-b-2 px-4 text-sm ${active ? "border-bark font-medium text-bark" : "border-transparent text-walnut/55 hover:text-walnut"}`}
+      className={cn(
+        "nm-transition h-10 shrink-0 rounded-pill px-5 text-sm font-semibold",
+        active ? "bg-nm-surface text-nm-accent shadow-soft-sm" : "text-nm-muted hover:text-nm-text"
+      )}
     >
       {children}
     </button>
@@ -462,17 +470,17 @@ function TextField({
   onChange: (value: string) => void;
   placeholder?: string;
 }) {
+  const id = useId();
   return (
-    <label className="block min-w-0 text-sm font-medium">
-      {label}
-      <input
+    <FormField label={label} htmlFor={id}>
+      <Input
+        id={id}
         type="text"
         value={value}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-1.5 h-10 w-full rounded-md border border-sand bg-white px-3 font-normal outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
       />
-    </label>
+    </FormField>
   );
 }
 
@@ -495,39 +503,36 @@ function NumberField({
   max?: number;
   step?: number;
 }) {
+  const id = useId();
   return (
-    <label className="block text-sm font-medium">
-      {label}
-      <span className="relative mt-1.5 block">
-        {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-walnut/45">{prefix}</span>}
-        <input
-          type="number"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onChange={(event) => onChange(Number(event.target.value))}
-          className={`h-10 w-full rounded-md border border-sand bg-white px-3 font-normal outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 ${prefix ? "pl-7" : ""} ${suffix ? "pr-12" : ""}`}
-        />
-        {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-walnut/45">{suffix}</span>}
-      </span>
-    </label>
+    <FormField label={label} htmlFor={id}>
+      <Input
+        id={id}
+        type="number"
+        inputMode="decimal"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        leading={prefix ? <span className="text-sm">{prefix}</span> : undefined}
+        trailing={suffix ? <span className="text-xs">{suffix}</span> : undefined}
+      />
+    </FormField>
   );
 }
 
 function CompactNumber({ value, onChange }: { value: number; onChange: (value: number) => void }) {
   return (
-    <span className="relative block w-32">
-      <input
-        type="number"
-        min={0.1}
-        step={0.1}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-        aria-label="Medida en centímetros"
-        className="h-9 w-full rounded-md border border-sand bg-white px-3 pr-9 font-normal outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
-      />
-      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-walnut/45">cm</span>
-    </span>
+    <Input
+      type="number"
+      min={0.1}
+      step={0.1}
+      value={value}
+      onChange={(event) => onChange(Number(event.target.value))}
+      aria-label="Medida en centímetros"
+      trailing={<span className="text-xs">cm</span>}
+      className="h-10 w-32"
+    />
   );
 }

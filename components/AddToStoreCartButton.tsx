@@ -32,7 +32,7 @@ export function AddToStoreCartButton({
         onClick={handleAdd}
         title={t("addToCart.add")}
         aria-label={t("addToCart.add")}
-        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-white shadow-sm transition hover:bg-emerald-800"
+        className="nm-transition inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-nm-accent text-nm-accent-fg shadow-soft hover:brightness-105 active:shadow-soft-inset-sm active:brightness-95"
       >
         {added ? <Check size={18} aria-hidden="true" /> : <ShoppingBag size={17} aria-hidden="true" />}
       </button>
@@ -43,7 +43,7 @@ export function AddToStoreCartButton({
     <button
       type="button"
       onClick={handleAdd}
-      className={`inline-flex h-11 items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 ${
+      className={`nm-transition inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-nm-accent px-4 text-sm font-semibold text-nm-accent-fg shadow-soft hover:brightness-105 active:shadow-soft-inset-sm active:brightness-95 ${
         fullWidth ? "w-full" : ""
       }`}
     >

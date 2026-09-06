@@ -19,13 +19,12 @@ export function ProductCard({ product, onSelect }: ProductCardProps) {
       onClick={() => onSelect(product.id)}
       aria-disabled={disabled}
       className={[
-        "group relative w-full text-left rounded-2xl border bg-white p-5 transition",
-        "border-sand hover:border-bark/40 hover:shadow-md",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+        "nm-transition group relative w-full rounded-soft bg-nm-surface p-5 text-left shadow-soft hover:shadow-soft-lg active:shadow-soft-inset-sm",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-nm-accent",
         disabled ? "opacity-70" : "",
       ].join(" ")}
     >
-      <div className="relative aspect-[4/3] w-full rounded-xl bg-sand mb-4 flex items-center justify-center overflow-hidden">
+      <div className="relative mb-4 flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-soft-sm shadow-soft-inset">
         {product.images && product.images.length > 0 ? (
           <ImageSlideshow
             images={product.images}
@@ -39,15 +38,15 @@ export function ProductCard({ product, onSelect }: ProductCardProps) {
       </div>
 
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="font-serif text-lg text-walnut">{pickText(language, product.name, product.nameEn)}</h3>
+        <h3 className="font-heading text-lg text-nm-text">{pickText(language, product.name, product.nameEn)}</h3>
         {!product.available && (
-          <span className="text-xs uppercase tracking-wide text-bark/70 bg-cream border border-sand rounded-full px-2 py-0.5">
+          <span className="rounded-pill bg-nm-surface px-2 py-0.5 text-xs uppercase tracking-wide text-nm-muted shadow-soft-inset-sm">
             {t("productCard.comingSoon")}
           </span>
         )}
       </div>
 
-      <p className="mt-1 text-sm text-walnut/70">{pickText(language, product.description, product.descriptionEn)}</p>
+      <p className="mt-1 text-sm text-nm-muted">{pickText(language, product.description, product.descriptionEn)}</p>
     </button>
   );
 }
@@ -60,7 +59,7 @@ function ProductIllustration({ id }: { id: string }) {
   return (
     <svg
       viewBox="0 0 120 90"
-      className="w-3/4 h-3/4 text-bark/70"
+      className="w-3/4 h-3/4 text-nm-muted"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"

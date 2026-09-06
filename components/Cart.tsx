@@ -6,6 +6,8 @@ import type { CartItem } from "@/lib/quoteTypes";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { CartItemCard } from "./CartItemCard";
+import { Button } from "@/components/ui/button";
+import { Divider } from "@/components/ui/divider";
 
 interface CartProps {
   items: CartItem[];
@@ -20,55 +22,46 @@ export function Cart({ items, onRemove, onAddMore, onCheckout, config }: CartPro
   const subtotal = cartSubtotal(items, config);
 
   return (
-    <section className="max-w-2xl mx-auto bg-white border border-sand rounded-2xl p-5 sm:p-8">
-      <h2 className="font-serif text-2xl sm:text-3xl text-walnut mb-6">
+    <section className="mx-auto max-w-2xl rounded-soft-lg bg-nm-surface p-5 shadow-soft sm:p-8">
+      <h2 className="font-heading text-2xl text-nm-text sm:text-3xl">
         {t("cart.title")}
       </h2>
 
       {items.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-walnut/60 mb-4">{t("cart.empty")}</p>
-          <button
-            type="button"
-            onClick={onAddMore}
-            className="inline-flex items-center justify-center rounded-lg bg-bark text-cream px-5 py-3 text-sm font-medium hover:bg-walnut transition"
-          >
+        <div className="mt-6 grid place-items-center gap-4 rounded-soft p-10 text-center shadow-soft-inset">
+          <p className="text-sm text-nm-muted">{t("cart.empty")}</p>
+          <Button type="button" variant="accent" onClick={onAddMore}>
             {t("cart.addPiece")}
-          </button>
+          </Button>
         </div>
       ) : (
         <>
-          <div>
+          <div className="mt-6 grid gap-3">
             {items.map((item) => (
               <CartItemCard key={item.id} item={item} onRemove={onRemove} config={config} />
             ))}
           </div>
 
-          <div className="mt-4 pt-4 flex justify-between items-baseline">
-            <span className="text-sm text-walnut/60">{t("cart.subtotal")}</span>
-            <span className="font-serif text-xl text-walnut">
-              {formatARS(subtotal)}
-            </span>
+          <div className="mt-6">
+            <Divider />
+            <div className="mt-4 flex items-baseline justify-between">
+              <span className="text-sm text-nm-muted">{t("cart.subtotal")}</span>
+              <span className="font-heading text-xl text-nm-text">
+                {formatARS(subtotal)}
+              </span>
+            </div>
+            <p className="mt-1 text-right text-xs text-nm-muted">
+              {t("cart.shippingNextStep")}
+            </p>
           </div>
-          <p className="text-xs text-walnut/50 mt-1 text-right">
-            {t("cart.shippingNextStep")}
-          </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-between">
-            <button
-              type="button"
-              onClick={onAddMore}
-              className="text-sm text-bark hover:text-walnut underline underline-offset-4"
-            >
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Button type="button" variant="ghost" onClick={onAddMore}>
               {t("cart.addAnother")}
-            </button>
-            <button
-              type="button"
-              onClick={onCheckout}
-              className="inline-flex items-center justify-center rounded-lg bg-bark text-cream px-6 py-3 text-sm font-medium hover:bg-walnut transition"
-            >
+            </Button>
+            <Button type="button" variant="accent" onClick={onCheckout}>
               {t("cart.quoteAll")}
-            </button>
+            </Button>
           </div>
         </>
       )}

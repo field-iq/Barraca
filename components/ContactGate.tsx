@@ -2,6 +2,7 @@
 
 import type { ContactDetails, ContactMethod } from "@/lib/quoteTypes";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export interface ContactGateProps {
   value: ContactDetails;
@@ -20,14 +21,14 @@ export function ContactGate({ value, onChange }: ContactGateProps) {
 
   return (
     <fieldset className="space-y-4">
-      <legend className="font-serif text-xl text-walnut">
+      <legend className="font-heading text-xl text-nm-text">
         {t("contactGate.legend")}
       </legend>
-      <p className="text-sm text-walnut/70 -mt-2">
+      <p className="-mt-2 text-sm text-nm-muted">
         {t("contactGate.description")}
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label={t("contactGate.email")} htmlFor="contact-email">
           <input
             id="contact-email"
@@ -68,17 +69,11 @@ export function ContactGate({ value, onChange }: ContactGateProps) {
         </select>
       </Field>
 
-      <label className="flex items-start gap-3 cursor-pointer select-none">
-        <input
-          type="checkbox"
-          checked={value.consent}
-          onChange={(e) => update({ consent: e.target.checked })}
-          className="mt-1 h-5 w-5 rounded border-sand text-bark focus:ring-accent"
-        />
-        <span className="text-sm text-walnut">
-          {t("contactGate.consent")}
-        </span>
-      </label>
+      <Checkbox
+        checked={value.consent}
+        onChange={(consent) => update({ consent })}
+        label={t("contactGate.consent")}
+      />
     </fieldset>
   );
 }
@@ -101,7 +96,7 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={htmlFor} className="text-sm font-medium text-walnut">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-nm-text">
         {label}
       </label>
       {children}
@@ -110,4 +105,4 @@ function Field({
 }
 
 const inputClass =
-  "w-full rounded-lg border border-sand bg-white px-3 py-2.5 text-walnut placeholder:text-walnut/40 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent";
+  "w-full rounded-soft-sm bg-nm-surface px-3 py-2.5 text-nm-text shadow-soft-inset placeholder:text-nm-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-nm-accent";
