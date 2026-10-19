@@ -332,6 +332,73 @@ export const translations = {
   },
   "storeCart.orderId": { es: "Pedido {orderId}", en: "Order {orderId}" },
 
+  "chat.menu.chat": { es: "Chatear con el asistente", en: "Chat with our assistant" },
+  "chat.menu.whatsapp": { es: "Escribir por WhatsApp", en: "Message us on WhatsApp" },
+  "chat.title": { es: "Asistente de La Barraca", en: "La Barraca assistant" },
+  "chat.close": { es: "Cerrar chat", en: "Close chat" },
+  "chat.welcome": {
+    es: "¡Hola! Soy el asistente de La Barraca de Juan. Elegí una pregunta y te respondo al instante.",
+    en: "Hi! I'm La Barraca de Juan's assistant. Pick a question and I'll answer right away.",
+  },
+  "chat.suggestions": { es: "Preguntas frecuentes", en: "Frequently asked questions" },
+  "chat.moreQuestions": { es: "¿Algo más?", en: "Anything else?" },
+  "chat.faq.hours.q": { es: "¿Dónde están y qué horarios tienen?", en: "Where are you and what are your hours?" },
+  "chat.faq.hours.a": {
+    es: "Estamos en Boulevard Sáenz Peña 1213, esquina Guareschi, Tigre. Abrimos sábados y domingos de 9 a 19:30.",
+    en: "We're at Boulevard Sáenz Peña 1213, corner of Guareschi, in Tigre. We're open Saturdays and Sundays, 9 am to 7:30 pm.",
+  },
+  "chat.faq.ready.q": { es: "¿Qué muebles tienen listos para llevar?", en: "What ready-to-take-home pieces do you have?" },
+  "chat.faq.ready.a": {
+    es: "Tenemos mesas, mesas ratonas, bancos, estanterías, espejos y más, todos de madera maciza y con medidas estándar. Podés ver el catálogo completo con precios en la web.",
+    en: "We have dining and coffee tables, benches, shelves, mirrors and more, all in solid wood and standard sizes. You can see the full catalog with prices on the website.",
+  },
+  "chat.faq.custom.q": { es: "¿Hacen muebles a medida?", en: "Do you make custom furniture?" },
+  "chat.faq.custom.a": {
+    es: "Sí, hacemos piezas a medida en nuestro taller de Tigre. Podés armar tu cotización en la sección \"A medida\" y te respondemos con el presupuesto.",
+    en: "Yes, we build custom pieces in our Tigre workshop. You can put together a quote in the \"Custom made\" section and we'll get back to you with a price.",
+  },
+  "chat.faq.buy.q": { es: "¿Cómo compro?", en: "How do I order?" },
+  "chat.faq.buy.a": {
+    es: "Agregá lo que te guste al carrito y enviá el pedido. No se cobra online: nos ponemos en contacto para confirmar disponibilidad, entrega y forma de pago.",
+    en: "Add what you like to the cart and send your order. Nothing is charged online: we'll contact you to confirm availability, delivery and payment.",
+  },
+  "chat.faq.delivery.q": { es: "¿Hacen envíos?", en: "Do you deliver?" },
+  "chat.faq.delivery.a": {
+    es: "Sí. Al hacer el pedido podés elegir envío, que se calcula según la zona o la distancia, o retirarlo por el local. Lo coordinamos con vos al confirmar.",
+    en: "Yes. When you place your order you can choose delivery, priced by zone or distance, or pick it up at the store. We'll arrange it with you when we confirm.",
+  },
+  "chat.faq.human.q": { es: "Quiero hablar con una persona", en: "I'd like to talk to a person" },
+  "chat.faq.human.a": {
+    es: "¡Claro! Escribinos por WhatsApp o mandanos un mail y te respondemos a la brevedad.",
+    en: "Of course! Message us on WhatsApp or send us an email and we'll reply shortly.",
+  },
+  "chat.action.catalog": { es: "Ver catálogo", en: "See catalog" },
+  "chat.action.custom": { es: "Cotizar a medida", en: "Get a custom quote" },
+  "chat.action.map": { es: "Cómo llegar", en: "Get directions" },
+  "chat.action.email": { es: "Enviar mail", en: "Send email" },
+  "chat.whatsapp": { es: "WhatsApp", en: "WhatsApp" },
+  "chat.email": { es: "Enviar mail", en: "Send email" },
+  "chat.waMessage": {
+    es: "Hola! Les escribo desde la web de La Barraca de Juan.",
+    en: "Hi! I'm writing from the La Barraca de Juan website.",
+  },
+  "chat.form.title": { es: "Enviar consulta por mail", en: "Send us an email" },
+  "chat.form.name": { es: "Nombre", en: "Name" },
+  "chat.form.email": { es: "Email", en: "Email" },
+  "chat.form.phone": { es: "Teléfono (opcional)", en: "Phone (optional)" },
+  "chat.form.message": { es: "Tu consulta", en: "Your message" },
+  "chat.form.submit": { es: "Enviar consulta", en: "Send message" },
+  "chat.form.sending": { es: "Enviando…", en: "Sending…" },
+  "chat.form.back": { es: "Volver al chat", en: "Back to chat" },
+  "chat.form.sent": {
+    es: "¡Listo! Recibimos tu consulta y te respondemos a la brevedad.",
+    en: "Done! We got your message and will reply shortly.",
+  },
+  "chat.form.error": {
+    es: "No pudimos enviar el mail. Probá de nuevo o escribinos por WhatsApp.",
+    en: "We couldn't send the email. Please try again or message us on WhatsApp.",
+  },
+
   "addToCart.added": { es: "Agregado", en: "Added" },
   "addToCart.add": { es: "Agregar al carrito", en: "Add to cart" },
 } as const;

@@ -15,9 +15,14 @@ html,
 body {
   background-color: #f7f4ee;
   color: #3f2e22;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* `clip` (not `hidden`) so body doesn't become a scroll container,
+   which would break the sticky header. */
+body {
+  overflow-x: clip;
 }
 
 html {

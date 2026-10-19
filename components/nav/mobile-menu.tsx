@@ -12,6 +12,7 @@ export function MobileMenu({
   brand,
   ctaLabel,
   ctaHref,
+  onCtaClick,
 }: {
   open: boolean;
   onClose: () => void;
@@ -19,6 +20,8 @@ export function MobileMenu({
   brand?: React.ReactNode;
   ctaLabel?: string;
   ctaHref?: string;
+  /** When set, the CTA renders as a button that calls this instead of linking to ctaHref. */
+  onCtaClick?: () => void;
 }) {
   if (!open) return null;
   return (
@@ -30,7 +33,16 @@ export function MobileMenu({
       <nav className="mt-10 grid gap-3">
         {links.map(l => <Link key={l.href} href={l.href} onClick={onClose} className="rounded-soft bg-nm-surface px-6 py-5 font-heading text-2xl shadow-soft active:shadow-soft-inset">{l.label}</Link>)}
       </nav>
-      {ctaLabel && ctaHref && (
+      {ctaLabel && onCtaClick && (
+        <button
+          type="button"
+          onClick={() => { onClose(); onCtaClick(); }}
+          className="nm-transition mt-8 flex h-14 w-full items-center justify-center rounded-pill bg-nm-accent px-8 text-base font-semibold text-nm-accent-fg shadow-soft hover:brightness-105 active:shadow-soft-inset-sm active:brightness-95"
+        >
+          {ctaLabel}
+        </button>
+      )}
+      {ctaLabel && ctaHref && !onCtaClick && (
         <a
           href={ctaHref}
           target="_blank"

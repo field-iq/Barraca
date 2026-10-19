@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Camera, Languages, MessageCircle, Menu, Moon, ShoppingBag, Sun } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Languages, MessageCircle, Menu, Moon, ShoppingBag, Sparkles, Sun } from "lucide-react";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 import { useStoreCart } from "./StoreCartProvider";
 import { useTheme } from "@/components/ui/theme-provider";
@@ -20,6 +21,18 @@ export function Header() {
   const { theme, toggle } = useTheme();
   const { itemCount, openCart } = useStoreCart();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [consultOpen, setConsultOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const consultRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!consultOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!consultRef.current?.contains(event.target as Node)) setConsultOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [consultOpen]);
 
   const otherLanguage = language === "es" ? "en" : "es";
   // usePathname() can report either the external URL ("/catalogo") or the
@@ -46,7 +59,6 @@ export function Header() {
             <span className="block truncate font-heading text-lg text-nm-text">
               La Barraca <span className="text-nm-accent">de Juan</span>
             </span>
-            <span className="mt-0.5 block text-[9px] font-medium uppercase tracking-[0.22em] text-nm-muted">{t("header.tagline")}</span>
           </span>
         </Link>
 
@@ -79,16 +91,43 @@ export function Header() {
             {language === "es" ? "EN" : "ES"}
           </Link>
 
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={t("header.consultAriaLabel")}
-            className="nm-transition hidden h-9 items-center justify-center gap-1.5 rounded-pill bg-nm-accent px-3.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-nm-accent-fg shadow-soft hover:brightness-105 sm:inline-flex"
-          >
-            <MessageCircle size={15} aria-hidden="true" />
-            {t("header.consult")}
-          </a>
+          <div ref={consultRef} className="relative hidden sm:block">
+            <button
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={consultOpen}
+              aria-label={t("header.consultAriaLabel")}
+              onClick={() => setConsultOpen((v) => !v)}
+              className="nm-transition inline-flex h-9 items-center justify-center gap-1.5 rounded-pill bg-nm-accent px-3.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-nm-accent-fg shadow-soft hover:brightness-105"
+            >
+              <MessageCircle size={15} aria-hidden="true" />
+              {t("header.consult")}
+            </button>
+            {consultOpen && (
+              <div role="menu" className="absolute right-0 top-full z-50 mt-3 grid w-64 gap-1 rounded-soft bg-nm-surface p-2 shadow-soft-lg">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setConsultOpen(false); setChatOpen(true); }}
+                  className="nm-transition flex items-center gap-3 rounded-soft px-3 py-2.5 text-left text-sm font-medium text-nm-text hover:shadow-soft-sm"
+                >
+                  <Sparkles size={16} className="text-nm-accent" aria-hidden="true" />
+                  {t("chat.menu.chat")}
+                </button>
+                <a
+                  role="menuitem"
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setConsultOpen(false)}
+                  className="nm-transition flex items-center gap-3 rounded-soft px-3 py-2.5 text-sm font-medium text-nm-text hover:shadow-soft-sm"
+                >
+                  <MessageCircle size={16} className="text-nm-accent" aria-hidden="true" />
+                  {t("chat.menu.whatsapp")}
+                </a>
+              </div>
+            )}
+          </div>
 
           <IconButton size="sm" label="Toggle theme" onClick={toggle} className="hidden sm:inline-grid">
             {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
@@ -120,8 +159,10 @@ export function Header() {
         onClose={() => setMenuOpen(false)}
         links={links}
         ctaLabel={t("header.consult")}
-        ctaHref={WHATSAPP_URL}
+        onCtaClick={() => setChatOpen(true)}
       />
+
+      <ChatWidget open={chatOpen} onClose={() => setChatOpen(false)} />
     </>
   );
 }
