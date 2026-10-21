@@ -4,13 +4,14 @@ import { getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
 
 interface StandardItemPageProps {
-  params: { locale: string; section: string };
+  params: Promise<{ locale: string; section: string }>;
 }
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: StandardItemPageProps) {
+  const { section } = await params;
   const catalog = await getCatalog();
-  const item = getVisibleProducts(catalog).find((product) => product.id === params.section);
+  const item = getVisibleProducts(catalog).find((product) => product.id === section);
 
   if (!item) return { title: "Muebles estándar - La Barraca De Juan" };
 
@@ -21,8 +22,9 @@ export async function generateMetadata({ params }: StandardItemPageProps) {
 }
 
 export default async function StandardItemPage({ params }: StandardItemPageProps) {
+  const { section } = await params;
   const catalog = await getCatalog();
-  const item = getVisibleProducts(catalog).find((product) => product.id === params.section);
+  const item = getVisibleProducts(catalog).find((product) => product.id === section);
 
   if (!item || item.images.length === 0) notFound();
 
