@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { head, put } from "@vercel/blob";
+import { BlobNotFoundError, head, put } from "@vercel/blob";
 import { isCatalogCloudStorageConfigured } from "./catalogStore";
 
 // Resend free plan: 100/day and 3,000/month. Stay below both so the account never needs a paid plan.
@@ -41,11 +41,13 @@ async function readQuota(now: Date): Promise<EmailQuota> {
       const response = await fetch(`${metadata.url}?version=${encodeURIComponent(metadata.etag)}`, {
         cache: "no-store",
       });
-      if (response.ok) return parseQuota(await response.json(), now);
-    } catch {
-      // Nothing counted yet.
+      if (!response.ok) throw new Error(`Lectura del contador falló (${response.status}).`);
+      return parseQuota(await response.json(), now);
+    } catch (error) {
+      // Only a missing blob means "nothing counted yet"; any other failure must not reset the counter.
+      if (error instanceof BlobNotFoundError) return emptyQuota(now);
+      throw error;
     }
-    return emptyQuota(now);
   }
 
   try {
