@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getSessionToken } from "@/lib/adminAuth";
+import { SESSION_COOKIE, isValidSession } from "@/lib/adminAuth";
 
 const HAS_EXTENSION = /\.[^/]+$/;
 
@@ -12,10 +12,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    const sessionCookie = request.cookies.get("admin_session");
-    const expectedToken = await getSessionToken();
-
-    if (!sessionCookie || sessionCookie.value !== expectedToken) {
+    if (!(await isValidSession(request.cookies.get(SESSION_COOKIE)?.value))) {
       if (pathname.startsWith("/api/admin")) {
         return NextResponse.json({ error: "No autorizado" }, { status: 401 });
       }
