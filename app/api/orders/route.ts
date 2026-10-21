@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { CONTACT_EMAIL } from "@/lib/contactInfo";
 import { reserveEmails } from "@/lib/emailQuota";
+import { checkRateLimit, clientKey } from "@/lib/rateLimit";
 import { getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
@@ -22,6 +23,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
   try {
+    if (!checkRateLimit(`orders:${clientKey(request)}`, 5, 60 * 60_000)) {
+      return NextResponse.json(
+        { error: "Enviaste varios pedidos seguidos. Probá de nuevo en un rato o escribinos por WhatsApp." },
+        { status: 429 },
+      );
+    }
+
     const payload = (await request.json()) as Partial<StoreOrderRequest>;
     if (payload.website) {
       return NextResponse.json({ ok: true, orderId: "RECIBIDO" });
