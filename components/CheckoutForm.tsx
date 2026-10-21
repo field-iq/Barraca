@@ -7,6 +7,7 @@ import { formatARS } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
 import { calculateDeliveryCost } from "@/lib/pricing/tablePricing";
+import { SHIPPING_ENABLED } from "@/lib/shipping";
 import type {
   CartItem,
   ContactDetails,
@@ -52,7 +53,7 @@ export function CheckoutForm({ items, onBack, onSubmit, config }: CheckoutFormPr
   );
   const zoneAvailable = config.delivery.zonesEnabled && enabledZones.length > 0;
   const distanceAvailable = config.delivery.distanceEnabled;
-  const deliveryAvailable = zoneAvailable || distanceAvailable;
+  const deliveryAvailable = SHIPPING_ENABLED && (zoneAvailable || distanceAvailable);
 
   const [deliveryOption, setDeliveryOption] = useState<DeliveryOption>(
     deliveryAvailable ? "delivery" : "pickup",

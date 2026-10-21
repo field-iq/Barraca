@@ -3,6 +3,7 @@ import { calculateBenchQuote } from "@/lib/pricing/benchPricing";
 import { calculateMirrorQuote } from "@/lib/pricing/mirrorPricing";
 import { validateProductDimensions, type CustomProductId } from "@/lib/pricing/pricingConfig";
 import { getPricingConfig } from "@/lib/pricing/pricingStore";
+import { SHIPPING_ENABLED } from "@/lib/shipping";
 import { calculateDeliveryCost, calculateTableQuote } from "@/lib/pricing/tablePricing";
 import type { CartQuoteRequest, TableDimensions } from "@/lib/quoteTypes";
 
@@ -13,7 +14,10 @@ export async function POST(request: NextRequest) {
     const payload = (await request.json()) as Partial<CartQuoteRequest>;
     const config = await getPricingConfig();
     const items = validateItems(payload.items, config);
-    const deliveryOption = payload.deliveryOption === "pickup" ? "pickup" : "delivery";
+    if (!SHIPPING_ENABLED && payload.deliveryOption === "delivery") {
+      throw new QuoteError("Por ahora no hacemos envíos. Retiro en el taller.");
+    }
+    const deliveryOption = !SHIPPING_ENABLED || payload.deliveryOption === "pickup" ? "pickup" : "delivery";
     const deliveryAddress = cleanString(payload.deliveryAddress, 240);
 
     if (deliveryOption === "delivery" && !deliveryAddress) {

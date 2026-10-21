@@ -81,10 +81,10 @@ export const translations = {
   "home.idea.description": { es: "Escribinos y la pensamos juntos.", en: "Write to us and let's figure it out together." },
 
   "footer.tagline": { es: "La Barraca de Juan · Muebles & deco", en: "La Barraca de Juan · Furniture & decor" },
-  "footer.notice": { es: "Disponibilidad y envíos sujetos a confirmación.", en: "Availability and shipping subject to confirmation." },
+  "footer.notice": { es: "Disponibilidad sujeta a confirmación.", en: "Availability subject to confirmation." },
   "footer.catalogNotice": {
-    es: "La Barraca de Juan · Muebles & deco · Envíos y disponibilidad a confirmar",
-    en: "La Barraca de Juan · Furniture & decor · Shipping and availability to confirm",
+    es: "La Barraca de Juan · Muebles & deco · Disponibilidad a confirmar",
+    en: "La Barraca de Juan · Furniture & decor · Availability to confirm",
   },
   "footer.developedBy": { es: "Desarrollado por", en: "Developed by" },
 
@@ -297,6 +297,10 @@ export const translations = {
   "storeCart.withDelivery": { es: "Con envío", en: "With delivery" },
   "storeCart.calculateDelivery": { es: "Calcular entrega", en: "Calculate delivery" },
   "storeCart.withoutDelivery": { es: "Sin envío", en: "No delivery" },
+  "storeCart.pickupOnly": {
+    es: "Por ahora no hacemos envíos: los pedidos se retiran en el local (Boulevard Sáenz Peña 1213, Tigre). Coordinamos día y horario con vos.",
+    en: "We don't ship for now: orders are picked up at the store (Boulevard Sáenz Peña 1213, Tigre). We'll arrange a day and time with you.",
+  },
   "storeCart.pickupToArrange": { es: "Retiro a coordinar", en: "Pickup to arrange" },
   "storeCart.deliveryUnavailable": {
     es: "El envío no está disponible en este momento. Elegí retiro o consultanos antes de enviar el pedido.",
@@ -364,8 +368,8 @@ export const translations = {
   },
   "chat.faq.delivery.q": { es: "¿Hacen envíos?", en: "Do you deliver?" },
   "chat.faq.delivery.a": {
-    es: "Sí. Al hacer el pedido podés elegir envío, que se calcula según la zona o la distancia, o retirarlo por el local. Lo coordinamos con vos al confirmar.",
-    en: "Yes. When you place your order you can choose delivery, priced by zone or distance, or pick it up at the store. We'll arrange it with you when we confirm.",
+    es: "Por ahora no hacemos envíos. Los pedidos se retiran por el local, y coordinamos día y horario con vos al confirmar.",
+    en: "Not for now. Orders are picked up at the store, and we'll arrange a day and time with you when we confirm.",
   },
   "chat.faq.human.q": { es: "Quiero hablar con una persona", en: "I'd like to talk to a person" },
   "chat.faq.human.a": {

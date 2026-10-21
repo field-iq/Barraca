@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { CONTACT_EMAIL } from "@/lib/contactInfo";
 import { reserveEmails } from "@/lib/emailQuota";
 import { checkRateLimit, clientKey } from "@/lib/rateLimit";
+import { SHIPPING_ENABLED } from "@/lib/shipping";
 import { getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
@@ -169,6 +170,12 @@ function validateDelivery(value: unknown, config: PricingConfig): ResolvedOrder[
   }
   const delivery = value as Record<string, unknown>;
   const option = delivery.option;
+  if (!SHIPPING_ENABLED) {
+    if (option === "delivery") {
+      throw new OrderError("Por ahora no hacemos envíos. Retiro en el local.");
+    }
+    return { option: "pickup", description: "Retiro en el local · a coordinar", cost: 0 };
+  }
   if (option === "pickup") {
     return { option, description: "Sin envío · retiro a coordinar", cost: 0 };
   }

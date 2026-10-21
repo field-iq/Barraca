@@ -22,6 +22,7 @@ import {
   type PricingConfig,
 } from "@/lib/pricing/pricingConfig";
 import { calculateDeliveryCost } from "@/lib/pricing/tablePricing";
+import { SHIPPING_ENABLED } from "@/lib/shipping";
 import type {
   StoreDeliveryMethod,
   StoreDeliveryOption,
@@ -345,7 +346,7 @@ export function StoreCartDrawer() {
                   className="mt-4"
                   trailing={<ChevronLeft className="size-4 rotate-180" />}
                   onClick={() => {
-                    setDeliveryOption("");
+                    setDeliveryOption(SHIPPING_ENABLED ? "" : "pickup");
                     setDeliveryMethod("");
                     setDistanceInput("");
                     setError("");
@@ -367,13 +368,13 @@ export function StoreCartDrawer() {
                   <span>{resolvedItems.reduce((sum, item) => sum + item.quantity, 0)} {t("storeCart.items")}</span>
                   <span>{formatARS(total)}</span>
                 </div>
-                {deliveryOption && (
+                {SHIPPING_ENABLED && deliveryOption && (
                   <div className="mt-2 flex justify-between gap-4 text-sm text-nm-muted">
                     <span>{deliveryOption === "pickup" ? t("storeCart.pickup") : t("storeCart.shipping")}</span>
                     <span>{deliveryCost === null ? t("checkout.toCalculate") : deliveryCost === 0 ? t("storeCart.free") : formatARS(deliveryCost)}</span>
                   </div>
                 )}
-                {deliveryCost !== null && deliveryOption && (
+                {SHIPPING_ENABLED && deliveryCost !== null && deliveryOption && (
                   <>
                     <Divider className="my-3" />
                     <div className="flex items-baseline justify-between gap-4">
@@ -384,6 +385,13 @@ export function StoreCartDrawer() {
                 )}
               </div>
 
+              {!SHIPPING_ENABLED && (
+                <p className="rounded-soft bg-nm-surface px-5 py-4 text-sm leading-6 text-nm-muted shadow-soft-inset">
+                  {t("storeCart.pickupOnly")}
+                </p>
+              )}
+
+              {SHIPPING_ENABLED && (
               <fieldset>
                 <legend className="font-heading text-lg text-nm-text">{t("storeCart.wantDelivery")}</legend>
                 <p className="mt-1 text-xs leading-5 text-nm-muted">
@@ -496,6 +504,7 @@ export function StoreCartDrawer() {
                   </div>
                 )}
               </fieldset>
+              )}
 
               <div className="grid gap-4">
                 <FormField label={t("storeCart.fullName")} htmlFor="order-name" required>

@@ -1,6 +1,7 @@
 "use client";
 
 import { cartSubtotal } from "@/lib/cart";
+import { SHIPPING_ENABLED } from "@/lib/shipping";
 import { formatARS } from "@/lib/format";
 import type { CartItem } from "@/lib/quoteTypes";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
@@ -50,9 +51,11 @@ export function Cart({ items, onRemove, onAddMore, onCheckout, config }: CartPro
                 {formatARS(subtotal)}
               </span>
             </div>
-            <p className="mt-1 text-right text-xs text-nm-muted">
-              {t("cart.shippingNextStep")}
-            </p>
+            {SHIPPING_ENABLED && (
+              <p className="mt-1 text-right text-xs text-nm-muted">
+                {t("cart.shippingNextStep")}
+              </p>
+            )}
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
