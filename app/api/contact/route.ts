@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { CONTACT_EMAIL } from "@/lib/contactInfo";
+import { reserveEmails } from "@/lib/emailQuota";
 import { checkRateLimit, clientKey } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
-const ADMIN_EMAIL = "admin@fieldiq.com.au";
+const ADMIN_EMAIL = CONTACT_EMAIL;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
@@ -43,6 +45,11 @@ export async function POST(request: Request) {
         ${transcript ? `<hr><p style="font-size:13px;color:#6b4f3a"><strong>Conversación previa con el asistente:</strong><br>${escapeHtml(transcript).replace(/\n/g, "<br>")}</p>` : ""}
       </div>`;
     const text = `Nueva consulta desde la web\n\nNombre: ${name}\nEmail: ${email}${phone ? `\nTeléfono: ${phone}` : ""}\n\n${message}${transcript ? `\n\n--- Conversación previa ---\n${transcript}` : ""}`;
+
+    if (!(await reserveEmails(1))) {
+      console.error("[contact] Tope de mails alcanzado.");
+      return NextResponse.json({ error: "quota_reached" }, { status: 503 });
+    }
 
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({

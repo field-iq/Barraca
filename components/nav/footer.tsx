@@ -1,4 +1,5 @@
-import { Camera, MessageCircle } from 'lucide-react';
+import { Camera, Mail, MessageCircle } from 'lucide-react';
+import { CONTACT_EMAIL } from '@/lib/contactInfo';
 
 export interface FooterProps {
   tagline: string;
@@ -17,6 +18,9 @@ export function Footer({ tagline, notice, developedByLabel, instagramUrl, whatsa
             La Barraca <span className="text-nm-accent">de Juan</span>
           </p>
           <p className="mt-2 max-w-md text-sm leading-relaxed text-nm-muted">{tagline}</p>
+          <a href={`mailto:${CONTACT_EMAIL}`} className="mt-1 inline-block text-sm text-nm-muted underline underline-offset-2 hover:text-nm-text">
+            {CONTACT_EMAIL}
+          </a>
         </div>
         <div className="flex gap-3">
           <a
@@ -27,6 +31,13 @@ export function Footer({ tagline, notice, developedByLabel, instagramUrl, whatsa
             className="nm-transition inline-grid size-11 place-items-center rounded-full bg-nm-surface text-nm-text shadow-soft hover:shadow-soft-lg"
           >
             <Camera className="size-4" />
+          </a>
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            aria-label={`Email ${CONTACT_EMAIL}`}
+            className="nm-transition inline-grid size-11 place-items-center rounded-full bg-nm-surface text-nm-text shadow-soft hover:shadow-soft-lg"
+          >
+            <Mail className="size-4" />
           </a>
           <a
             href={whatsappUrl}

@@ -344,8 +344,8 @@ export const translations = {
   "chat.moreQuestions": { es: "¿Algo más?", en: "Anything else?" },
   "chat.faq.hours.q": { es: "¿Dónde están y qué horarios tienen?", en: "Where are you and what are your hours?" },
   "chat.faq.hours.a": {
-    es: "Estamos en Boulevard Sáenz Peña 1213, esquina Guareschi, Tigre. Abrimos sábados y domingos de 9 a 19:30.",
-    en: "We're at Boulevard Sáenz Peña 1213, corner of Guareschi, in Tigre. We're open Saturdays and Sundays, 9 am to 7:30 pm.",
+    es: "Estamos en Boulevard Sáenz Peña 1213, esquina Guareschi, Tigre. Abrimos sábados y domingos de 9 a 19:30. También podés escribirnos a info@labarracadejuan.com.ar.",
+    en: "We're at Boulevard Sáenz Peña 1213, corner of Guareschi, in Tigre. We're open Saturdays and Sundays, 9 am to 7:30 pm. You can also email us at info@labarracadejuan.com.ar.",
   },
   "chat.faq.ready.q": { es: "¿Qué muebles tienen listos para llevar?", en: "What ready-to-take-home pieces do you have?" },
   "chat.faq.ready.a": {

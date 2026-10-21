@@ -1,4 +1,5 @@
-import { MapPin, Clock, ArrowRight } from 'lucide-react';
+import { MapPin, Clock, Mail, ArrowRight } from 'lucide-react';
+import { CONTACT_EMAIL } from '@/lib/contactInfo';
 export function ContactCard({ title, address, hours, mapHref, directionsLabel }: { title: string; address: string; hours: string; mapHref?: string; directionsLabel?: string }) {
   const rows = [[MapPin, address], [Clock, hours]] as const;
   return (
@@ -7,6 +8,10 @@ export function ContactCard({ title, address, hours, mapHref, directionsLabel }:
       {rows.map(([Icon, text]) => (
         <div key={text} className="flex items-start gap-4"><span className="grid size-11 shrink-0 place-items-center rounded-full text-nm-accent shadow-soft-inset-sm"><Icon className="size-4" /></span><span className="text-sm text-nm-text">{text}</span></div>
       ))}
+      <div className="flex items-start gap-4">
+        <span className="grid size-11 shrink-0 place-items-center rounded-full text-nm-accent shadow-soft-inset-sm"><Mail className="size-4" /></span>
+        <a href={`mailto:${CONTACT_EMAIL}`} className="text-sm text-nm-text hover:underline">{CONTACT_EMAIL}</a>
+      </div>
       {mapHref && (
         <a href={mapHref} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-nm-accent hover:underline">
           {directionsLabel} <ArrowRight className="size-4" />

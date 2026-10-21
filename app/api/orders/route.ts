@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { CONTACT_EMAIL } from "@/lib/contactInfo";
+import { reserveEmails } from "@/lib/emailQuota";
 import { getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
@@ -15,7 +17,7 @@ import type { StoreOrderRequest } from "@/lib/orderTypes";
 
 export const runtime = "nodejs";
 
-const ADMIN_EMAIL = "admin@fieldiq.com.au";
+const ADMIN_EMAIL = CONTACT_EMAIL;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
@@ -62,6 +64,14 @@ export async function POST(request: NextRequest) {
       console.error("[orders] RESEND_API_KEY u ORDER_FROM_EMAIL no configurados.");
       return NextResponse.json(
         { error: "El envío de pedidos todavía no está configurado. Contactá a La Barraca." },
+        { status: 503 },
+      );
+    }
+
+    if (!(await reserveEmails(2))) {
+      console.error("[orders] Tope de mails alcanzado.");
+      return NextResponse.json(
+        { error: "Hoy recibimos muchos pedidos. Escribinos por WhatsApp y te atendemos enseguida." },
         { status: 503 },
       );
     }
