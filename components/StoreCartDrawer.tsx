@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { cardPrice } from "@/lib/catalog";
 import { formatARS } from "@/lib/format";
 import {
   DEFAULT_PRICING_CONFIG,
@@ -101,6 +102,11 @@ export function StoreCartDrawer() {
     (sum, item) => sum + item.product.cashPrice * item.quantity,
     0,
   );
+  const cardTotal = resolvedItems.reduce(
+    (sum, item) => sum + cardPrice(item.product) * item.quantity,
+    0,
+  );
+  const cashSavings = cardTotal - total;
   const enabledZones = useMemo(
     () => pricingConfig.delivery.zones.filter((zone) => zone.enabled),
     [pricingConfig.delivery.zones],
@@ -302,7 +308,16 @@ export function StoreCartDrawer() {
                             <Trash2 className="size-3.5" />
                           </button>
                         </div>
-                        <p className="mt-2 font-heading text-lg text-nm-text">{formatARS(product.cashPrice)}</p>
+                        <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-0.5">
+                          <p className="font-heading text-lg text-nm-text">
+                            <span className="mr-1.5 font-sans text-xs font-medium uppercase text-nm-muted">{t("storeCart.cash")}</span>
+                            {formatARS(product.cashPrice)}
+                          </p>
+                          <p className="text-sm text-nm-muted">
+                            <span className="mr-1.5 text-xs font-medium uppercase">{t("storeCart.card")}</span>
+                            {formatARS(cardPrice(product))}
+                          </p>
+                        </div>
                         <div className="mt-3 flex items-center justify-between gap-3">
                           <div className="inline-flex h-9 items-center gap-1 rounded-pill px-1 shadow-soft-inset">
                             <QuantityButton
@@ -320,7 +335,10 @@ export function StoreCartDrawer() {
                               <Plus className="size-3.5" />
                             </QuantityButton>
                           </div>
-                          <p className="text-sm font-semibold text-nm-text">{formatARS(product.cashPrice * quantity)}</p>
+                          <div className="text-right">
+                            <p className="text-sm font-semibold text-nm-text">{formatARS(product.cashPrice * quantity)}</p>
+                            <p className="text-xs text-nm-muted">{formatARS(cardPrice(product) * quantity)} {t("storeCart.cardShort")}</p>
+                          </div>
                         </div>
                       </div>
                     </article>
@@ -337,6 +355,13 @@ export function StoreCartDrawer() {
                   <span className="text-sm text-nm-muted">{t("storeCart.totalCash")}</span>
                   <span className="font-heading text-2xl text-nm-text">{formatARS(total)}</span>
                 </div>
+                <div className="mt-1 flex items-baseline justify-between gap-4">
+                  <span className="text-sm text-nm-muted">{t("storeCart.totalCard")}</span>
+                  <span className="text-sm text-nm-muted">{formatARS(cardTotal)}</span>
+                </div>
+                {cashSavings > 0 && (
+                  <p className="mt-1 text-xs font-medium text-nm-accent">{t("storeCart.cashSavings", { amount: formatARS(cashSavings) })}</p>
+                )}
                 <p className="mt-1 text-xs text-nm-muted">{t("storeCart.coordinateNotice")}</p>
                 <Button
                   type="button"

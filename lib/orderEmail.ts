@@ -1,3 +1,4 @@
+import { CONTACT_EMAIL } from "./contactInfo";
 import { formatARS } from "./format";
 
 export interface ResolvedOrderItem {
@@ -6,6 +7,8 @@ export interface ResolvedOrderItem {
   quantity: number;
   unitPrice: number;
   subtotal: number;
+  cardUnitPrice: number;
+  cardSubtotal: number;
 }
 
 export interface ResolvedOrder {
@@ -18,12 +21,14 @@ export interface ResolvedOrder {
   };
   items: ResolvedOrderItem[];
   itemsSubtotal: number;
+  cardItemsSubtotal: number;
   delivery: {
     option: "delivery" | "pickup";
     description: string;
     cost: number;
   };
   total: number;
+  cardTotal: number;
   createdAt: Date;
 }
 
@@ -55,7 +60,8 @@ export function buildCustomerOrderEmail(order: ResolvedOrder): string {
       </p>
       ${orderTable(order)}
       <p style="margin:18px 0 0;color:#6b4f3a;font-size:14px;line-height:1.6">
-        <strong>Entrega:</strong> ${escapeHtml(order.delivery.description)}
+        <strong>Entrega:</strong> ${escapeHtml(order.delivery.description)}<br>
+        ¿Necesitás envío? Respondé este correo o escribinos a ${CONTACT_EMAIL} y lo coordinamos.
       </p>
       <p style="margin:22px 0 0;color:#6b4f3a;font-size:14px;line-height:1.6">
         Este correo confirma la solicitud del pedido. No se realizó ningún cobro desde el sitio.
@@ -67,7 +73,7 @@ export function buildCustomerOrderEmail(order: ResolvedOrder): string {
 export function buildOrderText(order: ResolvedOrder, customerCopy: boolean): string {
   const lines = order.items.map(
     (item) =>
-      `${item.quantity} x ${item.name} (${item.dimensions}) - ${formatARS(item.subtotal)}`,
+      `${item.quantity} x ${item.name} (${item.dimensions}) - Efectivo: ${formatARS(item.subtotal)} | Tarjeta: ${formatARS(item.cardSubtotal)}`,
   );
   const heading = customerCopy
     ? `Hola ${order.customer.name}. Recibimos tu pedido ${order.orderId}.`
@@ -81,6 +87,8 @@ export function buildOrderText(order: ResolvedOrder, customerCopy: boolean): str
     `Entrega: ${order.delivery.description}`,
     order.delivery.cost > 0 ? `Costo de envío: ${formatARS(order.delivery.cost)}` : "",
     `Total en efectivo: ${formatARS(order.total)}`,
+    `Total con tarjeta: ${formatARS(order.cardTotal)}`,
+    customerCopy ? `¿Necesitás envío? Escribinos a ${CONTACT_EMAIL} y lo coordinamos.` : "",
     `Email: ${order.customer.email}`,
     order.customer.phone ? `Teléfono: ${order.customer.phone}` : "",
     order.customer.notes ? `Comentarios: ${order.customer.notes}` : "",
@@ -101,7 +109,8 @@ function orderTable(order: ResolvedOrder): string {
             <span style="color:#7a6a5c;font-size:13px">${escapeHtml(item.dimensions)}</span>
           </td>
           <td style="padding:13px 8px;border-bottom:1px solid #efe7da;text-align:center;vertical-align:top">${item.quantity}</td>
-          <td style="padding:13px 8px;border-bottom:1px solid #efe7da;text-align:right;vertical-align:top;white-space:nowrap">${formatARS(item.subtotal)}</td>
+          <td style="padding:13px 8px;border-bottom:1px solid #efe7da;text-align:right;vertical-align:top;white-space:nowrap"><strong>${formatARS(item.subtotal)}</strong></td>
+          <td style="padding:13px 8px;border-bottom:1px solid #efe7da;text-align:right;vertical-align:top;white-space:nowrap;color:#7a6a5c">${formatARS(item.cardSubtotal)}</td>
         </tr>`,
     )
     .join("");
@@ -112,7 +121,8 @@ function orderTable(order: ResolvedOrder): string {
         <tr style="background:#faf7f2;color:#6b4f3a">
           <th style="padding:10px 8px;text-align:left">Producto</th>
           <th style="padding:10px 8px;text-align:center">Cant.</th>
-          <th style="padding:10px 8px;text-align:right">Subtotal</th>
+          <th style="padding:10px 8px;text-align:right">Efectivo</th>
+          <th style="padding:10px 8px;text-align:right">Tarjeta</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -120,14 +130,22 @@ function orderTable(order: ResolvedOrder): string {
         <tr>
           <td colspan="2" style="padding:14px 8px 0;text-align:right;color:#6b4f3a">Productos</td>
           <td style="padding:14px 8px 0;text-align:right;white-space:nowrap">${formatARS(order.itemsSubtotal)}</td>
+          <td style="padding:14px 8px 0;text-align:right;white-space:nowrap;color:#7a6a5c">${formatARS(order.cardItemsSubtotal)}</td>
         </tr>
         <tr>
           <td colspan="2" style="padding:8px 8px 0;text-align:right;color:#6b4f3a">${order.delivery.option === "delivery" ? "Envío" : "Retiro"}</td>
           <td style="padding:8px 8px 0;text-align:right;white-space:nowrap">${order.delivery.cost > 0 ? formatARS(order.delivery.cost) : "Sin cargo"}</td>
+          <td style="padding:8px 8px 0;text-align:right;white-space:nowrap;color:#7a6a5c">${order.delivery.cost > 0 ? formatARS(order.delivery.cost) : "Sin cargo"}</td>
         </tr>
         <tr>
-          <td colspan="2" style="padding:16px 8px 0;text-align:right;font-weight:bold">Total en efectivo</td>
-          <td style="padding:16px 8px 0;text-align:right;font-size:20px;font-weight:bold;white-space:nowrap">${formatARS(order.total)}</td>
+          <td colspan="2" style="padding:16px 8px 0;text-align:right;font-weight:bold">Total</td>
+          <td style="padding:16px 8px 0;text-align:right;font-size:18px;font-weight:bold;white-space:nowrap">${formatARS(order.total)}</td>
+          <td style="padding:16px 8px 0;text-align:right;font-size:18px;white-space:nowrap;color:#7a6a5c">${formatARS(order.cardTotal)}</td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td style="padding:2px 8px 0;text-align:right;font-size:12px;color:#7a6a5c">en efectivo</td>
+          <td style="padding:2px 8px 0;text-align:right;font-size:12px;color:#7a6a5c">con tarjeta</td>
         </tr>
       </tfoot>
     </table>`;

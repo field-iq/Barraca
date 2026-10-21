@@ -282,6 +282,11 @@ export const translations = {
   "storeCart.removeOneAriaLabel": { es: "Quitar una unidad de {name}", en: "Remove one {name}" },
   "storeCart.addOneAriaLabel": { es: "Agregar una unidad de {name}", en: "Add one {name}" },
   "storeCart.totalCash": { es: "Total en efectivo", en: "Total in cash" },
+  "storeCart.totalCard": { es: "Total con tarjeta", en: "Total by card" },
+  "storeCart.cash": { es: "Efectivo", en: "Cash" },
+  "storeCart.card": { es: "Tarjeta", en: "Card" },
+  "storeCart.cardShort": { es: "con tarjeta", en: "by card" },
+  "storeCart.cashSavings": { es: "Pagando en efectivo ahorrás {amount}.", en: "Pay cash and save {amount}." },
   "storeCart.coordinateNotice": { es: "Entrega y forma de pago se coordinan con el taller.", en: "Delivery and payment method are arranged with the workshop." },
   "storeCart.continueOrder": { es: "Continuar pedido", en: "Continue order" },
   "storeCart.items": { es: "artículos", en: "items" },
@@ -298,8 +303,8 @@ export const translations = {
   "storeCart.calculateDelivery": { es: "Calcular entrega", en: "Calculate delivery" },
   "storeCart.withoutDelivery": { es: "Sin envío", en: "No delivery" },
   "storeCart.pickupOnly": {
-    es: "Por ahora no hacemos envíos: los pedidos se retiran en el local (Boulevard Sáenz Peña 1213, Tigre). Coordinamos día y horario con vos.",
-    en: "We don't ship for now: orders are picked up at the store (Boulevard Sáenz Peña 1213, Tigre). We'll arrange a day and time with you.",
+    es: "Los pedidos se retiran en el local (Boulevard Sáenz Peña 1213, Tigre) y coordinamos día y horario con vos. ¿Necesitás envío? Contactanos por WhatsApp o a info@labarracadejuan.com.ar y lo vemos.",
+    en: "Orders are picked up at the store (Boulevard Sáenz Peña 1213, Tigre) and we'll arrange a day and time with you. Need delivery? Contact us on WhatsApp or at info@labarracadejuan.com.ar and we'll sort it out.",
   },
   "storeCart.pickupToArrange": { es: "Retiro a coordinar", en: "Pickup to arrange" },
   "storeCart.deliveryUnavailable": {
@@ -368,8 +373,8 @@ export const translations = {
   },
   "chat.faq.delivery.q": { es: "¿Hacen envíos?", en: "Do you deliver?" },
   "chat.faq.delivery.a": {
-    es: "Por ahora no hacemos envíos. Los pedidos se retiran por el local, y coordinamos día y horario con vos al confirmar.",
-    en: "Not for now. Orders are picked up at the store, and we'll arrange a day and time with you when we confirm.",
+    es: "Los pedidos se retiran por el local, pero si necesitás envío contactanos por WhatsApp o a info@labarracadejuan.com.ar y lo coordinamos con vos.",
+    en: "Orders are picked up at the store, but if you need delivery, contact us on WhatsApp or at info@labarracadejuan.com.ar and we'll arrange it with you.",
   },
   "chat.faq.human.q": { es: "Quiero hablar con una persona", en: "I'd like to talk to a person" },
   "chat.faq.human.a": {

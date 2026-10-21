@@ -4,7 +4,7 @@ import { CONTACT_EMAIL } from "@/lib/contactInfo";
 import { reserveEmails } from "@/lib/emailQuota";
 import { checkRateLimit, clientKey } from "@/lib/rateLimit";
 import { SHIPPING_ENABLED } from "@/lib/shipping";
-import { getVisibleProducts } from "@/lib/catalog";
+import { cardPrice, getVisibleProducts } from "@/lib/catalog";
 import { getCatalog } from "@/lib/catalogStore";
 import type { PricingConfig } from "@/lib/pricing/pricingConfig";
 import { getPricingConfig } from "@/lib/pricing/pricingStore";
@@ -53,17 +53,22 @@ export async function POST(request: NextRequest) {
         quantity: requested.quantity,
         unitPrice: product.cashPrice,
         subtotal: product.cashPrice * requested.quantity,
+        cardUnitPrice: cardPrice(product),
+        cardSubtotal: cardPrice(product) * requested.quantity,
       };
     });
 
     const itemsSubtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const cardItemsSubtotal = items.reduce((sum, item) => sum + item.cardSubtotal, 0);
     const order: ResolvedOrder = {
       orderId: createOrderId(),
       customer,
       items,
       itemsSubtotal,
+      cardItemsSubtotal,
       delivery,
       total: itemsSubtotal + delivery.cost,
+      cardTotal: cardItemsSubtotal + delivery.cost,
       createdAt: new Date(),
     };
 
@@ -172,7 +177,7 @@ function validateDelivery(value: unknown, config: PricingConfig): ResolvedOrder[
   const option = delivery.option;
   if (!SHIPPING_ENABLED) {
     if (option === "delivery") {
-      throw new OrderError("Por ahora no hacemos envíos. Retiro en el local.");
+      throw new OrderError(`Los pedidos se retiran en el local. Si necesitás envío, contactanos por WhatsApp o a ${CONTACT_EMAIL}.`);
     }
     return { option: "pickup", description: "Retiro en el local · a coordinar", cost: 0 };
   }

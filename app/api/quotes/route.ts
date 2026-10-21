@@ -3,6 +3,7 @@ import { calculateBenchQuote } from "@/lib/pricing/benchPricing";
 import { calculateMirrorQuote } from "@/lib/pricing/mirrorPricing";
 import { validateProductDimensions, type CustomProductId } from "@/lib/pricing/pricingConfig";
 import { getPricingConfig } from "@/lib/pricing/pricingStore";
+import { CONTACT_EMAIL } from "@/lib/contactInfo";
 import { SHIPPING_ENABLED } from "@/lib/shipping";
 import { calculateDeliveryCost, calculateTableQuote } from "@/lib/pricing/tablePricing";
 import type { CartQuoteRequest, TableDimensions } from "@/lib/quoteTypes";
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     const config = await getPricingConfig();
     const items = validateItems(payload.items, config);
     if (!SHIPPING_ENABLED && payload.deliveryOption === "delivery") {
-      throw new QuoteError("Por ahora no hacemos envíos. Retiro en el taller.");
+      throw new QuoteError(`Los pedidos se retiran en el taller. Si necesitás envío, contactanos por WhatsApp o a ${CONTACT_EMAIL}.`);
     }
     const deliveryOption = !SHIPPING_ENABLED || payload.deliveryOption === "pickup" ? "pickup" : "delivery";
     const deliveryAddress = cleanString(payload.deliveryAddress, 240);

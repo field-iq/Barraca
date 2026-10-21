@@ -1,5 +1,10 @@
 import { STANDARD_FURNITURE } from "./standardFurniture";
 
+/** Precio de lista, que es el que se paga con tarjeta; nunca menor al de efectivo. */
+export function cardPrice(product: { listPrice: number; cashPrice: number }): number {
+  return Math.max(product.listPrice, product.cashPrice);
+}
+
 export interface CatalogCategory {
   id: string;
   name: string;
