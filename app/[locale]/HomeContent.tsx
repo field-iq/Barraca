@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Camera, MessageCircle } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/nav/footer";
@@ -57,17 +58,30 @@ export function HomeContent({ hero }: { hero: React.ReactNode }) {
           <div className="mx-auto max-w-6xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-nm-muted">{t("home.stores.eyebrow")}</p>
             <h2 className="mt-3 font-heading text-4xl text-nm-text sm:text-5xl">{t("home.stores.title")}</h2>
-            <div className="mt-8 grid gap-4 sm:gap-6 md:max-w-md">
-              {stores.map((store) => (
-                <ContactCard
-                  key={store.name}
-                  title={store.name}
-                  address={store.address}
-                  hours={store.hours}
-                  mapHref={store.map}
-                  directionsLabel={t("home.stores.directions")}
+            <div className="mt-8 grid items-center gap-6 md:grid-cols-2 md:gap-10">
+              <div className="grid gap-4 sm:gap-6">
+                {stores.map((store) => (
+                  <ContactCard
+                    key={store.name}
+                    title={store.name}
+                    address={store.address}
+                    hours={store.hours}
+                    mapHref={store.map}
+                    directionsLabel={t("home.stores.directions")}
+                  />
+                ))}
+              </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-soft shadow-soft">
+                <Image
+                  src="/local-tigre.jpg"
+                  alt={language === "en"
+                    ? "Storefront of La Barraca de Juan on Boulevard Sáenz Peña, Tigre"
+                    : "Fachada del local de La Barraca de Juan en Boulevard Sáenz Peña, Tigre"}
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-cover"
                 />
-              ))}
+              </div>
             </div>
           </div>
         </section>
