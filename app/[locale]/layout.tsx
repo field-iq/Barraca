@@ -13,14 +13,14 @@ export function generateStaticParams() {
   return [{ locale: "es" }, { locale: "en" }];
 }
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = params;
+  const { locale } = await params;
   if (locale !== "es" && locale !== "en") notFound();
 
   return (
