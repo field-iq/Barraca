@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, Languages, MessageCircle, Menu, Moon, ShoppingBag, Sparkles, Sun } from "lucide-react";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { WHATSAPP_URL } from "@/lib/contactInfo";
+import { LANGUAGE_COOKIE } from "@/lib/i18n/preferredLanguage";
 import { useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 import { useStoreCart } from "./StoreCartProvider";
 import { useTheme } from "@/components/ui/theme-provider";
@@ -81,15 +82,20 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <Link
+          <a
             href={toggleHref}
             title={t("header.languageToggle")}
             aria-label={t("header.languageToggle")}
-            className="nm-transition hidden h-9 items-center justify-center gap-1.5 rounded-pill px-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-nm-muted shadow-soft-sm hover:text-nm-text sm:inline-flex"
+            // A plain link (no prefetch) so the cookie below is saved before the next request.
+            onClick={() => {
+              // Remember the choice so the phone's language doesn't override it on the next visit.
+              document.cookie = `${LANGUAGE_COOKIE}=${otherLanguage}; path=/; max-age=31536000; samesite=lax`;
+            }}
+            className="nm-transition inline-flex h-9 items-center justify-center gap-1.5 rounded-pill px-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-nm-muted shadow-soft-sm hover:text-nm-text"
           >
-            <Languages size={15} strokeWidth={1.7} aria-hidden="true" />
+            <Languages size={15} strokeWidth={1.7} aria-hidden="true" className="hidden sm:block" />
             {language === "es" ? "EN" : "ES"}
-          </Link>
+          </a>
 
           <div ref={consultRef} className="relative hidden sm:block">
             <button
@@ -129,7 +135,7 @@ export function Header() {
             )}
           </div>
 
-          <IconButton size="sm" label="Toggle theme" onClick={toggle} className="hidden sm:inline-grid">
+          <IconButton size="sm" label={theme === "dark" ? t("header.themeToLight") : t("header.themeToDark")} onClick={toggle}>
             {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </IconButton>
 

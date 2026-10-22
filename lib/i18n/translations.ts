@@ -7,6 +7,8 @@ export const translations = {
   "header.nav.stores": { es: "Locales", en: "Our stores" },
   "header.instagramAriaLabel": { es: "Instagram de La Barraca de Juan", en: "La Barraca de Juan on Instagram" },
   "header.consultAriaLabel": { es: "Consultar por WhatsApp", en: "Contact us on WhatsApp" },
+  "header.themeToDark": { es: "Cambiar a modo oscuro", en: "Switch to dark mode" },
+  "header.themeToLight": { es: "Cambiar a modo claro", en: "Switch to light mode" },
   "header.consult": { es: "Consultar", en: "Contact us" },
   "header.languageToggle": { es: "English", en: "Español" },
   "header.menuAriaLabel": { es: "Abrir menú", en: "Open menu" },

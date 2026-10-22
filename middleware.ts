@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE, isValidSession } from "@/lib/adminAuth";
+import { LANGUAGE_COOKIE, isLanguage, languageFromAcceptHeader } from "@/lib/i18n/preferredLanguage";
 
 const HAS_EXTENSION = /\.[^/]+$/;
 
@@ -36,6 +37,21 @@ export async function middleware(request: NextRequest) {
   // URL structure, not in a header a persistent layout reads once.
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     return NextResponse.next();
+  }
+
+  // Spanish is the default. Phones set to English land on "/en" the first time, unless the
+  // visitor already picked a language with the toggle (saved in a cookie), which always wins.
+  const savedLanguage = request.cookies.get(LANGUAGE_COOKIE)?.value;
+  const preferred = isLanguage(savedLanguage)
+    ? savedLanguage
+    : languageFromAcceptHeader(request.headers.get("accept-language"));
+
+  if (preferred === "en" && request.method === "GET") {
+    const url = request.nextUrl.clone();
+    url.pathname = `/en${pathname === "/" ? "" : pathname}`;
+    const response = NextResponse.redirect(url);
+    response.headers.set("Vary", "Accept-Language, Cookie");
+    return response;
   }
 
   const url = request.nextUrl.clone();
