@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Mail, MessageCircle, X } from "lucide-react";
+import { WHATSAPP_NUMBER } from "@/lib/contactInfo";
 import { useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 import { IconButton } from "@/components/ui/icon-button";
 
-const WHATSAPP_NUMBER = "5491153791654";
 
 const inputClass =
   "w-full rounded-soft bg-nm-surface px-4 py-2.5 text-sm text-nm-text shadow-soft-inset-sm outline-none placeholder:text-nm-muted focus:ring-2 focus:ring-nm-accent/40";

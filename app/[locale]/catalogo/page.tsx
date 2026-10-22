@@ -14,6 +14,7 @@ import { QuoteSummary } from "@/components/QuoteSummary";
 import { StandardFurnitureSection } from "@/components/StandardFurnitureSection";
 import { getProductName } from "@/lib/products";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { WHATSAPP_URL } from "@/lib/contactInfo";
 import { submitQuote } from "@/lib/submitQuote";
 import {
   DEFAULT_PRICING_CONFIG,
@@ -209,7 +210,7 @@ export default function CatalogPage() {
         notice={t("footer.notice")}
         developedByLabel={t("footer.developedBy")}
         instagramUrl="https://www.instagram.com/labarracadejuan_/"
-        whatsappUrl="https://wa.me/5491153791654"
+        whatsappUrl={WHATSAPP_URL}
       />
     </>
   );

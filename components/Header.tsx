@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Camera, Languages, MessageCircle, Menu, Moon, ShoppingBag, Sparkles, Sun } from "lucide-react";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { WHATSAPP_URL } from "@/lib/contactInfo";
 import { useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 import { useStoreCart } from "./StoreCartProvider";
 import { useTheme } from "@/components/ui/theme-provider";
@@ -13,7 +14,6 @@ import { IconButton } from "@/components/ui/icon-button";
 import { MobileMenu } from "@/components/nav/mobile-menu";
 import type { NavLink } from "@/components/nav/navbar";
 
-const WHATSAPP_URL = "https://wa.me/5491153791654";
 
 export function Header() {
   const { language, t } = useLanguage();

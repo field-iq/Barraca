@@ -7,9 +7,9 @@ import { Footer } from "@/components/nav/footer";
 import { CategoryTile } from "@/components/product/category-tile";
 import { ContactCard } from "@/components/nav/contact-card";
 import { CtaSection } from "@/components/marketing/cta-section";
+import { WHATSAPP_URL } from "@/lib/contactInfo";
 import { useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 
-const WHATSAPP_URL = "https://wa.me/5491153791654";
 const INSTAGRAM_URL = "https://www.instagram.com/labarracadejuan_/";
 
 const storeAddresses = [
