@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, LogOut, Package, Ruler, Video } from "lucide-react";
+import { ExternalLink, LogOut, Package, Ruler, Store, Video } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export interface AdminShellProps {
   title: string;
-  active: "catalogo" | "precios" | "video";
+  active: "catalogo" | "precios" | "video" | "local";
   externalHref: string;
   externalLabel: string;
   children: React.ReactNode;
@@ -56,6 +56,9 @@ export function AdminShell({ title, active, externalHref, externalLabel, childre
           </AdminTabLink>
           <AdminTabLink href="/admin/video" active={active === "video"} icon={<Video size={16} />}>
             Video
+          </AdminTabLink>
+          <AdminTabLink href="/admin/local" active={active === "local"} icon={<Store size={16} />}>
+            Local
           </AdminTabLink>
         </nav>
 

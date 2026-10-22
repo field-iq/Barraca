@@ -21,7 +21,7 @@ const storeAddresses = [
   },
 ] as const;
 
-export function HomeContent({ hero }: { hero: React.ReactNode }) {
+export function HomeContent({ hero, storePhotoUrl }: { hero: React.ReactNode; storePhotoUrl: string }) {
   const { language, t } = useLanguage();
 
   const catalogHref = withLocalePrefix("/catalogo", language);
@@ -73,7 +73,7 @@ export function HomeContent({ hero }: { hero: React.ReactNode }) {
               </div>
               <div className="relative aspect-[4/5] overflow-hidden rounded-soft shadow-soft">
                 <Image
-                  src="/local-tigre.jpg"
+                  src={storePhotoUrl}
                   alt={language === "en"
                     ? "Storefront of La Barraca de Juan on Boulevard Sáenz Peña, Tigre"
                     : "Fachada del local de La Barraca de Juan en Boulevard Sáenz Peña, Tigre"}
