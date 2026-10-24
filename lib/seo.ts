@@ -98,6 +98,11 @@ export const HOME_COPY: Record<SeoLocale, HomeSeoCopy> = {
           "Trabajamos con madera maciza y madera recuperada. Reciclamos y reutilizamos materiales para darles una segunda vida, con terminaciones artesanales pensadas para durar muchos años.",
       },
       {
+        question: "¿Hacen envíos?",
+        answer:
+          "Los pedidos se retiran por el local, pero hacemos envíos a pedido a Tigre, Nordelta y zona norte. Escribinos por WhatsApp o a info@labarracadejuan.com.ar y lo coordinamos con vos.",
+      },
+      {
         question: "¿Tienen muebles listos para llevar?",
         answer:
           "Sí. En el catálogo hay mesas, mesas ratonas, camastros, estanterías, espejos y cilindros en medidas estándar. La disponibilidad está sujeta a confirmación, así que consultanos antes de venir.",
@@ -137,6 +142,11 @@ export const HOME_COPY: Record<SeoLocale, HomeSeoCopy> = {
       {
         question: "What kind of wood do you use?",
         answer: "We work with solid wood and reclaimed wood. We recycle and reuse materials to give them a second life, with handcrafted finishes made to last for years.",
+      },
+      {
+        question: "Do you deliver?",
+        answer:
+          "Orders are picked up at the store, but we deliver on request to Tigre, Nordelta and the northern suburbs. Message us on WhatsApp or at info@labarracadejuan.com.ar and we will arrange it with you.",
       },
       {
         question: "Do you have ready-to-take-home furniture?",
