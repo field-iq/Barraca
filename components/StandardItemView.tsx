@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { AddToStoreCartButton } from "@/components/AddToStoreCartButton";
-import { formatARS } from "@/lib/format";
+import { formatARS, localizeDimensions } from "@/lib/format";
 import type { CatalogProduct } from "@/lib/catalog";
 import { pickText, useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 
@@ -56,7 +56,7 @@ export function StandardItemView({ item, categoryName, categoryNameEn }: Standar
             <dl className="mt-4 text-sm">
               <div className="flex min-w-0 flex-col gap-1 min-[420px]:flex-row min-[420px]:items-baseline min-[420px]:justify-between min-[420px]:gap-4">
                 <dt className="text-nm-muted">{t("standard.dimensions")}</dt>
-                <dd className="min-w-0 break-words font-medium text-nm-text min-[420px]:text-right">{item.dimensions}</dd>
+                <dd className="min-w-0 break-words font-medium text-nm-text min-[420px]:text-right">{localizeDimensions(item.dimensions, language)}</dd>
               </div>
             </dl>
 

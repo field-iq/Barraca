@@ -111,6 +111,8 @@ export const translations = {
 
   // Standard furniture (ready-to-take catalog)
   "standard.title": { es: "Piezas listas para llevar", en: "Pieces ready to take home" },
+  "standard.all": { es: "Todo", en: "All" },
+  "standard.categories": { es: "Categorías", en: "Categories" },
   "standard.viewPhotos": { es: "Ver fotos", en: "View photos" },
   "standard.cashPrice": { es: "Precio especial en efectivo", en: "Special cash price" },
   "standard.before": { es: "Antes:", en: "Before:" },
