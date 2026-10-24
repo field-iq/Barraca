@@ -1,70 +1,52 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/marketing/hero";
-import { CONTACT_EMAIL, SITE_URL, WHATSAPP_NUMBER } from "@/lib/contactInfo";
+import { HomeSeoText } from "@/components/seo/HomeSeoText";
 import { getHeroSettings } from "@/lib/heroStore";
 import { getStorePhotoSettings } from "@/lib/storePhotoStore";
+import {
+  BUSINESS_NAME, HOME_SEO, businessSchema, faqSchema, jsonLd, localePath, pageAlternates, toLocale, websiteSchema,
+} from "@/lib/seo";
 import { HomeContent } from "./HomeContent";
 
 // Re-render at most once a minute; saving from /admin also revalidates immediately.
 export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
+  const locale = toLocale((await params).locale);
+  const seo = HOME_SEO[locale];
   return {
-    alternates: {
-      canonical: locale === "en" ? "/en" : "/",
-      languages: { es: "/", en: "/en", "x-default": "/" },
-    },
+    title: { absolute: seo.title },
+    description: seo.description,
+    keywords:
+      locale === "en"
+        ? ["custom wooden furniture", "solid wood furniture", "furniture in Tigre", "custom dining tables", "reclaimed wood furniture", "furniture Buenos Aires", "reclaimed wood", "recycled wood furniture", "upcycled furniture", "circular economy", "sustainable furniture", "second life furniture", "reuse"]
+        : ["muebles de madera", "muebles a medida", "muebles en Tigre", "mesas de madera maciza", "mesas a medida", "muebles de madera recuperada", "muebles zona norte", "madera recuperada", "madera reciclada", "muebles reciclados", "reciclaje", "reciclado", "segunda vida", "economía circular", "muebles circulares", "reutilizar madera", "reutilización", "muebles sustentables"],
+    alternates: pageAlternates("/", locale),
     // Page-level openGraph replaces the layout's whole object, so repeat the shared fields.
     openGraph: {
-      title: "La Barraca de Juan | Muebles & deco",
-      description:
-        locale === "en"
-          ? "Ready-to-take-home pieces and custom-made furniture in Tigre, Argentina."
-          : "Piezas listas para llevar y muebles hechos a medida en Tigre.",
-      url: locale === "en" ? "/en" : "/",
+      title: seo.title,
+      description: seo.description,
+      url: localePath("/", locale),
       locale: locale === "en" ? "en_US" : "es_AR",
       type: "website",
-      siteName: "La Barraca de Juan",
+      siteName: BUSINESS_NAME,
       images: [{ url: "/hero-poster.jpg", alt: "La Barraca de Juan, muebles y deco en Tigre" }],
     },
   };
 }
 
-const businessData = {
-  "@context": "https://schema.org",
-  "@type": "FurnitureStore",
-  name: "La Barraca de Juan",
-  url: SITE_URL,
-  image: `${SITE_URL}/local-tigre.jpg`,
-  logo: `${SITE_URL}/logo.png`,
-  description: "Muebles con historia, piezas listas para llevar y diseños a medida en Tigre.",
-  email: CONTACT_EMAIL,
-  telephone: `+${WHATSAPP_NUMBER}`,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Boulevard Sáenz Peña 1213",
-    addressLocality: "Tigre",
-    addressRegion: "Buenos Aires",
-    addressCountry: "AR",
-  },
-  openingHoursSpecification: [
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Saturday", "Sunday"], opens: "09:00", closes: "19:30" },
-  ],
-  sameAs: ["https://www.instagram.com/labarracadejuan_/"],
-};
-
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = toLocale((await params).locale);
   const [hero, storePhoto] = await Promise.all([getHeroSettings(), getStorePhotoSettings()]);
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(businessData).replace(/</g, "\\u003c") }}
-      />
+      {[businessSchema(locale), websiteSchema(), faqSchema(locale)].map((data, index) => (
+        <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(data) }} />
+      ))}
       <HomeContent
         storePhotoUrl={storePhoto.photoUrl}
-        hero={<Hero title="La Barraca de Juan" videoSrc={hero.videoUrl} posterSrc={hero.posterUrl ?? undefined} />}
+        seoText={<HomeSeoText locale={locale} />}
+        hero={<Hero title={HOME_SEO[locale].h1} videoSrc={hero.videoUrl} posterSrc={hero.posterUrl ?? undefined} />}
       />
     </>
   );

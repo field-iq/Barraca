@@ -21,15 +21,15 @@ const storeAddresses = [
   },
 ] as const;
 
-export function HomeContent({ hero, storePhotoUrl }: { hero: React.ReactNode; storePhotoUrl: string }) {
+export function HomeContent({ hero, seoText, storePhotoUrl }: { hero: React.ReactNode; seoText: React.ReactNode; storePhotoUrl: string }) {
   const { language, t } = useLanguage();
 
   const catalogHref = withLocalePrefix("/catalogo", language);
 
   const featuredPieces = [
-    { id: "piece1", name: t("home.piece1.eyebrow"), subtitle: t("home.piece1.detail"), image: "/mesa-2.jpeg", alt: "Mesa de comedor artesanal de madera" },
-    { id: "piece2", name: t("home.piece2.eyebrow"), subtitle: t("home.piece2.detail"), image: "/mesa-ratona-1.jpeg", alt: "Mesa ratona artesanal con detalles recuperados" },
-    { id: "piece3", name: t("home.piece3.eyebrow"), subtitle: t("home.piece3.detail"), image: "/estanteria-1.jpeg", alt: "Estantería artesanal de madera" },
+    { id: "piece1", name: t("home.piece1.eyebrow"), subtitle: t("home.piece1.detail"), image: "/mesa-2.jpeg", alt: "Mesa de comedor artesanal de madera maciza y madera recuperada" },
+    { id: "piece2", name: t("home.piece2.eyebrow"), subtitle: t("home.piece2.detail"), image: "/mesa-ratona-1.jpeg", alt: "Mesa ratona artesanal de madera recuperada y reciclada, mueble con segunda vida" },
+    { id: "piece3", name: t("home.piece3.eyebrow"), subtitle: t("home.piece3.detail"), image: "/estanteria-1.jpeg", alt: "Estantería artesanal de madera reciclada, reutilizada y a medida" },
     { id: "piece4", name: t("home.piece4.eyebrow"), subtitle: t("home.piece4.detail"), image: "/banco-1.jpeg", alt: "Banco artesanal de madera" },
     { id: "piece5", name: t("home.piece5.eyebrow"), subtitle: t("home.piece5.detail"), image: "/espejo-1.jpeg", alt: "Espejo con marco de madera maciza" },
     { id: "piece6", name: t("home.piece6.eyebrow"), subtitle: t("home.piece6.detail"), image: "/catalogo/cilindros/1.jpeg", alt: "Cilindros de madera maciza" },
@@ -53,6 +53,8 @@ export function HomeContent({ hero, storePhotoUrl }: { hero: React.ReactNode; st
             ))}
           </div>
         </section>
+
+        {seoText}
 
         <section id="locales" className="scroll-mt-20 px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
