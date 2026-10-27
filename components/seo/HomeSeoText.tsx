@@ -1,13 +1,14 @@
+import { Accordion } from "@/components/ui/accordion";
 import { HOME_COPY, type SeoLocale } from "@/lib/seo";
 
-/** Texto visible e indexable de la home: es lo que Google lee para saber de qué trata el sitio. */
-export function HomeSeoText({ locale }: { locale: SeoLocale }) {
+/** Texto visible e indexable sobre el negocio: vive en Quiénes somos y es lo que Google lee para saber de qué trata el sitio. */
+export function AboutSeoText({ locale }: { locale: SeoLocale }) {
   const copy = HOME_COPY[locale];
 
   return (
-    <section aria-labelledby="home-seo-title" className="px-4 py-16 sm:px-6 lg:px-8">
+    <section aria-labelledby="about-seo-title" className="px-4 pb-10 sm:px-6 sm:pb-14 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <h2 id="home-seo-title" className="font-heading text-4xl text-nm-text sm:text-5xl">
+        <h2 id="about-seo-title" className="font-heading text-3xl text-nm-text sm:text-4xl">
           {copy.heading}
         </h2>
         <p className="mt-4 max-w-3xl text-base leading-7 text-nm-muted">{copy.intro}</p>
@@ -20,16 +21,29 @@ export function HomeSeoText({ locale }: { locale: SeoLocale }) {
             </article>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <h2 className="mt-14 font-heading text-3xl text-nm-text">{copy.faqTitle}</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {copy.faq.map((entry) => (
-            <div key={entry.question} className="rounded-soft bg-nm-surface p-6 shadow-soft">
-              <h3 className="text-base font-semibold text-nm-text">{entry.question}</h3>
-              <p className="mt-2 text-sm leading-6 text-nm-muted">{entry.answer}</p>
-            </div>
-          ))}
-        </div>
+/** Preguntas frecuentes de la home: se ve la pregunta y al tocarla se despliega la respuesta. */
+export function HomeFaq({ locale }: { locale: SeoLocale }) {
+  const copy = HOME_COPY[locale];
+
+  return (
+    <section aria-labelledby="home-faq-title" className="px-4 pb-10 sm:px-6 sm:pb-14 lg:px-8">
+      <div className="mx-auto max-w-3xl">
+        <h2 id="home-faq-title" className="font-heading text-3xl text-nm-text sm:text-4xl">
+          {copy.faqTitle}
+        </h2>
+        <Accordion
+          className="mt-8"
+          items={copy.faq.map((entry) => ({
+            id: entry.question,
+            title: entry.question,
+            content: entry.answer,
+          }))}
+        />
       </div>
     </section>
   );

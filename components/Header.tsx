@@ -46,6 +46,7 @@ export function Header() {
   const links: NavLink[] = [
     { label: t("header.nav.ready"), href: withLocalePrefix("/catalogo", language) },
     { label: t("header.nav.custom"), href: withLocalePrefix("/catalogo#a-medida", language) },
+    { label: t("header.nav.about"), href: withLocalePrefix("/quienes-somos", language) },
     { label: t("header.nav.stores"), href: withLocalePrefix("/#locales", language) },
   ];
 

@@ -14,7 +14,7 @@ import { ImageSlideshow } from "./ImageSlideshow";
 import { AddToStoreCartButton } from "./AddToStoreCartButton";
 
 /** Junta en un mismo modelo las medidas que comparten categoría y nombre, o la misma foto. */
-function groupModels(products: CatalogProduct[]): CatalogProduct[][] {
+export function groupModels(products: CatalogProduct[]): CatalogProduct[][] {
   const groups: CatalogProduct[][] = [];
   for (const product of products) {
     const group = groups.find((items) =>
@@ -113,7 +113,7 @@ function CategoryChip({
   );
 }
 
-function ModelCard({ sizes }: { sizes: CatalogProduct[] }) {
+export function ModelCard({ sizes }: { sizes: CatalogProduct[] }) {
   const { language, t } = useLanguage();
   const [selectedId, setSelectedId] = useState(sizes[Math.floor(sizes.length / 2)].id);
   const product = sizes.find((item) => item.id === selectedId) ?? sizes[0];

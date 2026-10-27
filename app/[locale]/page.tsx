@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/marketing/hero";
-import { HomeSeoText } from "@/components/seo/HomeSeoText";
+import { HomeFaq } from "@/components/seo/HomeSeoText";
+import { getCatalog } from "@/lib/catalogStore";
+import { getGoogleReviews } from "@/lib/googleReviews";
+import { getHomeReviews } from "@/lib/reviews";
 import { getHeroSettings } from "@/lib/heroStore";
 import { getStorePhotoSettings } from "@/lib/storePhotoStore";
 import {
@@ -37,15 +40,21 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = toLocale((await params).locale);
-  const [hero, storePhoto] = await Promise.all([getHeroSettings(), getStorePhotoSettings()]);
+  const [hero, storePhoto, catalog] = await Promise.all([getHeroSettings(), getStorePhotoSettings(), getCatalog()]);
+  const { reviews, isSample } = getHomeReviews();
+  const google = await getGoogleReviews(locale);
   return (
     <>
       {[businessSchema(locale), websiteSchema(), faqSchema(locale)].map((data, index) => (
         <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(data) }} />
       ))}
       <HomeContent
+        catalog={catalog}
         storePhotoUrl={storePhoto.photoUrl}
-        seoText={<HomeSeoText locale={locale} />}
+        reviews={reviews}
+        reviewsAreSample={isSample}
+        google={google}
+        faq={<HomeFaq locale={locale} />}
         hero={<Hero title={HOME_SEO[locale].h1} videoSrc={hero.videoUrl} posterSrc={hero.posterUrl ?? undefined} />}
       />
     </>

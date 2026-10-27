@@ -21,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...bothLanguages("/", 1),
     ...bothLanguages("/catalogo", 0.9),
+    ...bothLanguages("/quienes-somos", 0.6),
     ...products.flatMap((product) => bothLanguages(`/estandar/${product.id}`, 0.7)),
   ];
 }

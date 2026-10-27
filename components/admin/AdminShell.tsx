@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, LogOut, Package, Ruler, Store, Video } from "lucide-react";
+import { BookOpen, ExternalLink, LogOut, Package, Ruler, Store, Video } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export interface AdminShellProps {
   title: string;
-  active: "catalogo" | "precios" | "video" | "local";
+  active: "catalogo" | "precios" | "video" | "local" | "about";
   externalHref: string;
   externalLabel: string;
   children: React.ReactNode;
@@ -47,7 +47,7 @@ export function AdminShell({ title, active, externalHref, externalLabel, childre
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
-        <nav className="mb-6 inline-flex gap-1 rounded-pill p-1.5 shadow-soft-inset" aria-label="Administración">
+        <nav className="mb-6 flex max-w-full gap-1 overflow-x-auto rounded-pill p-1.5 shadow-soft-inset sm:inline-flex" aria-label="Administración">
           <AdminTabLink href="/admin/catalogo" active={active === "catalogo"} icon={<Package size={16} />}>
             Catálogo
           </AdminTabLink>
@@ -59,6 +59,9 @@ export function AdminShell({ title, active, externalHref, externalLabel, childre
           </AdminTabLink>
           <AdminTabLink href="/admin/local" active={active === "local"} icon={<Store size={16} />}>
             Local
+          </AdminTabLink>
+          <AdminTabLink href="/admin/quienes-somos" active={active === "about"} icon={<BookOpen size={16} />}>
+            Quiénes somos
           </AdminTabLink>
         </nav>
 
