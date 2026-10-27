@@ -173,7 +173,7 @@ export function HomeContent({
                         href={catalogHref}
                         className="group nm-transition block h-full rounded-soft bg-nm-surface p-2.5 shadow-soft hover:shadow-soft-lg sm:p-3"
                       >
-                        <span className="relative block aspect-square overflow-hidden rounded-soft-sm shadow-soft-inset">
+                        <span className="relative block aspect-[4/5] overflow-hidden rounded-soft-sm shadow-soft-inset">
                           <Image
                             src={image as string}
                             alt={pickText(language, category.name, category.nameEn)}
@@ -184,7 +184,7 @@ export function HomeContent({
                         </span>
                         <span className="flex items-center justify-between gap-2 px-2 pb-1 pt-4">
                           <span className="min-w-0">
-                            <span className="block truncate font-heading text-lg text-nm-text sm:text-xl">
+                            <span className="line-clamp-2 min-h-[2.5em] font-heading text-lg leading-tight text-nm-text sm:line-clamp-1 sm:min-h-0 sm:text-xl">
                               {pickText(language, category.name, category.nameEn)}
                             </span>
                             <span className="text-xs text-nm-muted">{count === 1 ? t("home.categories.countOne") : t("home.categories.count", { count })}</span>

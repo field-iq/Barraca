@@ -96,7 +96,7 @@ export function AutoCarousel({ items, intervalMs = 3000, perViewWide = 3, perVie
           style={{ transform: `translateX(calc(-${(current * 100) / perView}% + ${dragX}px))` }}
         >
           {items.map((item) => (
-            <li key={item.key} className="shrink-0 px-2 sm:px-3" style={{ flexBasis: `${100 / perView}%` }}>
+            <li key={item.key} className="min-w-0 shrink-0 px-2 sm:px-3" style={{ flexBasis: `${100 / perView}%` }}>
               {item.node}
             </li>
           ))}
