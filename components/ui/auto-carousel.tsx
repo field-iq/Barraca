@@ -11,17 +11,18 @@ const SWIPE_THRESHOLD = 40;
 /**
  * Carrusel que avanza solo (se pausa al tocarlo o pasar el mouse) y también se maneja a mano:
  * flechas en todos los tamaños y arrastre con el dedo en el celular.
- * Muestra `perViewWide` elementos en pantallas anchas y 1 en el celular.
+ * Muestra `perViewWide` elementos en pantallas anchas y `perViewMobile` (1 por defecto) en el celular.
  */
-export function AutoCarousel({ items, intervalMs = 3000, perViewWide = 3, framed = false, previousLabel = 'Previous', nextLabel = 'Next' }: {
+export function AutoCarousel({ items, intervalMs = 3000, perViewWide = 3, perViewMobile = 1, framed = false, previousLabel = 'Previous', nextLabel = 'Next' }: {
   items: CarouselItem[];
   intervalMs?: number;
   perViewWide?: number;
+  perViewMobile?: number;
   framed?: boolean;
   previousLabel?: string;
   nextLabel?: string;
 }) {
-  const [perView, setPerView] = useState(1);
+  const [perView, setPerView] = useState(perViewMobile);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [dragX, setDragX] = useState(0);
@@ -31,11 +32,11 @@ export function AutoCarousel({ items, intervalMs = 3000, perViewWide = 3, framed
 
   useEffect(() => {
     const query = window.matchMedia('(min-width: 768px)');
-    const update = () => setPerView(query.matches ? perViewWide : 1);
+    const update = () => setPerView(query.matches ? perViewWide : perViewMobile);
     update();
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
-  }, [perViewWide]);
+  }, [perViewWide, perViewMobile]);
 
   const lastIndex = Math.max(0, items.length - perView);
   const current = Math.min(index, lastIndex);

@@ -164,35 +164,44 @@ export function HomeContent({
             <div className="mx-auto max-w-6xl">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-nm-muted">{t("home.categories.eyebrow")}</p>
               <h2 className="mt-3 font-heading text-3xl text-nm-text sm:text-4xl">{t("home.categories.title")}</h2>
-              <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-                {categories.map(({ category, count, image }) => (
-                  <Link
-                    key={category.id}
-                    href={catalogHref}
-                    className="group nm-transition block rounded-soft bg-nm-surface p-2.5 shadow-soft hover:shadow-soft-lg sm:p-3"
-                  >
-                    <span className="relative block aspect-square overflow-hidden rounded-soft-sm shadow-soft-inset">
-                      <Image
-                        src={image as string}
-                        alt={pickText(language, category.name, category.nameEn)}
-                        fill
-                        sizes="(min-width: 1024px) 22vw, 45vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </span>
-                    <span className="flex items-center justify-between gap-2 px-2 pb-1 pt-4">
-                      <span className="min-w-0">
-                        <span className="block truncate font-heading text-lg text-nm-text sm:text-xl">
-                          {pickText(language, category.name, category.nameEn)}
+              <div className="mt-6">
+                <AutoCarousel
+                  items={categories.map(({ category, count, image }) => ({
+                    key: category.id,
+                    node: (
+                      <Link
+                        href={catalogHref}
+                        className="group nm-transition block h-full rounded-soft bg-nm-surface p-2.5 shadow-soft hover:shadow-soft-lg sm:p-3"
+                      >
+                        <span className="relative block aspect-square overflow-hidden rounded-soft-sm shadow-soft-inset">
+                          <Image
+                            src={image as string}
+                            alt={pickText(language, category.name, category.nameEn)}
+                            fill
+                            sizes="(min-width: 1024px) 22vw, 45vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
                         </span>
-                        <span className="text-xs text-nm-muted">{t("home.categories.count", { count })}</span>
-                      </span>
-                      <span className="nm-transition grid size-9 shrink-0 place-items-center rounded-full shadow-soft-sm group-hover:text-nm-accent group-hover:shadow-soft-inset-sm">
-                        <ArrowRight className="size-4" aria-hidden="true" />
-                      </span>
-                    </span>
-                  </Link>
-                ))}
+                        <span className="flex items-center justify-between gap-2 px-2 pb-1 pt-4">
+                          <span className="min-w-0">
+                            <span className="block truncate font-heading text-lg text-nm-text sm:text-xl">
+                              {pickText(language, category.name, category.nameEn)}
+                            </span>
+                            <span className="text-xs text-nm-muted">{count === 1 ? t("home.categories.countOne") : t("home.categories.count", { count })}</span>
+                          </span>
+                          <span className="nm-transition grid size-9 shrink-0 place-items-center rounded-full shadow-soft-sm group-hover:text-nm-accent group-hover:shadow-soft-inset-sm">
+                            <ArrowRight className="size-4" aria-hidden="true" />
+                          </span>
+                        </span>
+                      </Link>
+                    ),
+                  }))}
+                  perViewWide={4}
+                  perViewMobile={2}
+                  intervalMs={4000}
+                  previousLabel={t("home.categories.previous")}
+                  nextLabel={t("home.categories.next")}
+                />
               </div>
             </div>
           </section>

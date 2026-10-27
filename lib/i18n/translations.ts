@@ -87,6 +87,9 @@ export const translations = {
 
   "home.categories.eyebrow": { es: "Comprá por categoría", en: "Shop by category" },
   "home.categories.title": { es: "Encontrá tu próxima pieza", en: "Find your next piece" },
+  "home.categories.previous": { es: "Categorías anteriores", en: "Previous categories" },
+  "home.categories.next": { es: "Categorías siguientes", en: "Next categories" },
+  "home.categories.countOne": { es: "1 modelo", en: "1 model" },
   "home.categories.count": { es: "{count} modelos", en: "{count} models" },
 
   "home.shop.eyebrow": { es: "Listos para llevar", en: "Ready to take home" },
