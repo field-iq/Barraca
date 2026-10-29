@@ -12,7 +12,7 @@ import { CtaSection } from "@/components/marketing/cta-section";
 import { GoogleRatingBadge, GoogleReviewCard } from "@/components/reviews/google-reviews";
 import { TestimonialCard } from "@/components/reviews/testimonial-card";
 import { AutoCarousel, type CarouselItem } from "@/components/ui/auto-carousel";
-import { ModelCard, groupModels } from "@/components/StandardFurnitureSection";
+import { ModelCard } from "@/components/StandardFurnitureSection";
 import { getVisibleProducts, type CatalogData } from "@/lib/catalog";
 import { WHATSAPP_URL } from "@/lib/contactInfo";
 import type { GoogleReviewsData } from "@/lib/googleReviews";
@@ -54,8 +54,7 @@ export function HomeContent({
   const customHref = withLocalePrefix("/catalogo#a-medida", language);
 
   const products = useMemo(() => getVisibleProducts(catalog), [catalog]);
-  const models = useMemo(() => groupModels(products), [products]);
-  const featuredModels = models.slice(0, FEATURED_MODELS);
+  const featuredProducts = products.slice(0, FEATURED_MODELS);
 
   const categories = useMemo(
     () =>
@@ -63,11 +62,11 @@ export function HomeContent({
         .filter((category) => category.visible)
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((category) => {
-          const inCategory = models.filter((group) => group[0].categoryId === category.id);
-          return { category, count: inCategory.length, image: inCategory[0]?.[0].images[0] };
+          const inCategory = products.filter((product) => product.categoryId === category.id);
+          return { category, count: inCategory.length, image: inCategory[0]?.images[0] };
         })
         .filter((entry) => entry.count > 0 && entry.image),
-    [catalog.categories, models],
+    [catalog.categories, products],
   );
 
   const trust = [
@@ -230,7 +229,7 @@ export function HomeContent({
           </div>
         </section>
 
-        {featuredModels.length > 0 && (
+        {featuredProducts.length > 0 && (
           <section id="coleccion" className="scroll-mt-4 px-4 pb-10 sm:px-6 sm:pb-14 lg:px-8">
             <div className="mx-auto max-w-6xl">
               <div className="flex flex-wrap items-end justify-between gap-4">
@@ -247,13 +246,13 @@ export function HomeContent({
                 </Link>
               </div>
               <div className="mt-8 hidden min-w-0 gap-8 md:grid md:grid-cols-2 lg:grid-cols-3">
-                {featuredModels.map((group) => (
-                  <ModelCard key={group[0].id} sizes={group} />
+                {featuredProducts.map((product) => (
+                  <ModelCard key={product.id} product={product} />
                 ))}
               </div>
               <div className="mt-6 md:hidden">
                 <AutoCarousel
-                  items={featuredModels.map((group) => ({ key: group[0].id, node: <ModelCard sizes={group} /> }))}
+                  items={featuredProducts.map((product) => ({ key: product.id, node: <ModelCard product={product} /> }))}
                   perViewWide={1}
                   intervalMs={6000}
                   previousLabel={t("home.shop.previous")}

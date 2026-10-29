@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { AddToStoreCartButton } from "@/components/AddToStoreCartButton";
 import { formatARS, localizeDimensions } from "@/lib/format";
 import type { CatalogProduct } from "@/lib/catalog";
+import { AutoCarousel } from "@/components/ui/auto-carousel";
 import { pickText, useLanguage, withLocalePrefix } from "@/lib/i18n/LanguageContext";
 
 interface StandardItemViewProps {
@@ -16,7 +16,13 @@ interface StandardItemViewProps {
 
 export function StandardItemView({ item, categoryName, categoryNameEn }: StandardItemViewProps) {
   const { language, t } = useLanguage();
-  const [mainImage, ...secondaryImages] = item.images;
+  // Solo las fotos de este producto; cada una lleva sus medidas.
+  const photos = item.images.map((src, index) => ({
+    key: `${item.id}-${index}`,
+    src,
+    alt: `${item.imageAlt} ${index + 1}`,
+    dimensions: item.dimensions,
+  }));
   const savings = Math.max(0, item.listPrice - item.cashPrice);
   const discountPercentage = item.listPrice > 0
     ? Math.max(0, Math.round((savings / item.listPrice) * 100))
@@ -85,33 +91,34 @@ export function StandardItemView({ item, categoryName, categoryNameEn }: Standar
           </div>
         </section>
 
-        <section aria-label={`${t("standard.viewPhotos")}: ${detailTitle}`} className="mt-10">
-          <div className="relative mx-auto aspect-[3/4] w-full max-w-2xl overflow-hidden rounded-soft shadow-soft-inset">
-            <Image
-              src={mainImage}
-              alt={item.imageAlt}
-              fill
-              sizes="(max-width: 672px) 100vw, 672px"
-              className="object-contain"
-              priority
-            />
-          </div>
-
-          {secondaryImages.length > 0 && (
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {secondaryImages.map((image, index) => (
-                <div key={image} className="relative aspect-[3/4] overflow-hidden rounded-soft shadow-soft-inset">
-                  <Image
-                    src={image}
-                    alt={`${item.imageAlt} ${index + 2}`}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-contain"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+        <section aria-label={`${t("standard.viewPhotos")}: ${detailTitle}`} className="mx-auto mt-10 w-full max-w-md px-5 sm:max-w-lg sm:px-0">
+          <AutoCarousel
+            framed
+            perViewWide={1}
+            intervalMs={4000}
+            previousLabel={t("home.gallery.previous")}
+            nextLabel={t("home.gallery.next")}
+            items={photos.map((photo, index) => ({
+              key: photo.key,
+              node: (
+                <figure className="rounded-soft bg-nm-surface p-2.5 shadow-soft sm:p-3">
+                  <div className="aspect-[3/4] overflow-hidden rounded-soft-sm shadow-soft-inset">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={photo.src}
+                      alt={photo.alt}
+                      loading={index < 2 ? "eager" : "lazy"}
+                      className="size-full object-contain"
+                    />
+                  </div>
+                  <figcaption className="mt-3 text-center text-sm">
+                    <span className="text-nm-muted">{t("standard.dimensions")}: </span>
+                    <span className="font-semibold text-nm-text">{localizeDimensions(photo.dimensions, language)}</span>
+                  </figcaption>
+                </figure>
+              ),
+            }))}
+          />
         </section>
         </div>
       </main>
