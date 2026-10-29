@@ -135,7 +135,7 @@ function CategoryDropdown({
         <ul
           role="listbox"
           aria-label={label}
-          className="absolute left-0 right-0 top-full mt-2 max-h-72 overflow-auto rounded-soft bg-nm-surface p-2 shadow-soft-lg"
+          className="nm-scroll absolute left-0 right-0 top-full mt-2 max-h-80 overflow-y-auto rounded-soft bg-nm-surface p-2 shadow-soft-lg"
         >
           {options.map((option) => {
             const active = option.id === value;

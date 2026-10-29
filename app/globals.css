@@ -108,6 +108,25 @@ html.dark .nm-theme {
 .nm-pressed {
   box-shadow: inset 2px 2px 5px var(--nm-shadow-dark), inset -2px -2px 5px var(--nm-shadow-light);
 }
+/* Barra de desplazamiento fina, redondeada y en los colores del tema (listas desplegables). */
+.nm-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--nm-accent-soft)) transparent;
+}
+@supports not (scrollbar-color: auto) {
+  .nm-scroll::-webkit-scrollbar {
+    width: 10px;
+  }
+  .nm-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .nm-scroll::-webkit-scrollbar-thumb {
+    background: rgb(var(--nm-accent-soft));
+    border: 2px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+}
 .nm-transition {
   transition-property: box-shadow, transform, background-color;
   transition-duration: 200ms;
